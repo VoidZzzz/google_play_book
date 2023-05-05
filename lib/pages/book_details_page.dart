@@ -9,6 +9,7 @@ import 'package:google_play_book/widgets/divider_view.dart';
 import 'package:google_play_book/widgets/icon_view.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
 
+import '../data/data_vos/books_vo.dart';
 import '../resources/strings.dart';
 import '../widgets/rating_overview_with_progress_bar_indicator.dart';
 import '../widgets/rating_view_by_users.dart';
@@ -16,8 +17,11 @@ import '../widgets/text_view.dart';
 import 'more_ebooks_pages.dart';
 
 class BookDetails extends StatefulWidget {
-  const BookDetails({Key? key, this.isAudiobook = false}) : super(key: key);
+  const BookDetails(
+      {Key? key, this.isAudiobook = false, required this.bookDetails})
+      : super(key: key);
   final bool isAudiobook;
+  final BooksVO? bookDetails;
 
   @override
   State<BookDetails> createState() => _BookDetailsState();
@@ -43,7 +47,11 @@ class _BookDetailsState extends State<BookDetails> {
               padding: const EdgeInsets.symmetric(horizontal: 20),
               child: Column(
                 children: [
-                  BookCoverAndDescriptionView(isAudiobook: widget.isAudiobook),
+                  BookCoverAndDescriptionView(
+                    isAudiobook: widget.isAudiobook,
+                    imageUrl: widget.bookDetails?.bookImage ?? "",
+                    bookName: widget.bookDetails?.title ?? "",
+                  ),
                   BookRatingAndTypeView(
                     isAudiobook: widget.isAudiobook,
                   ),
@@ -213,6 +221,7 @@ class _BookDetailsState extends State<BookDetails> {
                   HorizontalEBooksListView(
                     listViewTitle: "More by Thomas Ipsum",
                     onTapMore: () => _navigateToMoreBooksPage(context),
+                    bookList: null,
                   ),
                   const SizedBox(
                     height: 15,
@@ -220,6 +229,7 @@ class _BookDetailsState extends State<BookDetails> {
                   HorizontalEBooksListView(
                     listViewTitle: "Similar ebooks",
                     onTapMore: () => _navigateToMoreBooksPage(context),
+                    bookList: null,
                   ),
                   const SizedBox(
                     height: 15,
@@ -632,9 +642,15 @@ class BookRatingAndTypeView extends StatelessWidget {
 }
 
 class BookCoverAndDescriptionView extends StatelessWidget {
-  const BookCoverAndDescriptionView({Key? key, required this.isAudiobook})
+  const BookCoverAndDescriptionView(
+      {Key? key,
+      required this.isAudiobook,
+      required this.bookName,
+      required this.imageUrl})
       : super(key: key);
   final bool isAudiobook;
+  final String imageUrl;
+  final String bookName;
 
   @override
   Widget build(BuildContext context) {
@@ -642,11 +658,17 @@ class BookCoverAndDescriptionView extends StatelessWidget {
       height: 200,
       child: Row(
         children: [
-          BookCoverView(isAudiobook: isAudiobook,),
+          BookCoverView(
+            isAudiobook: isAudiobook,
+            imageUrl: imageUrl,
+          ),
           const SizedBox(
             width: 15,
           ),
-          BookDescriptionTextsView(isAudiobook: isAudiobook)
+          BookDescriptionTextsView(
+            isAudiobook: isAudiobook,
+            bookName: bookName,
+          )
         ],
       ),
     );
@@ -654,9 +676,12 @@ class BookCoverAndDescriptionView extends StatelessWidget {
 }
 
 class BookCoverView extends StatelessWidget {
-  const BookCoverView({Key? key, required this.isAudiobook}) : super(key: key);
+  const BookCoverView(
+      {Key? key, required this.isAudiobook, required this.imageUrl})
+      : super(key: key);
 
   final bool isAudiobook;
+  final String imageUrl;
 
   @override
   Widget build(BuildContext context) {
@@ -667,8 +692,7 @@ class BookCoverView extends StatelessWidget {
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(5),
       ),
-      child: Image.asset(
-        isAudiobook ? "images/audioBook.jpg" : "images/ebook.jpg",
+      child: Image.network(imageUrl,
         fit: BoxFit.cover,
       ),
     );
@@ -676,12 +700,12 @@ class BookCoverView extends StatelessWidget {
 }
 
 class BookDescriptionTextsView extends StatelessWidget {
-  const BookDescriptionTextsView({
-    Key? key,
-    required this.isAudiobook
-  }) : super(key: key);
+  const BookDescriptionTextsView(
+      {Key? key, required this.bookName, required this.isAudiobook})
+      : super(key: key);
 
   final bool isAudiobook;
+  final String bookName;
 
   @override
   Widget build(BuildContext context) {
@@ -692,8 +716,7 @@ class BookDescriptionTextsView extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Text(
-            isAudiobook ? "The Becoming of Elden Lord" : "Vikings: The taking of Rome",
+          Text(bookName,
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
             style: GoogleFonts.inter(

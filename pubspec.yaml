@@ -35,6 +35,13 @@ dependencies:
   carousel_slider: ^4.2.1
   percent_indicator: ^4.2.3
   flutter_rating_bar: ^4.0.1
+  json_annotation: ^4.8.0
+  http: ^0.13.5
+  dio: ^4.0.4
+  retrofit: ^3.3.1
+  hive: ^2.2.3
+  hive_flutter: ^1.1.0
+  collection: ^1.16.0
 
 
   # The following adds the Cupertino Icons font to your application.
@@ -51,6 +58,10 @@ dev_dependencies:
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
   flutter_lints: ^2.0.0
+  json_serializable: ^6.6.1
+  build_runner:
+  retrofit_generator: 4.2.0
+  hive_generator:
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

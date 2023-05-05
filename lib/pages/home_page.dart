@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:google_play_book/data/models/google_play_book_model.dart';
+import 'package:google_play_book/data/models/google_play_book_model_impl.dart';
+import 'package:google_play_book/network/api_constants.dart';
 import 'package:google_play_book/pages/book_details_page.dart';
 import 'package:google_play_book/pages/more_audiobooks_page.dart';
 import 'package:google_play_book/pages/more_ebooks_pages.dart';
 import 'package:google_play_book/resources/colors.dart';
 import 'package:google_play_book/widgets/text_view.dart';
 import '../custom_components/smart_list_view.dart';
+import '../data/data_vos/lists_vo.dart';
 import '../widgets/default_app_bar_view.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 
@@ -24,9 +28,27 @@ class _HomepageState extends State<Homepage>
     with SingleTickerProviderStateMixin {
   late TabController _controller;
 
+  /// model
+  GooglePlayBookModel model = GooglePlayBookModelImpl();
+  List<ListsVO>? bookList;
+
   @override
   void initState() {
     _controller = TabController(length: 2, vsync: this);
+
+    /// network call
+    model.getOverview(API_KEY).then((response) {
+      setState(() {
+        bookList = response.results?.lists;
+      });
+      debugPrint(bookList.toString());
+    }).catchError(
+      (error) {
+        debugPrint(
+          error.toString(),
+        );
+      },
+    );
     super.initState();
   }
 
@@ -73,25 +95,28 @@ class _HomepageState extends State<Homepage>
                 physics: const BouncingScrollPhysics(),
                 children: [
                   HorizontalEBooksListView(
-                    listViewTitle: "More Like Ninjas in Pyjamas",
+                    listViewTitle: bookList?[0].displayName ?? "",
                     padding: const EdgeInsets.only(left: 20),
                     onTapMore: () => _navigateToMoreBooksPage(context),
+                    bookList: bookList?[0],
                   ),
                   const SizedBox(
                     height: 10,
                   ),
                   HorizontalEBooksListView(
-                    listViewTitle: "E-Books for you",
+                    listViewTitle: bookList?[1].displayName ?? "",
                     padding: const EdgeInsets.only(left: 20),
                     onTapMore: () => _navigateToMoreBooksPage(context),
+                    bookList: bookList?[1],
                   ),
                   const SizedBox(
                     height: 10,
                   ),
                   HorizontalEBooksListView(
-                    listViewTitle: "On your Wishlist",
+                    listViewTitle: bookList?[2].displayName ?? "",
                     padding: const EdgeInsets.only(left: 20),
                     onTapMore: () => _navigateToMoreBooksPage(context),
+                    bookList: bookList?[2],
                   ),
                 ],
               ),
@@ -278,16 +303,18 @@ class AudiobooksView extends StatelessWidget {
 }
 
 class HorizontalEBooksListView extends StatelessWidget {
-  const HorizontalEBooksListView({
-    Key? key,
-    required this.listViewTitle,
-    required this.onTapMore,
-    this.padding = const EdgeInsets.only(left: 12),
-  }) : super(key: key);
+  const HorizontalEBooksListView(
+      {Key? key,
+      required this.listViewTitle,
+      required this.onTapMore,
+      this.padding = const EdgeInsets.only(left: 12),
+      required this.bookList})
+      : super(key: key);
 
   final String listViewTitle;
   final EdgeInsets padding;
   final Function onTapMore;
+  final ListsVO? bookList;
 
   @override
   Widget build(BuildContext context) {
@@ -305,22 +332,33 @@ class HorizontalEBooksListView extends StatelessWidget {
           ),
           SizedBox(
             height: 245,
-            child: SmartHorizontalListView(
-                itemCount: 5,
-                itemBuilder: (context, index) => BookView(
-                      padding: padding,
-                      onTapMenu: () => showBottomSheetForMenu(context),
-                      bottomDownloadPadding: 48,
-                      downloadIconSize: 17,
-                      downloadMargin: 2,
-                      leftSamplePadding: 25,
-                      topSamplePadding: 5,
-                      sampleFontSize: 12,
-                      sampleMargin: 3,
+            child: ListView.builder(
+              itemBuilder: (context, index) => BookView(
+                bookCover: bookList?.books?[index].bookImage ?? "",
+                bookName: bookList?.books?[index].title ?? "",
+                padding: padding,
+                onTapMenu: () => showBottomSheetForMenu(context),
+                bottomDownloadPadding: 48,
+                downloadIconSize: 17,
+                downloadMargin: 2,
+                leftSamplePadding: 25,
+                topSamplePadding: 5,
+                sampleFontSize: 12,
+                sampleMargin: 3,
+                onTapBookView: () => Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => BookDetails(
+                      bookDetails: bookList?.books?[index],
                     ),
-                onListEndReached: () {},
-                padding: EdgeInsets.zero,
-                scrollDirection: Axis.horizontal),
+                  ),
+                ),
+              ),
+              itemCount: bookList?.books?.length ?? 0,
+              scrollDirection: Axis.horizontal,
+              shrinkWrap: true,
+              padding: EdgeInsets.zero,
+              physics: const BouncingScrollPhysics(),
+            ),
           ),
         ],
       ),

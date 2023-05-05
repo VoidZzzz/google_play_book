@@ -8,6 +8,7 @@ import 'package:google_play_book/widgets/text_view.dart';
 
 import '../widgets/menu_option_view.dart';
 import '../widgets/modal_bottom_sheet_for_menu.dart';
+import 'book_details_page.dart';
 import 'book_view.dart';
 import 'create_shelf_page.dart';
 
@@ -513,7 +514,7 @@ class BooksListView extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const BookCoverView(imageHeight: 85, imageWidth: 55),
+                // BookCoverView(imageHeight: 85, imageWidth: 55, bookCover: '',),
                 SizedBox(
                   height: 80,
                   width: MediaQuery.of(context).size.width * 0.5,
@@ -606,7 +607,8 @@ class SmallGridView extends StatelessWidget {
           topSamplePadding: 3,
           sampleMargin: 3,
           sampleFontSize: 13,
-          onTapMenu: () => showBottomSheetForMenu(context),
+          onTapMenu: () => showBottomSheetForMenu(context), bookCover: '', bookName: '',
+          onTapBookView: (){},
         ),
       ),
     );
@@ -635,7 +637,12 @@ class LargeGridView extends StatelessWidget {
           rightMenuPadding: 5,
           bottomDownloadPadding: 49,
           rightDownloadPadding: 6,
-          onTapMenu: () => showBottomSheetForMenu(context),
+          onTapMenu: () => showBottomSheetForMenu(context), bookCover: '', bookName: '',
+          onTapBookView: () => Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (context) => const BookDetails(bookDetails: null,),
+            ),
+          ),
         ),
       ),
     );

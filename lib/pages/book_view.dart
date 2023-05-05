@@ -24,8 +24,11 @@ class BookView extends StatelessWidget {
       this.sampleFontSize = 14,
       this.sampleMargin = 5,
       this.topSamplePadding = 5,
-        this.isSample = true,
-      required this.onTapMenu})
+      this.isSample = true,
+      required this.onTapMenu,
+      required this.bookCover,
+      required this.bookName,
+      required this.onTapBookView})
       : super(key: key);
 
   final EdgeInsets padding;
@@ -45,11 +48,14 @@ class BookView extends StatelessWidget {
   final double sampleFontSize;
   final bool isDownLoaded;
   final bool isSample;
+  final String bookCover;
+  final String bookName;
+  final Function onTapBookView;
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: () => _navigateToBookDetails(context),
+      onTap: () => onTapBookView(),
       child: Stack(
         children: [
           Padding(
@@ -57,7 +63,11 @@ class BookView extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                BookCoverView(imageHeight: imageHeight, imageWidth: imageWidth),
+                BookCoverView(
+                  imageHeight: imageHeight,
+                  imageWidth: imageWidth,
+                  bookCover: bookCover,
+                ),
                 const SizedBox(
                   height: 5,
                 ),
@@ -65,7 +75,7 @@ class BookView extends StatelessWidget {
                   height: titleHeight,
                   width: titleWidth,
                   child: Text(
-                    "Business Approach in 2025 by Thorum Ipsum",
+                    bookName,
                     style: GoogleFonts.inter(
                         fontSize: 13,
                         fontWeight: FontWeight.w500,
@@ -126,25 +136,19 @@ class BookView extends StatelessWidget {
       ),
     );
   }
-
-  Future<dynamic> _navigateToBookDetails(BuildContext context) {
-    return Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (context) => const BookDetails(),
-      ),
-    );
-  }
 }
 
 class BookCoverView extends StatelessWidget {
-  const BookCoverView({
-    Key? key,
-    required this.imageHeight,
-    required this.imageWidth,
-  }) : super(key: key);
+  const BookCoverView(
+      {Key? key,
+      required this.imageHeight,
+      required this.imageWidth,
+      required this.bookCover})
+      : super(key: key);
 
   final double imageHeight;
   final double imageWidth;
+  final String bookCover;
 
   @override
   Widget build(BuildContext context) {
@@ -155,8 +159,8 @@ class BookCoverView extends StatelessWidget {
       ),
       height: imageHeight,
       width: imageWidth,
-      child: Image.asset(
-        "images/ebook.jpg",
+      child: Image.network(
+        bookCover,
         fit: BoxFit.cover,
       ),
     );

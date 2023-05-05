@@ -44,7 +44,7 @@ class MoreAudiobooksPage extends StatelessWidget {
 Future<dynamic> navigateToBookDetailsPage(BuildContext context) {
   return Navigator.of(context).push(
     MaterialPageRoute(
-      builder: (context) => const BookDetails(isAudiobook: true,),
+      builder: (context) => const BookDetails(isAudiobook: true, bookDetails: null,),
     ),
   );
 }
