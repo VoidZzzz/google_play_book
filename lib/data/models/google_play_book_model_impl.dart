@@ -1,4 +1,5 @@
 import 'package:google_play_book/data/models/google_play_book_model.dart';
+import 'package:google_play_book/network/response/get_more_list_response.dart';
 import 'package:google_play_book/network/response/get_overview_response.dart';
 import '../../network/data_agent/google_play_book_data_agent.dart';
 import '../../network/data_agent/google_play_book_data_agent_impl.dart';
@@ -18,5 +19,10 @@ class GooglePlayBookModelImpl extends GooglePlayBookModel {
   @override
   Future<GetOverviewResponse> getOverview(String apiKey) {
     return _dataAgent.getOverview(apiKey);
+  }
+
+  @override
+  Future<GetMoreListResponse> getMoreList(String apiKey, String list, String offset) {
+    return _dataAgent.getMoreList(apiKey,list, offset);
   }
 }

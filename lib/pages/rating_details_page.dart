@@ -21,6 +21,7 @@ class RatingDetailsPage extends StatelessWidget {
       body: SingleChildScrollView(
         child: Column(
           children: [
+            const RatingOverViewWithProgressBarIndicator(),
             SizedBox(
               height: 45,
               child: Padding(
@@ -28,42 +29,38 @@ class RatingDetailsPage extends StatelessWidget {
                 child: SmartHorizontalListView(
                     itemCount: ratingChips.length,
                     itemBuilder: (context, index) => Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 5.0),
-                          child: FilterChip(
-                              selectedColor: LIGHT_THEME_TERTIARY_COLOR,
-                              side: const BorderSide(
-                                  color: GREY_COLOR, width: 0.5),
-                              backgroundColor: WHITE_COLOR,
-                              labelPadding: const EdgeInsets.symmetric(
-                                  horizontal: 10, vertical: 1),
-                              label: Row(
-                                children: [
-                                  TextView(
-                                    text: ratingChips[index],
-                                    fontColor: GREY_COLOR,
-                                  ),
-                                  const SizedBox(
-                                    width: 5,
-                                  ),
-                                  const IconView(
-                                      icon: Icons.star,
-                                      iconColor: GREY_COLOR,
-                                      iconSize: 20),
-                                ],
+                      padding: const EdgeInsets.symmetric(horizontal: 5.0),
+                      child: FilterChip(
+                          selectedColor: LIGHT_THEME_TERTIARY_COLOR,
+                          side: const BorderSide(
+                              color: GREY_COLOR, width: 0.5),
+                          backgroundColor: WHITE_COLOR,
+                          labelPadding: const EdgeInsets.symmetric(
+                              horizontal: 10, vertical: 1),
+                          label: Row(
+                            children: [
+                              TextView(
+                                text: ratingChips[index],
+                                fontColor: Colors.black54,
                               ),
-                              onSelected: (isSelected) {}),
-                        ),
+                              const SizedBox(
+                                width: 5,
+                              ),
+                              const IconView(
+                                  icon: Icons.star,
+                                  iconColor: Colors.black54,
+                                  iconSize: 20),
+                            ],
+                          ),
+                          onSelected: (isSelected) {}),
+                    ),
                     onListEndReached: () {},
                     padding: EdgeInsets.zero,
                     scrollDirection: Axis.horizontal),
               ),
             ),
             const SizedBox(
-              height: 10,
-            ),
-            const RatingOverViewWithProgressBarIndicator(),
-            const SizedBox(
-              height: 15,
+              height: 25,
             ),
             const Padding(
               padding: EdgeInsets.symmetric(horizontal: 20.0),
@@ -185,7 +182,7 @@ class AppBarLeadingVIew extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const IconView(
-        icon: Icons.keyboard_arrow_left, iconColor: WHITE_COLOR, iconSize: 30);
+        icon: Icons.keyboard_arrow_left, iconColor: Colors.black87, iconSize: 30);
   }
 }
 
@@ -198,6 +195,7 @@ class AppBarTitleView extends StatelessWidget {
   Widget build(BuildContext context) {
     return const TextView(
       text: "Ratings and reviews",
+      fontColor: Colors.black87,
       fontSize: 20,
     );
   }

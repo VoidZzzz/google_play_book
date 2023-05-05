@@ -16,11 +16,12 @@ class AboutBookDetailsPage extends StatelessWidget {
           onTap: () => Navigator.of(context).pop(),
           child: const IconView(
               icon: Icons.keyboard_arrow_left,
-              iconColor: WHITE_COLOR,
+              iconColor: Colors.black87,
               iconSize: 30),
         ),
         title: const TextView(
           text: "About this ebook",
+          fontColor: Colors.black87,
           fontSize: 18,
         ),
       ),
@@ -32,8 +33,9 @@ class AboutBookDetailsPage extends StatelessWidget {
             padding: EdgeInsets.symmetric(vertical: 20.0),
             child: TextView(
               text: BOOK_DETAILS_DUMMY_OVERVIEW_TEXT,
+              fontSize: 15,
               maxLines: 999,
-              fontColor: Colors.white54,
+              fontColor: Colors.black54,
             ),
           ),
         ),

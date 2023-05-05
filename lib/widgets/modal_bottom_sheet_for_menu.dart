@@ -8,7 +8,7 @@ void showBottomSheetForMenu(BuildContext context) {
     context: (context),
     builder: (context) => Container(
       height: 320,
-      color: APP_SECONDARY_COLOR,
+      color: WHITE_COLOR,
       child: Padding(
         padding: const EdgeInsets.only(left: 20, top: 20),
         child: Column(
@@ -22,8 +22,8 @@ void showBottomSheetForMenu(BuildContext context) {
                   SizedBox(
                     height: 70,
                     width: 45,
-                    child: Image.asset(
-                      "images/dummyBookList.webp",
+                    child: Image.network(
+                      "https://www.pixelstalk.net/wp-content/uploads/2016/08/Breaking-Bad-HD-Wallpaper-for-Iphone.jpg",
                       fit: BoxFit.cover,
                     ),
                   ),
@@ -36,12 +36,12 @@ void showBottomSheetForMenu(BuildContext context) {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text(
-                          "Business Approach in 2025",
+                          "Viking: The taking over Rome",
                           maxLines: 2,
                           style: GoogleFonts.inter(
                             fontWeight: FontWeight.w700,
                             fontSize: 20,
-                            color: WHITE_COLOR,
+                            color: Colors.black87,
                           ),
                         ),
                         Row(
@@ -51,7 +51,7 @@ void showBottomSheetForMenu(BuildContext context) {
                               style: GoogleFonts.inter(
                                 fontWeight: FontWeight.w500,
                                 fontSize: 14,
-                                color: Colors.white54,
+                                color: Colors.black54,
                               ),
                             ),
                             Text(
@@ -59,7 +59,7 @@ void showBottomSheetForMenu(BuildContext context) {
                               style: GoogleFonts.inter(
                                 fontWeight: FontWeight.w500,
                                 fontSize: 14,
-                                color: Colors.white54,
+                                color: Colors.black54,
                               ),
                             ),
                           ],

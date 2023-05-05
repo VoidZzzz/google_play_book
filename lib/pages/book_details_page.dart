@@ -7,10 +7,8 @@ import 'package:google_play_book/pages/rating_details_page.dart';
 import 'package:google_play_book/resources/colors.dart';
 import 'package:google_play_book/widgets/divider_view.dart';
 import 'package:google_play_book/widgets/icon_view.dart';
-import 'package:percent_indicator/linear_percent_indicator.dart';
-
 import '../data/data_vos/books_vo.dart';
-import '../resources/strings.dart';
+import '../data/data_vos/lists_vo.dart';
 import '../widgets/rating_overview_with_progress_bar_indicator.dart';
 import '../widgets/rating_view_by_users.dart';
 import '../widgets/text_view.dart';
@@ -18,10 +16,11 @@ import 'more_ebooks_pages.dart';
 
 class BookDetails extends StatefulWidget {
   const BookDetails(
-      {Key? key, this.isAudiobook = false, required this.bookDetails})
+      {Key? key, this.isAudiobook = false, required this.bookDetails, required this.bookLists})
       : super(key: key);
   final bool isAudiobook;
   final BooksVO? bookDetails;
+  final ListsVO? bookLists;
 
   @override
   State<BookDetails> createState() => _BookDetailsState();
@@ -68,14 +67,14 @@ class _BookDetailsState extends State<BookDetails> {
                           height: 35,
                           width: 170,
                           decoration: BoxDecoration(
-                              color: APP_PRIMARY_COLOR,
+                              color: WHITE_COLOR,
                               borderRadius: BorderRadius.circular(6),
-                              border: Border.all(color: WHITE_COLOR)),
+                              border: Border.all(color: GREY_COLOR)),
                           child: const Center(
                             child: TextView(
                               text: "Free Sample",
-                              fontWeight: FontWeight.w600,
-                              fontColor: APP_TERTIARY_COLOR,
+                              fontWeight: FontWeight.w700,
+                              fontColor: LIGHT_THEME_TERTIARY_COLOR,
                             ),
                           ),
                         ),
@@ -83,14 +82,14 @@ class _BookDetailsState extends State<BookDetails> {
                           height: 35,
                           width: 170,
                           decoration: BoxDecoration(
-                            color: APP_TERTIARY_COLOR,
+                            color: LIGHT_THEME_TERTIARY_COLOR,
                             borderRadius: BorderRadius.circular(6),
                           ),
                           child: const Center(
                             child: TextView(
                               text: "Buy \$2.5",
                               fontWeight: FontWeight.w600,
-                              fontColor: APP_PRIMARY_COLOR,
+                              fontColor: WHITE_COLOR,
                             ),
                           ),
                         ),
@@ -106,13 +105,13 @@ class _BookDetailsState extends State<BookDetails> {
                             TextSpan(
                                 text: "List price: ",
                                 style: GoogleFonts.inter(
-                                    fontSize: 13, fontWeight: FontWeight.w400)),
+                                    fontSize: 13, fontWeight: FontWeight.w400, color: APP_PRIMARY_COLOR),),
                             TextSpan(
                               text: "\$2.99",
                               style: GoogleFonts.inter(
                                   decoration: TextDecoration.lineThrough,
                                   fontSize: 13,
-                                  fontWeight: FontWeight.w400),
+                                  fontWeight: FontWeight.w400, color: APP_PRIMARY_COLOR),
                             ),
                           ],
                         ),
@@ -148,8 +147,8 @@ class _BookDetailsState extends State<BookDetails> {
                         ),
                         Text(widget.bookDetails?.description ?? "",
                           style: GoogleFonts.inter(
-                              fontWeight: FontWeight.normal,
-                              color: Colors.white54,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.black54,
                               fontSize: 14),
                           overflow: TextOverflow.ellipsis,
                           maxLines: 4,
@@ -221,7 +220,7 @@ class _BookDetailsState extends State<BookDetails> {
                   HorizontalEBooksListView(
                     listViewTitle: "More by Thomas Ipsum",
                     onTapMore: () => _navigateToMoreBooksPage(context),
-                    bookList: null,
+                    bookList: widget.bookLists,
                   ),
                   const SizedBox(
                     height: 15,
@@ -229,7 +228,7 @@ class _BookDetailsState extends State<BookDetails> {
                   HorizontalEBooksListView(
                     listViewTitle: "Similar ebooks",
                     onTapMore: () => _navigateToMoreBooksPage(context),
-                    bookList: null,
+                    bookList: widget.bookLists,
                   ),
                   const SizedBox(
                     height: 15,
@@ -238,6 +237,7 @@ class _BookDetailsState extends State<BookDetails> {
                     padding: EdgeInsets.symmetric(horizontal: 20.0),
                     child: TextView(
                       text: "Rate this ebook",
+                      fontColor: Colors.black87,
                       fontSize: 18,
                     ),
                   ),
@@ -246,7 +246,7 @@ class _BookDetailsState extends State<BookDetails> {
                     child: TextView(
                       text: "Tell others what you think",
                       fontWeight: FontWeight.w400,
-                      fontColor: Colors.white70,
+                      fontColor: Colors.black54,
                     ),
                   ),
                   SizedBox(
@@ -275,7 +275,7 @@ class _BookDetailsState extends State<BookDetails> {
                       child: const Center(
                         child: TextView(
                           text: "Write a review",
-                          fontColor: APP_TERTIARY_COLOR,
+                          fontColor: LIGHT_THEME_SELECTED_CHIP_COLOR,
                         ),
                       ),
                     ),
@@ -295,6 +295,7 @@ class _BookDetailsState extends State<BookDetails> {
                     padding: EdgeInsets.symmetric(horizontal: 20.0),
                     child: TextView(
                       text: "Ebook details",
+                      fontColor: Colors.black87,
                       fontSize: 20,
                     ),
                   ),
@@ -319,12 +320,13 @@ class _BookDetailsState extends State<BookDetails> {
                       children: const [
                         IconView(
                             icon: Icons.info_outline,
-                            iconColor: GREY_COLOR,
+                            iconColor: Colors.black87,
                             iconSize: 20),
                         SizedBox(
                           width: 15,
                         ),
-                        TextView(text: "Google play refund policy"),
+                        TextView(text: "Google play refund policy",
+                          fontColor: Colors.black87,),
                         Spacer()
                       ],
                     ),
@@ -344,7 +346,7 @@ class _BookDetailsState extends State<BookDetails> {
   Future<dynamic> _navigateToMoreBooksPage(BuildContext context) {
     return Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (context) => const MoreEbooksPage(),
+        builder: (context) => const MoreEbooksPage(listName: "hardcover-fiction",),
       ),
     );
   }
@@ -424,7 +426,7 @@ class _BookDetailsState extends State<BookDetails> {
           }),
           child: const TextView(
             text: "Less",
-            fontColor: APP_TERTIARY_COLOR,
+            fontColor: LIGHT_THEME_SELECTED_CHIP_COLOR,
           ),
         ),
       ],
@@ -461,7 +463,7 @@ class _BookDetailsState extends State<BookDetails> {
           }),
           child: const TextView(
             text: "More",
-            fontColor: APP_TERTIARY_COLOR,
+            fontColor: LIGHT_THEME_SELECTED_CHIP_COLOR,
           ),
         ),
       ],
@@ -501,6 +503,7 @@ class BookDetailsTextRowView extends StatelessWidget {
               alignment: Alignment.centerLeft,
               child: TextView(
                 text: title,
+                fontColor: Colors.black87,
                 fontSize: 16,
               ),
             ),
@@ -511,7 +514,7 @@ class BookDetailsTextRowView extends StatelessWidget {
               alignment: Alignment.centerLeft,
               child: TextView(
                 text: value,
-                fontColor: isDecorated ? APP_TERTIARY_COLOR : Colors.white70,
+                fontColor: isDecorated ? LIGHT_THEME_SELECTED_CHIP_COLOR : Colors.black54,
                 isDecorated: isDecorated,
               ),
             ),
@@ -535,11 +538,12 @@ class SectionTitleAndSeemoreButtonView extends StatelessWidget {
         TextView(
           text: text,
           fontSize: 18,
+          fontColor: Colors.black87,
         ),
         const Spacer(),
         const IconView(
             icon: Icons.keyboard_arrow_right,
-            iconColor: APP_TERTIARY_COLOR,
+            iconColor: LIGHT_THEME_SELECTED_CHIP_COLOR,
             iconSize: 30),
       ],
     );
@@ -568,18 +572,18 @@ class BookRatingAndTypeView extends StatelessWidget {
                     "4.3",
                     style: GoogleFonts.inter(
                         fontSize: 18,
-                        color: GREY_COLOR,
+                        color: Colors.black54,
                         fontWeight: FontWeight.w600),
                   ),
                   const IconView(
-                      icon: Icons.star, iconColor: GREY_COLOR, iconSize: 25),
+                      icon: Icons.star, iconColor: Colors.black54, iconSize: 25),
                 ],
               ),
               Text(
                 "155 reviews",
                 style: GoogleFonts.inter(
                     fontSize: 13,
-                    color: GREY_COLOR,
+                    color: Colors.black54,
                     fontWeight: FontWeight.w600),
               )
             ],
@@ -589,13 +593,13 @@ class BookRatingAndTypeView extends StatelessWidget {
             children: [
               const IconView(
                   icon: Icons.book_outlined,
-                  iconColor: GREY_COLOR,
+                  iconColor: Colors.black54,
                   iconSize: 25),
               Text(
                 isAudiobook ? "Audiobook" : "Ebook",
                 style: GoogleFonts.inter(
                     fontSize: 13,
-                    color: GREY_COLOR,
+                    color: Colors.black54,
                     fontWeight: FontWeight.w600),
               )
             ],
@@ -607,14 +611,14 @@ class BookRatingAndTypeView extends StatelessWidget {
                 isAudiobook ? "5hr 27min" : "31",
                 style: GoogleFonts.inter(
                     fontSize: 18,
-                    color: GREY_COLOR,
+                    color: Colors.black54,
                     fontWeight: FontWeight.w600),
               ),
               Text(
                 isAudiobook ? "Unabridged" : "pages",
                 style: GoogleFonts.inter(
                     fontSize: 13,
-                    color: GREY_COLOR,
+                    color: Colors.black54,
                     fontWeight: FontWeight.w600),
               )
             ],
@@ -624,13 +628,13 @@ class BookRatingAndTypeView extends StatelessWidget {
             children: [
               const IconView(
                   icon: Icons.home_rounded,
-                  iconColor: GREY_COLOR,
+                  iconColor: Colors.black54,
                   iconSize: 25),
               Text(
                 "Eligible",
                 style: GoogleFonts.inter(
                     fontSize: 13,
-                    color: GREY_COLOR,
+                    color: Colors.black54,
                     fontWeight: FontWeight.w600),
               )
             ],
@@ -729,7 +733,7 @@ class BookDescriptionTextsView extends StatelessWidget {
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
             style: GoogleFonts.inter(
-                fontWeight: FontWeight.w600, fontSize: 23, color: WHITE_COLOR),
+                fontWeight: FontWeight.w600, fontSize: 23, color: Colors.black87),
           ),
           const SizedBox(
             height: 8,
@@ -737,14 +741,14 @@ class BookDescriptionTextsView extends StatelessWidget {
           Text(
             "(Legacy Edition)",
             style: GoogleFonts.inter(
-                fontWeight: FontWeight.w600, fontSize: 22, color: WHITE_COLOR),
+                fontWeight: FontWeight.w600, fontSize: 22, color: Colors.black87),
           ),
           const SizedBox(
             height: 8,
           ),
           Text(author,
             style: GoogleFonts.inter(
-                fontWeight: FontWeight.w600, fontSize: 16, color: WHITE_COLOR),
+                fontWeight: FontWeight.w600, fontSize: 16, color: Colors.black87),
           ),
           const SizedBox(
             height: 8,
@@ -754,7 +758,7 @@ class BookDescriptionTextsView extends StatelessWidget {
             style: GoogleFonts.inter(
                 fontWeight: FontWeight.w500,
                 fontSize: 16,
-                color: Colors.white54),
+                color: Colors.black54),
           ),
           const SizedBox(
             height: 8,
@@ -764,7 +768,7 @@ class BookDescriptionTextsView extends StatelessWidget {
             style: GoogleFonts.inter(
                 fontWeight: FontWeight.w500,
                 fontSize: 16,
-                color: Colors.white54),
+                color: Colors.black54),
           )
         ],
       ),
@@ -783,23 +787,23 @@ class AppBarView extends StatelessWidget {
       children: const [
         IconView(
             icon: Icons.keyboard_arrow_left,
-            iconColor: WHITE_COLOR,
+            iconColor: Colors.black54,
             iconSize: 30),
         Spacer(),
-        IconView(icon: Icons.search, iconColor: WHITE_COLOR, iconSize: 25),
+        IconView(icon: Icons.search, iconColor: Colors.black54, iconSize: 25),
         SizedBox(
           width: 15,
         ),
         IconView(
             icon: Icons.bookmark_add_outlined,
-            iconColor: WHITE_COLOR,
+            iconColor: Colors.black54,
             iconSize: 22),
         SizedBox(
           width: 15,
         ),
         IconView(
             icon: Icons.more_horiz_outlined,
-            iconColor: WHITE_COLOR,
+            iconColor: Colors.black54,
             iconSize: 25),
       ],
     );

@@ -29,9 +29,9 @@ class _BottomNavigationBarHomePageState
       child: Scaffold(
         body: _body[currentIndex],
         bottomNavigationBar: BottomNavigationBar(
-          backgroundColor: APP_PRIMARY_COLOR,
-          selectedItemColor: APP_TERTIARY_COLOR,
-          unselectedItemColor: Colors.grey,
+          backgroundColor: WHITE_COLOR,
+          selectedItemColor: LIGHT_THEME_SELECTED_CHIP_COLOR,
+          unselectedItemColor: Colors.black54,
           selectedLabelStyle:
               GoogleFonts.inter(fontWeight: FontWeight.w600, fontSize: 13),
           unselectedLabelStyle:

@@ -25,6 +25,9 @@ class BookView extends StatelessWidget {
       this.sampleMargin = 5,
       this.topSamplePadding = 5,
       this.isSample = true,
+        this.bookAuthorName = "Thomas Ipsum",
+        this.titleColor = GREY_COLOR,
+        this.authorColor = GREY_COLOR,
       required this.onTapMenu,
       required this.bookCover,
       required this.bookName,
@@ -51,6 +54,9 @@ class BookView extends StatelessWidget {
   final String bookCover;
   final String bookName;
   final Function onTapBookView;
+  final String bookAuthorName;
+  final Color titleColor;
+  final Color authorColor;
 
   @override
   Widget build(BuildContext context) {
@@ -74,14 +80,28 @@ class BookView extends StatelessWidget {
                 SizedBox(
                   height: titleHeight,
                   width: titleWidth,
-                  child: Text(
-                    bookName,
-                    style: GoogleFonts.inter(
-                        fontSize: 13,
-                        fontWeight: FontWeight.w500,
-                        color: Colors.grey),
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        bookName,
+                        style: GoogleFonts.inter(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600,
+                            color: titleColor),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      Text(
+                        bookAuthorName,
+                        style: GoogleFonts.inter(
+                            fontSize: 13,
+                            fontWeight: FontWeight.w500,
+                            color: authorColor),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ],
                   ),
                 ),
               ],
@@ -122,11 +142,12 @@ class BookView extends StatelessWidget {
                 padding: EdgeInsets.all(sampleMargin),
                 decoration: BoxDecoration(
                   color: APP_SECONDARY_COLOR,
-                  borderRadius: BorderRadius.circular(5),
+                  borderRadius: BorderRadius.circular(3),
                 ),
                 child: TextView(
                   text: "Sample",
                   fontWeight: FontWeight.w500,
+                  fontColor: Colors.white70,
                   fontSize: sampleFontSize,
                 ),
               ),

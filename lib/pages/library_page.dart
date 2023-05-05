@@ -74,7 +74,9 @@ class _LibraryPageState extends State<LibraryPage>
                     Column(
                       children: [
                         TabBar(
-                          indicatorColor: APP_TERTIARY_COLOR,
+                          unselectedLabelColor: Colors.black54,
+                          labelColor: LIGHT_THEME_SELECTED_CHIP_COLOR,
+                          indicatorColor: LIGHT_THEME_SELECTED_CHIP_COLOR,
                           indicatorSize: TabBarIndicatorSize.label,
                           controller: _tabController,
                           tabs: const [
@@ -128,6 +130,8 @@ class _LibraryPageState extends State<LibraryPage>
                                   child: Container(
                                     width: 30,
                                     decoration: BoxDecoration(
+                                        border:
+                                            Border.all(color: Colors.black54),
                                         borderRadius: BorderRadius.circular(18),
                                         color: WHITE_COLOR),
                                     child: const Icon(
@@ -143,7 +147,11 @@ class _LibraryPageState extends State<LibraryPage>
                                 padding: const EdgeInsets.only(left: 8.0),
                                 child: FilterChip(
                                   backgroundColor: WHITE_COLOR,
-                                  selectedColor: APP_TERTIARY_COLOR,
+                                  side: (chipIsSelected[index])
+                                      ? const BorderSide(color: WHITE_COLOR)
+                                      : const BorderSide(color: GREY_COLOR),
+                                  selectedColor:
+                                      LIGHT_THEME_SELECTED_CHIP_COLOR,
                                   showCheckmark: false,
                                   label: Text(
                                     dummyChipLabels[index - 1],
@@ -183,7 +191,7 @@ class _LibraryPageState extends State<LibraryPage>
                               (viewTypeValue == 1)
                                   ? Icons.view_list_outlined
                                   : Icons.view_module_outlined,
-                              color: Colors.white,
+                              color: Colors.black54,
                             ),
                           ),
                         ],
@@ -246,13 +254,14 @@ class _LibraryPageState extends State<LibraryPage>
     return showModalBottomSheet(
       context: (context),
       builder: (context) => Container(
-        color: APP_SECONDARY_COLOR,
+        color: WHITE_COLOR,
         height: 230,
         child: Padding(
           padding: const EdgeInsets.only(left: 10, top: 20.0),
           child: Theme(
             data: Theme.of(context).copyWith(
-                unselectedWidgetColor: WHITE_COLOR, disabledColor: Colors.blue),
+                unselectedWidgetColor: Colors.black,
+                disabledColor: Colors.blue),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -261,7 +270,7 @@ class _LibraryPageState extends State<LibraryPage>
                   style: GoogleFonts.inter(
                       fontSize: 20,
                       fontWeight: FontWeight.w600,
-                      color: WHITE_COLOR),
+                      color: Colors.black),
                 ),
                 const SizedBox(
                   height: 10,
@@ -272,7 +281,7 @@ class _LibraryPageState extends State<LibraryPage>
                 Row(
                   children: [
                     Radio(
-                      activeColor: APP_TERTIARY_COLOR,
+                      activeColor: LIGHT_THEME_SELECTED_CHIP_COLOR,
                       value: 1,
                       groupValue: viewTypeValue,
                       onChanged: (val) {
@@ -286,7 +295,7 @@ class _LibraryPageState extends State<LibraryPage>
                       radioOne,
                       style: GoogleFonts.inter(
                           fontWeight: FontWeight.w500,
-                          color: WHITE_COLOR,
+                          color: Colors.black87,
                           fontSize: 14),
                     )
                   ],
@@ -308,7 +317,7 @@ class _LibraryPageState extends State<LibraryPage>
                       radioTwo,
                       style: GoogleFonts.inter(
                           fontWeight: FontWeight.w500,
-                          color: WHITE_COLOR,
+                          color: Colors.black87,
                           fontSize: 14),
                     )
                   ],
@@ -332,7 +341,7 @@ class _LibraryPageState extends State<LibraryPage>
                       radioThree,
                       style: GoogleFonts.inter(
                           fontWeight: FontWeight.w500,
-                          color: WHITE_COLOR,
+                          color: Colors.black87,
                           fontSize: 14),
                     ),
                   ],
@@ -353,36 +362,46 @@ class CreateNewButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      clipBehavior: Clip.antiAlias,
-      elevation: 2,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(40),
-      ),
-      child: Container(
-        height: 43,
-        width: 150,
-        decoration: BoxDecoration(
-            color: APP_TERTIARY_COLOR, borderRadius: BorderRadius.circular(40)),
-        child: Center(
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: const [
-              IconView(
-                  icon: Icons.create,
-                  iconColor: APP_PRIMARY_COLOR,
-                  iconSize: 25),
-              SizedBox(
-                width: 10,
-              ),
-              TextView(
-                text: "Create new",
-                fontColor: APP_PRIMARY_COLOR,
-              ),
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Container(
+          height: 43,
+          width: 150,
+          decoration: BoxDecoration(
+            color: LIGHT_THEME_SELECTED_CHIP_COLOR,
+            borderRadius: BorderRadius.circular(40),
+            boxShadow: const [
+              BoxShadow(
+                  color: GREY_COLOR,
+                  offset: Offset(0.0, 5.0),
+                  spreadRadius: 3,
+                  blurRadius: 5),
             ],
           ),
+          child: Center(
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: const [
+                IconView(
+                    icon: Icons.create_outlined,
+                    iconColor: WHITE_COLOR,
+                    iconSize: 25),
+                SizedBox(
+                  width: 10,
+                ),
+                TextView(
+                  text: "Create new",
+                  fontColor: WHITE_COLOR,
+                ),
+              ],
+            ),
+          ),
         ),
-      ),
+        const SizedBox(
+          height: 20,
+        ),
+      ],
     );
   }
 }
@@ -412,10 +431,18 @@ class ShelfView extends StatelessWidget {
               const SizedBox(
                 height: 20,
               ),
-              SizedBox(
+              Container(
                 height: 80,
-                child: Image.asset(
-                  "images/dummyBookList.webp",
+                clipBehavior: Clip.antiAlias,
+                width: 50,
+                decoration: const BoxDecoration(
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(5),
+                    topRight: Radius.circular(5),
+                  ),
+                ),
+                child: Image.network(
+                  "https://www.pixelstalk.net/wp-content/uploads/2016/08/Breaking-Bad-HD-Wallpaper-for-Iphone.jpg",
                   fit: BoxFit.cover,
                 ),
               ),
@@ -437,15 +464,15 @@ class ShelfView extends StatelessWidget {
                   style: GoogleFonts.inter(
                       fontSize: 18,
                       fontWeight: FontWeight.w600,
-                      color: WHITE_COLOR),
+                      color: Colors.black87),
                 ),
               ),
               Text(
-                "2 books",
+                "10 books",
                 style: GoogleFonts.inter(
                     fontSize: 14,
                     fontWeight: FontWeight.w600,
-                    color: Colors.white54),
+                    color: Colors.black54),
               ),
             ],
           ),
@@ -453,7 +480,7 @@ class ShelfView extends StatelessWidget {
           const Icon(
             Icons.keyboard_arrow_right,
             size: 30,
-            color: WHITE_COLOR,
+            color: Colors.black87,
           ),
           const SizedBox(
             width: 20,
@@ -475,15 +502,15 @@ class SortButtonView extends StatelessWidget {
       children: [
         const Icon(
           Icons.sort,
-          color: Colors.white,
+          color: LIGHT_GREY_COLOR,
         ),
         const SizedBox(
           width: 10,
         ),
         Text(
-          "Sort by: recent",
+          "Sort by: Recent",
           style: GoogleFonts.inter(
-              fontWeight: FontWeight.w500, fontSize: 14, color: Colors.white),
+              fontWeight: FontWeight.w500, fontSize: 14, color: Colors.black54),
         ),
       ],
     );
@@ -514,41 +541,60 @@ class BooksListView extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // BookCoverView(imageHeight: 85, imageWidth: 55, bookCover: '',),
+                Container(
+                  height: 80,
+                  width: 55,
+                  clipBehavior: Clip.antiAlias,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(5),
+                  ),
+                  child: Image.network(
+                    "https://www.pixelstalk.net/wp-content/uploads/2016/08/Breaking-Bad-HD-Wallpaper-for-Iphone.jpg",
+                    fit: BoxFit.cover,
+                  ),
+                ),
                 SizedBox(
                   height: 80,
-                  width: MediaQuery.of(context).size.width * 0.5,
+                  width: MediaQuery.of(context).size.width * 0.52,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       Text(
-                        "Business Approach in 2025",
+                        "The Becoming of Heisenburg",
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
                         style: GoogleFonts.inter(
                             fontWeight: FontWeight.w600,
                             fontSize: 15,
-                            color: Colors.white),
+                            color: Colors.black87),
+                      ),
+                      const SizedBox(
+                        height: 5,
                       ),
                       Text(
                         "Thomas Ipsum",
                         style: GoogleFonts.inter(
-                            fontWeight: FontWeight.w500,
+                            fontWeight: FontWeight.w600,
                             fontSize: 13,
-                            color: Colors.grey),
+                            color: Colors.black54),
+                      ),
+                      const SizedBox(
+                        height: 5,
                       ),
                       Text(
                         "Ebook-sample",
                         style: GoogleFonts.inter(
-                            fontWeight: FontWeight.w600,
+                            fontWeight: FontWeight.w500,
                             fontSize: 13,
-                            color: Colors.grey),
+                            color: Colors.black54),
                       )
                     ],
                   ),
                 ),
                 const Icon(
                   Icons.download_done,
-                  color: Colors.grey,
+                  color: Colors.black87,
                   size: 20,
                 ),
                 CondustrialMenuView(onTapMenu: onTapMenu)
@@ -575,7 +621,7 @@ class CondustrialMenuView extends StatelessWidget {
       onTap: () => onTapMenu(),
       child: const Icon(
         Icons.more_horiz,
-        color: Colors.grey,
+        color: Colors.black54,
         size: 25,
       ),
     );
@@ -606,9 +652,14 @@ class SmallGridView extends StatelessWidget {
           leftSamplePadding: 15,
           topSamplePadding: 3,
           sampleMargin: 3,
+          titleColor: Colors.black87,
+          authorColor: Colors.black54,
           sampleFontSize: 13,
-          onTapMenu: () => showBottomSheetForMenu(context), bookCover: '', bookName: '',
-          onTapBookView: (){},
+          onTapMenu: () => showBottomSheetForMenu(context),
+          bookCover:
+              'https://w0.peakpx.com/wallpaper/290/26/HD-wallpaper-vikings-ragnar-viking.jpg',
+          bookName: "VIKINGS: THE TAKING OVER ROME",
+          onTapBookView: () {},
         ),
       ),
     );
@@ -634,13 +685,21 @@ class LargeGridView extends StatelessWidget {
           imageHeight: 250,
           imageWidth: 170,
           titleWidth: 170,
+          titleColor: Colors.black87,
+          authorColor: Colors.black54,
           rightMenuPadding: 5,
           bottomDownloadPadding: 49,
           rightDownloadPadding: 6,
-          onTapMenu: () => showBottomSheetForMenu(context), bookCover: '', bookName: '',
+          onTapMenu: () => showBottomSheetForMenu(context),
+          bookCover:
+              'https://w0.peakpx.com/wallpaper/290/26/HD-wallpaper-vikings-ragnar-viking.jpg',
+          bookName: "Vikings: The taking over Rome",
           onTapBookView: () => Navigator.of(context).push(
             MaterialPageRoute(
-              builder: (context) => const BookDetails(bookDetails: null,),
+              builder: (context) => const BookDetails(
+                bookDetails: null,
+                bookLists: null,
+              ),
             ),
           ),
         ),

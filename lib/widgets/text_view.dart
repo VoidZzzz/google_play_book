@@ -6,7 +6,7 @@ class TextView extends StatelessWidget {
   const TextView(
       {Key? key,
       required this.text,
-      this.fontColor = WHITE_COLOR,
+      this.fontColor = Colors.black54,
       this.fontWeight = FontWeight.w600,
       this.fontSize = 14,
       this.maxLines =2,

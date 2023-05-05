@@ -54,6 +54,7 @@ class RatingViewByUsers extends StatelessWidget {
               children: [
                 TextView(
                   text: userName,
+                  fontColor: Colors.black87,
                   fontSize: 16,
                 ),
                 const SizedBox(
@@ -66,7 +67,7 @@ class RatingViewByUsers extends StatelessWidget {
                       initialRating: 5,
                       itemBuilder: (context, _) => const Icon(
                         Icons.star,
-                        color: APP_TERTIARY_COLOR,
+                        color: LIGHT_THEME_SELECTED_CHIP_COLOR,
                       ),
                       onRatingUpdate: (val) {},
                     ),
@@ -77,7 +78,7 @@ class RatingViewByUsers extends StatelessWidget {
                       text: reviewDate,
                       fontWeight: FontWeight.w500,
                       fontSize: 12,
-                      fontColor: Colors.white54,
+                      fontColor: Colors.black54,
                     )
                   ],
                 ),
@@ -86,7 +87,7 @@ class RatingViewByUsers extends StatelessWidget {
                 ),
                 TextView(
                   text: userComment,
-                  fontColor: Colors.white70,
+                  fontColor: Colors.black54,
                   maxLines: 2,
                 ),
                 const SizedBox(
@@ -97,6 +98,7 @@ class RatingViewByUsers extends StatelessWidget {
                     const TextView(
                       text: "Was this review helpful?",
                       fontSize: 13,
+                      fontColor: Colors.black54,
                       fontWeight: FontWeight.w400,
                     ),
                     const Spacer(),
@@ -105,12 +107,13 @@ class RatingViewByUsers extends StatelessWidget {
                       width: 50,
                       decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(15),
-                          border: Border.all(color: WHITE_COLOR),
-                          color: APP_PRIMARY_COLOR),
+                          border: Border.all(color: Colors.black54),
+                          color: WHITE_COLOR),
                       child: const Center(
                         child: TextView(
                           text: "Yes",
-                          fontWeight: FontWeight.w400,
+                          fontColor: Colors.black54,
+                          fontWeight: FontWeight.w500,
                         ),
                       ),
                     ),
@@ -122,12 +125,13 @@ class RatingViewByUsers extends StatelessWidget {
                       width: 50,
                       decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(15),
-                          border: Border.all(color: WHITE_COLOR),
-                          color: APP_PRIMARY_COLOR),
+                          border: Border.all(color: Colors.black54),
+                          color: WHITE_COLOR),
                       child: const Center(
                         child: TextView(
                           text: "No",
-                          fontWeight: FontWeight.w400,
+                          fontColor: Colors.black54,
+                          fontWeight: FontWeight.w500,
                         ),
                       ),
                     ),

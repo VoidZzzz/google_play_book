@@ -16,7 +16,7 @@ class MenuOptionsView extends StatelessWidget {
       children: [
         Icon(
           menuIcon,
-          color: WHITE_COLOR,
+          color: APP_PRIMARY_COLOR,
           size: 20,
         ),
         const SizedBox(
@@ -25,7 +25,7 @@ class MenuOptionsView extends StatelessWidget {
         Text(
           menuName,
           style: GoogleFonts.inter(
-              fontWeight: FontWeight.w500, color: WHITE_COLOR),
+              fontWeight: FontWeight.w500, color: APP_PRIMARY_COLOR),
         ),
       ],
     );

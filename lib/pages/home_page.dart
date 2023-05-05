@@ -57,6 +57,7 @@ class _HomepageState extends State<Homepage>
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
+          automaticallyImplyLeading: false,
           title: const DefaultAppBarView(),
         ),
         body: NestedScrollView(
@@ -71,6 +72,9 @@ class _HomepageState extends State<Homepage>
                   children: [
                     const CarouselView(),
                     TabBar(
+                      labelStyle: GoogleFonts.inter(fontWeight: FontWeight.w600),
+                      labelColor: APP_TERTIARY_COLOR,
+                      unselectedLabelColor: Colors.black87,
                       indicatorSize: TabBarIndicatorSize.label,
                       indicatorColor: APP_TERTIARY_COLOR,
                       controller: _controller,
@@ -97,7 +101,7 @@ class _HomepageState extends State<Homepage>
                   HorizontalEBooksListView(
                     listViewTitle: bookList?[0].displayName ?? "",
                     padding: const EdgeInsets.only(left: 20),
-                    onTapMore: () => _navigateToMoreBooksPage(context),
+                    onTapMore: () => _navigateToMoreBooksPage(context, bookList?[0].listName ?? ""),
                     bookList: bookList?[0],
                   ),
                   const SizedBox(
@@ -106,7 +110,7 @@ class _HomepageState extends State<Homepage>
                   HorizontalEBooksListView(
                     listViewTitle: bookList?[1].displayName ?? "",
                     padding: const EdgeInsets.only(left: 20),
-                    onTapMore: () => _navigateToMoreBooksPage(context),
+                    onTapMore: () => _navigateToMoreBooksPage(context, bookList?[1].listName ?? ""),
                     bookList: bookList?[1],
                   ),
                   const SizedBox(
@@ -115,7 +119,7 @@ class _HomepageState extends State<Homepage>
                   HorizontalEBooksListView(
                     listViewTitle: bookList?[2].displayName ?? "",
                     padding: const EdgeInsets.only(left: 20),
-                    onTapMore: () => _navigateToMoreBooksPage(context),
+                    onTapMore: () => _navigateToMoreBooksPage(context, bookList?[2].listName ?? ""),
                     bookList: bookList?[2],
                   ),
                 ],
@@ -164,10 +168,10 @@ class _HomepageState extends State<Homepage>
     );
   }
 
-  Future<dynamic> _navigateToMoreBooksPage(BuildContext context) {
+  Future<dynamic> _navigateToMoreBooksPage(BuildContext context, String listName) {
     return Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (context) => const MoreEbooksPage(),
+        builder: (context) => MoreEbooksPage(listName: listName,),
       ),
     );
   }
@@ -282,14 +286,14 @@ class AudiobooksView extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: const [
                 TextView(
-                  text: "The taking: A Novel",
+                  text: "Tarnished: The true path to Elden Lord",
                   fontSize: 15,
-                  fontColor: Colors.white70,
+                  fontColor: Colors.black87,
                   maxLines: 1,
                 ),
                 TextView(
                   text: "Dean Kootz",
-                  fontColor: Colors.white54,
+                  fontColor: Colors.black54,
                   fontWeight: FontWeight.w400,
                   maxLines: 1,
                 ),
@@ -340,6 +344,7 @@ class HorizontalEBooksListView extends StatelessWidget {
                 onTapMenu: () => showBottomSheetForMenu(context),
                 bottomDownloadPadding: 48,
                 downloadIconSize: 17,
+                authorColor: Colors.black54, titleColor: Colors.black87,
                 downloadMargin: 2,
                 leftSamplePadding: 25,
                 topSamplePadding: 5,
@@ -348,7 +353,7 @@ class HorizontalEBooksListView extends StatelessWidget {
                 onTapBookView: () => Navigator.of(context).push(
                   MaterialPageRoute(
                     builder: (context) => BookDetails(
-                      bookDetails: bookList?.books?[index],
+                      bookDetails: bookList?.books?[index],bookLists: bookList,
                     ),
                   ),
                 ),
@@ -390,7 +395,7 @@ class CategoryTitleView extends StatelessWidget {
               style: GoogleFonts.inter(
                   fontSize: 16,
                   fontWeight: FontWeight.w600,
-                  color: Colors.white),
+                  color: Colors.black87),
             ),
             const Spacer(),
             const Icon(
@@ -422,6 +427,16 @@ class CarouselView extends StatelessWidget {
             clipBehavior: Clip.antiAlias,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(8),
+              boxShadow: const [
+                BoxShadow(
+                  color: GREY_COLOR,
+                  offset: Offset(
+                    2.0,5.0
+                  ),
+                  blurRadius: 4.0,
+                  spreadRadius: 3.0,
+                ), //BoxShadow
+              ]
             ),
             child: Image.asset(
               "images/dummySquareBook.jpg",

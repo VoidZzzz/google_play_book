@@ -15,24 +15,25 @@ class CreateShelfPage extends StatelessWidget {
       appBar: AppBar(
         leading: const IconView(
             icon: Icons.keyboard_arrow_left,
-            iconColor: WHITE_COLOR,
+            iconColor: Colors.black87,
             iconSize: 30),
         title: const TextView(
           text: "Create shelf",
           fontSize: 18,
+          fontColor: Colors.black87,
         ),
       ),
       body: Column(
         children: [
-          const SizedBox(height: 30,),
+          const SizedBox(
+            height: 30,
+          ),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 30.0),
             child: Container(
               decoration: const BoxDecoration(
                 color: Colors.white,
-                border: Border(
-                  bottom: BorderSide(color: APP_TERTIARY_COLOR)
-                ),
+                border: Border(bottom: BorderSide(color: APP_TERTIARY_COLOR)),
               ),
               child: TextFormField(
                 autofocus: true,
@@ -41,16 +42,19 @@ class CreateShelfPage extends StatelessWidget {
                   filled: true,
                   fillColor: WHITE_COLOR,
                   hintText: 'Shelf name',
-                  hintStyle: GoogleFonts.inter(fontWeight: FontWeight.w500, fontSize: 18, color: Colors.black45),
+                  hintStyle: GoogleFonts.inter(
+                      fontWeight: FontWeight.w500,
+                      fontSize: 18,
+                      color: Colors.black45),
                   border: InputBorder.none,
                 ),
               ),
             ),
           ),
-          SizedBox(
+          const SizedBox(
             height: 40,
           ),
-          DividerView(dividerColor: GREY_COLOR, dividerThickness: 0.5)
+          const DividerView(dividerColor: GREY_COLOR, dividerThickness: 0.5)
         ],
       ),
     );
