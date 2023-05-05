@@ -48,6 +48,7 @@ class _BookDetailsState extends State<BookDetails> {
               child: Column(
                 children: [
                   BookCoverAndDescriptionView(
+                    author: widget.bookDetails?.author ?? "",
                     isAudiobook: widget.isAudiobook,
                     imageUrl: widget.bookDetails?.bookImage ?? "",
                     bookName: widget.bookDetails?.title ?? "",
@@ -137,7 +138,6 @@ class _BookDetailsState extends State<BookDetails> {
                 child: InkWell(
                   onTap: () => _navigateToAboutBooksDetailsScreen(context),
                   child: SizedBox(
-                    height: 130,
                     child: Column(
                       children: [
                         const SectionTitleAndSeemoreButtonView(
@@ -146,8 +146,7 @@ class _BookDetailsState extends State<BookDetails> {
                         const SizedBox(
                           height: 10,
                         ),
-                        Text(
-                          BOOK_DETAILS_DUMMY_OVERVIEW_TEXT,
+                        Text(widget.bookDetails?.description ?? "",
                           style: GoogleFonts.inter(
                               fontWeight: FontWeight.normal,
                               color: Colors.white54,
@@ -160,6 +159,7 @@ class _BookDetailsState extends State<BookDetails> {
                   ),
                 ),
               ),
+              const SizedBox(height: 25,),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -304,11 +304,11 @@ class _BookDetailsState extends State<BookDetails> {
                   seeMoreIsTapped
                       ? Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                          child: columnForMoreView(),
+                          child: columnForMoreView(widget.bookDetails),
                         )
                       : Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                          child: columnForLessView(),
+                          child: columnForLessView(widget.bookDetails),
                         ),
                   const SizedBox(
                     height: 25,
@@ -357,7 +357,7 @@ class _BookDetailsState extends State<BookDetails> {
     );
   }
 
-  Column columnForMoreView() {
+  Column columnForMoreView(BooksVO? bookDetails) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -374,9 +374,9 @@ class _BookDetailsState extends State<BookDetails> {
           title: "Seller",
           value: "Google Ireland Ltd",
         ),
-        const BookDetailsTextRowView(
+        BookDetailsTextRowView(
           title: "Author",
-          value: "Thomas Ipsum",
+          value: bookDetails?.author ?? "",
         ),
         const BookDetailsTextRowView(
           title: "Illustrator",
@@ -387,17 +387,17 @@ class _BookDetailsState extends State<BookDetails> {
           value: "Marvel Entertainment",
           isDecorated: true,
         ),
-        const BookDetailsTextRowView(
+        BookDetailsTextRowView(
           title: "Published on",
-          value: "Feb 20, 2016",
+          value: bookDetails?.createdDate ?? "",
         ),
-        const BookDetailsTextRowView(
-          title: "ISBN",
-          value: "9781350654325",
+        BookDetailsTextRowView(
+          title: "ISBN 10",
+          value: bookDetails?.primaryISBN10 ?? "",
         ),
-        const BookDetailsTextRowView(
-          title: "ISBN",
-          value: "9781350654325",
+        BookDetailsTextRowView(
+          title: "ISBN 13",
+          value: bookDetails?.primaryISBN13?? "",
         ),
         const BookDetailsTextRowView(
             title: "Best for",
@@ -431,7 +431,7 @@ class _BookDetailsState extends State<BookDetails> {
     );
   }
 
-  Column columnForLessView() {
+  Column columnForLessView(BooksVO? bookDetails) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -448,9 +448,9 @@ class _BookDetailsState extends State<BookDetails> {
           title: "Seller",
           value: "Google Ireland Ltd",
         ),
-        const BookDetailsTextRowView(
+        BookDetailsTextRowView(
           title: "Author",
-          value: "Thomas Ipsum",
+          value: bookDetails?.author ?? "",
         ),
         const SizedBox(
           height: 10,
@@ -646,11 +646,13 @@ class BookCoverAndDescriptionView extends StatelessWidget {
       {Key? key,
       required this.isAudiobook,
       required this.bookName,
+        required this.author,
       required this.imageUrl})
       : super(key: key);
   final bool isAudiobook;
   final String imageUrl;
   final String bookName;
+  final String author;
 
   @override
   Widget build(BuildContext context) {
@@ -666,6 +668,7 @@ class BookCoverAndDescriptionView extends StatelessWidget {
             width: 15,
           ),
           BookDescriptionTextsView(
+            author: author,
             isAudiobook: isAudiobook,
             bookName: bookName,
           )
@@ -692,7 +695,8 @@ class BookCoverView extends StatelessWidget {
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(5),
       ),
-      child: Image.network(imageUrl,
+      child: Image.network(
+        imageUrl,
         fit: BoxFit.cover,
       ),
     );
@@ -701,11 +705,15 @@ class BookCoverView extends StatelessWidget {
 
 class BookDescriptionTextsView extends StatelessWidget {
   const BookDescriptionTextsView(
-      {Key? key, required this.bookName, required this.isAudiobook})
+      {Key? key,
+      required this.bookName,
+      required this.isAudiobook,
+      required this.author})
       : super(key: key);
 
   final bool isAudiobook;
   final String bookName;
+  final String author;
 
   @override
   Widget build(BuildContext context) {
@@ -716,7 +724,8 @@ class BookDescriptionTextsView extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Text(bookName,
+          Text(
+            bookName,
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
             style: GoogleFonts.inter(
@@ -733,8 +742,7 @@ class BookDescriptionTextsView extends StatelessWidget {
           const SizedBox(
             height: 8,
           ),
-          Text(
-            "Thomas Ipsum",
+          Text(author,
             style: GoogleFonts.inter(
                 fontWeight: FontWeight.w600, fontSize: 16, color: WHITE_COLOR),
           ),
