@@ -25,7 +25,7 @@ class MenuOptionsView extends StatelessWidget {
         Text(
           menuName,
           style: GoogleFonts.inter(
-              fontWeight: FontWeight.w500, color: APP_PRIMARY_COLOR),
+              fontWeight: FontWeight.w500, fontSize: 15,color: APP_PRIMARY_COLOR),
         ),
       ],
     );

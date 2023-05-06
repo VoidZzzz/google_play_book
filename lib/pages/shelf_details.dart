@@ -1,12 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_play_book/pages/bottom_navigation_bar_home_page.dart';
+import 'package:google_play_book/pages/create_shelf_page.dart';
 import 'package:google_play_book/pages/library_page.dart';
 import 'package:google_play_book/widgets/menu_option_view.dart';
 import 'package:google_play_book/resources/colors.dart';
 import 'package:google_play_book/widgets/icon_view.dart';
 import 'package:google_play_book/widgets/text_view.dart';
 
+import '../data/data_vos/books_vo.dart';
+import '../data/models/google_play_book_model.dart';
+import '../data/models/google_play_book_model_impl.dart';
 import '../widgets/modal_bottom_sheet_for_menu.dart';
 
 class ShelfDetails extends StatefulWidget {
@@ -41,6 +45,20 @@ class _ShelfDetailsState extends State<ShelfDetails> {
     false,
   ];
 
+  GooglePlayBookModel model = GooglePlayBookModelImpl();
+  List<BooksVO>? savedBookList;
+  bool isShowClearButton = false;
+
+  @override
+  void initState() {
+    model.getSavedAllBooks().then((value) {
+      setState(() {
+        savedBookList = value;
+      });
+    });
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -69,20 +87,32 @@ class _ShelfDetailsState extends State<ShelfDetails> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const TextView(text: "10 Interactive Books to Read", fontColor: APP_PRIMARY_COLOR, fontSize: 16,),
+                        const TextView(
+                          text: "Interactive Books to Read",
+                          fontColor: APP_PRIMARY_COLOR,
+                          fontSize: 18,
+                        ),
                         const SizedBox(height: 10),
                         const Divider(
                           color: GREY_COLOR,
                         ),
                         const SizedBox(height: 10),
-                        const MenuOptionsView(
-                            menuIcon: Icons.mode_edit_outline_outlined,
-                            menuName: "Rename shelf"),
-                        const SizedBox(height: 15),
+                        InkWell(
+                          onTap: () => Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (context) => const CreateShelfPage(),
+                            ),
+                          ),
+                          child: const MenuOptionsView(
+                              menuIcon: Icons.mode_edit_outline_outlined,
+                              menuName: "Rename shelf"),
+                        ),
+                        const SizedBox(height: 20),
                         InkWell(
                             onTap: () => Navigator.of(context).push(
                                   MaterialPageRoute(
-                                    builder: (context) => const BottomNavigationBarHomePage(),
+                                    builder: (context) =>
+                                        const BottomNavigationBarHomePage(),
                                   ),
                                 ),
                             child: const MenuOptionsView(
@@ -112,7 +142,7 @@ class _ShelfDetailsState extends State<ShelfDetails> {
             const Padding(
               padding: EdgeInsets.symmetric(horizontal: 20.0),
               child: TextView(
-                text: "10 Interaction Design Books to Read",
+                text: "Interactive Design Books to Read",
                 fontColor: APP_PRIMARY_COLOR,
                 fontSize: 18,
                 maxLines: 2,
@@ -121,10 +151,10 @@ class _ShelfDetailsState extends State<ShelfDetails> {
             const SizedBox(
               height: 2,
             ),
-            const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 20.0),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20.0),
               child: TextView(
-                text: "10 books",
+                text: "${savedBookList?.length} books",
                 fontColor: GREY_COLOR,
               ),
             ),
@@ -137,66 +167,84 @@ class _ShelfDetailsState extends State<ShelfDetails> {
             ),
             SizedBox(
               height: 60,
-              child: ListView.builder(
-                  shrinkWrap: true,
-                  physics: const BouncingScrollPhysics(),
-                  itemCount: dummyChipLabels.length + 1,
-                  scrollDirection: Axis.horizontal,
-                  itemBuilder: (context, index) {
-                    if (index == 0) {
-                      return Padding(
-                        padding: const EdgeInsets.only(
-                            top: 15.0, bottom: 15, left: 20),
-                        child: InkWell(
-                          onTap: () {
-                            for (int i = 0; i < chipIsSelected.length; i++) {
-                              setState(() {
-                                chipIsSelected[i] = false;
-                              });
-                            }
-                          },
-                          child: Container(
-                            width: 30,
-                            decoration: BoxDecoration(
-                                border: Border.all(color: GREY_COLOR),
-                                borderRadius: BorderRadius.circular(18),
-                                color: WHITE_COLOR),
-                            child: const Icon(
-                              Icons.clear,
-                              color: Colors.black,
-                              size: 20,
-                            ),
-                          ),
-                        ),
-                      );
-                    } else {
-                      return Padding(
-                        padding: const EdgeInsets.only(left: 8.0),
-                        child: FilterChip(
-                          side: (chipIsSelected[index])
-                              ? const BorderSide(color: WHITE_COLOR)
-                              : const BorderSide(color: GREY_COLOR),
-                          backgroundColor: WHITE_COLOR,
-                          selectedColor: LIGHT_THEME_SELECTED_CHIP_COLOR,
-                          showCheckmark: false,
-                          label: Text(
-                            dummyChipLabels[index - 1],
-                          ),
-                          labelStyle: GoogleFonts.inter(
-                              color: (chipIsSelected[index])
-                                  ? WHITE_COLOR
-                                  : Colors.black87,
-                              fontWeight: FontWeight.w600),
-                          selected: chipIsSelected[index],
-                          onSelected: (val) {
-                            setState(() {
-                              chipIsSelected[index] = val;
-                            });
-                          },
-                        ),
-                      );
-                    }
-                  }),
+              child: SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                physics: const BouncingScrollPhysics(),
+                child: Row(
+                  children: [
+                    const SizedBox(
+                      width: 12,
+                    ),
+                    ListView.builder(
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        itemCount: dummyChipLabels.length + 1,
+                        scrollDirection: Axis.horizontal,
+                        itemBuilder: (context, index) {
+                          if (index == 0) {
+                            return Visibility(
+                              visible: isShowClearButton,
+                              child: Padding(
+                                padding: const EdgeInsets.only(
+                                    top: 15.0, bottom: 15, left: 8),
+                                child: InkWell(
+                                  onTap: () {
+                                    for (int i = 0;
+                                        i < chipIsSelected.length;
+                                        i++) {
+                                      setState(() {
+                                        chipIsSelected[i] = false;
+                                        isShowClearButton = false;
+                                      });
+                                    }
+                                  },
+                                  child: Container(
+                                    width: 30,
+                                    decoration: BoxDecoration(
+                                        border: Border.all(color: GREY_COLOR),
+                                        borderRadius: BorderRadius.circular(18),
+                                        color: WHITE_COLOR),
+                                    child: const Icon(
+                                      Icons.clear,
+                                      color: Colors.black,
+                                      size: 20,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            );
+                          } else {
+                            return Padding(
+                              padding: const EdgeInsets.only(left: 8.0),
+                              child: FilterChip(
+                                side: (chipIsSelected[index])
+                                    ? const BorderSide(color: WHITE_COLOR)
+                                    : const BorderSide(color: GREY_COLOR),
+                                backgroundColor: WHITE_COLOR,
+                                selectedColor: LIGHT_THEME_SELECTED_CHIP_COLOR,
+                                showCheckmark: false,
+                                label: Text(
+                                  dummyChipLabels[index - 1],
+                                ),
+                                labelStyle: GoogleFonts.inter(
+                                    color: (chipIsSelected[index])
+                                        ? WHITE_COLOR
+                                        : Colors.black87,
+                                    fontWeight: FontWeight.w600),
+                                selected: chipIsSelected[index],
+                                onSelected: (val) {
+                                  setState(() {
+                                    chipIsSelected[index] = val;
+                                    isShowClearButton = true;
+                                  });
+                                },
+                              ),
+                            );
+                          }
+                        }),
+                  ],
+                ),
+              ),
             ),
             const SizedBox(
               height: 10,
@@ -233,13 +281,15 @@ class _ShelfDetailsState extends State<ShelfDetails> {
             ),
             (viewTypeValue == 1)
                 ? BooksListView(
-                    onTapMenu: () {
-                      showBottomSheetForMenu(context);
-                    },
+                    savedBookList: savedBookList,
                   )
                 : (viewTypeValue == 2)
-                    ? const LargeGridView()
-                    : const SmallGridView()
+                    ? LargeGridView(
+                        savedBookList: savedBookList,
+                      )
+                    : SmallGridView(
+                        savedBookList: savedBookList,
+                      )
           ],
         ),
       ),

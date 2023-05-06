@@ -6,9 +6,11 @@ import 'package:google_play_book/network/api_constants.dart';
 import 'package:google_play_book/pages/book_details_page.dart';
 import 'package:google_play_book/pages/more_audiobooks_page.dart';
 import 'package:google_play_book/pages/more_ebooks_pages.dart';
+import 'package:google_play_book/pages/search_page.dart';
 import 'package:google_play_book/resources/colors.dart';
 import 'package:google_play_book/widgets/text_view.dart';
 import '../custom_components/smart_list_view.dart';
+import '../data/data_vos/books_vo.dart';
 import '../data/data_vos/lists_vo.dart';
 import '../widgets/default_app_bar_view.dart';
 import 'package:carousel_slider/carousel_slider.dart';
@@ -31,6 +33,7 @@ class _HomepageState extends State<Homepage>
   /// model
   GooglePlayBookModel model = GooglePlayBookModelImpl();
   List<ListsVO>? bookList;
+  List<BooksVO>? saveBookList;
 
   @override
   void initState() {
@@ -49,6 +52,12 @@ class _HomepageState extends State<Homepage>
         );
       },
     );
+
+    model.getSavedAllBooks().then((value) {
+      setState(() {
+        saveBookList = value;
+      });
+    });
     super.initState();
   }
 
@@ -58,21 +67,30 @@ class _HomepageState extends State<Homepage>
       child: Scaffold(
         appBar: AppBar(
           automaticallyImplyLeading: false,
-          title: const DefaultAppBarView(),
+          title: DefaultAppBarView(
+            onTapSearch: () => Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (context) => const SearchPage(),
+              ),
+            ),
+          ),
         ),
         body: NestedScrollView(
           headerSliverBuilder: (context, isScroll) {
             return [
               SliverAppBar(
                 automaticallyImplyLeading: false,
-                // backgroundColor: APP_PRIMARY_COLOR,
-                collapsedHeight: 350,
-                expandedHeight: 350,
+                collapsedHeight: (saveBookList?.isEmpty ?? true) ? 60 : 350,
+                expandedHeight: (saveBookList?.isEmpty ?? true) ? 60 : 350,
                 flexibleSpace: Column(
                   children: [
-                    const CarouselView(),
+                    CarouselView(
+                      bookList: saveBookList ?? [],
+                      savedBooksLength: saveBookList?.length ?? 0,
+                    ),
                     TabBar(
-                      labelStyle: GoogleFonts.inter(fontWeight: FontWeight.w600),
+                      labelStyle:
+                          GoogleFonts.inter(fontWeight: FontWeight.w600),
                       labelColor: APP_TERTIARY_COLOR,
                       unselectedLabelColor: Colors.black87,
                       indicatorSize: TabBarIndicatorSize.label,
@@ -101,7 +119,8 @@ class _HomepageState extends State<Homepage>
                   HorizontalEBooksListView(
                     listViewTitle: bookList?[0].displayName ?? "",
                     padding: const EdgeInsets.only(left: 20),
-                    onTapMore: () => _navigateToMoreBooksPage(context, bookList?[0].listName ?? ""),
+                    onTapMore: () => _navigateToMoreBooksPage(
+                        context, bookList?[0].listName ?? ""),
                     bookList: bookList?[0],
                   ),
                   const SizedBox(
@@ -110,7 +129,8 @@ class _HomepageState extends State<Homepage>
                   HorizontalEBooksListView(
                     listViewTitle: bookList?[1].displayName ?? "",
                     padding: const EdgeInsets.only(left: 20),
-                    onTapMore: () => _navigateToMoreBooksPage(context, bookList?[1].listName ?? ""),
+                    onTapMore: () => _navigateToMoreBooksPage(
+                        context, bookList?[1].listName ?? ""),
                     bookList: bookList?[1],
                   ),
                   const SizedBox(
@@ -119,7 +139,8 @@ class _HomepageState extends State<Homepage>
                   HorizontalEBooksListView(
                     listViewTitle: bookList?[2].displayName ?? "",
                     padding: const EdgeInsets.only(left: 20),
-                    onTapMore: () => _navigateToMoreBooksPage(context, bookList?[2].listName ?? ""),
+                    onTapMore: () => _navigateToMoreBooksPage(
+                        context, bookList?[2].listName ?? ""),
                     bookList: bookList?[2],
                   ),
                 ],
@@ -168,10 +189,13 @@ class _HomepageState extends State<Homepage>
     );
   }
 
-  Future<dynamic> _navigateToMoreBooksPage(BuildContext context, String listName) {
+  Future<dynamic> _navigateToMoreBooksPage(
+      BuildContext context, String listName) {
     return Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (context) => MoreEbooksPage(listName: listName,),
+        builder: (context) => MoreEbooksPage(
+          listName: listName,
+        ),
       ),
     );
   }
@@ -252,7 +276,7 @@ class AudiobooksView extends StatelessWidget {
                 right: 7,
                 top: 5,
                 child: InkWell(
-                  onTap: () => showBottomSheetForMenu(context),
+                  onTap: () => showBottomSheetForMenu(context, null),
                   child: const IconView(
                       icon: Icons.more_horiz_outlined,
                       iconColor: GREY_COLOR,
@@ -336,34 +360,46 @@ class HorizontalEBooksListView extends StatelessWidget {
           ),
           SizedBox(
             height: 245,
-            child: ListView.builder(
-              itemBuilder: (context, index) => BookView(
-                bookCover: bookList?.books?[index].bookImage ?? "",
-                bookName: bookList?.books?[index].title ?? "",
-                padding: padding,
-                onTapMenu: () => showBottomSheetForMenu(context),
-                bottomDownloadPadding: 48,
-                downloadIconSize: 17,
-                authorColor: Colors.black54, titleColor: Colors.black87,
-                downloadMargin: 2,
-                leftSamplePadding: 25,
-                topSamplePadding: 5,
-                sampleFontSize: 12,
-                sampleMargin: 3,
-                onTapBookView: () => Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (context) => BookDetails(
-                      bookDetails: bookList?.books?[index],bookLists: bookList,
+            child: (bookList != null)
+                ? ListView.builder(
+                    itemBuilder: (context, index) => BookView(
+                      bookCover: bookList?.books?[index].bookImage ?? "",
+                      bookName: bookList?.books?[index].title ?? "",
+                      padding: padding,
+                      onTapMenu: () => showBottomSheetForMenu(
+                          context, bookList?.books?[index]),
+                      bottomDownloadPadding: 48,
+                      downloadIconSize: 17,
+                      authorColor: Colors.black54,
+                      titleColor: Colors.black87,
+                      downloadMargin: 2,
+                      leftSamplePadding: 25,
+                      topSamplePadding: 5,
+                      sampleFontSize: 12,
+                      sampleMargin: 3,
+                      onTapBookView: () => Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) => BookDetails(
+                            bookDetails: bookList?.books?[index],
+                            bookLists: bookList,
+                          ),
+                        ),
+                      ),
+                    ),
+                    itemCount: bookList?.books?.length ?? 0,
+                    scrollDirection: Axis.horizontal,
+                    shrinkWrap: true,
+                    padding: EdgeInsets.zero,
+                    physics: const BouncingScrollPhysics(),
+                  )
+                : const SizedBox(
+                    height: 200,
+                    child: Center(
+                      child: CircularProgressIndicator(
+                        color: LIGHT_THEME_SELECTED_CHIP_COLOR,
+                      ),
                     ),
                   ),
-                ),
-              ),
-              itemCount: bookList?.books?.length ?? 0,
-              scrollDirection: Axis.horizontal,
-              shrinkWrap: true,
-              padding: EdgeInsets.zero,
-              physics: const BouncingScrollPhysics(),
-            ),
           ),
         ],
       ),
@@ -411,45 +447,50 @@ class CategoryTitleView extends StatelessWidget {
 }
 
 class CarouselView extends StatelessWidget {
+  final List<BooksVO> bookList;
+  final int savedBooksLength;
+
   const CarouselView({
     Key? key,
+    required this.savedBooksLength,
+    required this.bookList,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      height: 300,
-      width: double.infinity,
-      child: CarouselSlider.builder(
-        itemCount: 10,
-        itemBuilder: (context, index, i) {
-          return Container(
-            clipBehavior: Clip.antiAlias,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(8),
-              boxShadow: const [
-                BoxShadow(
-                  color: GREY_COLOR,
-                  offset: Offset(
-                    2.0,5.0
-                  ),
-                  blurRadius: 4.0,
-                  spreadRadius: 3.0,
-                ), //BoxShadow
-              ]
-            ),
-            child: Image.asset(
-              "images/dummySquareBook.jpg",
-              fit: BoxFit.cover,
-            ),
-          );
-        },
-        options: CarouselOptions(
-            enlargeCenterPage: true,
-            viewportFraction: 0.55,
-            enableInfiniteScroll: false,
-            reverse: false,
-            initialPage: 0),
+    return Visibility(
+      visible: savedBooksLength > 0,
+      child: SizedBox(
+        height: 300,
+        width: double.infinity,
+        child: CarouselSlider.builder(
+          itemCount: bookList.length,
+          itemBuilder: (context, index, i) {
+            return Container(
+              clipBehavior: Clip.antiAlias,
+              decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(8),
+                  boxShadow: const [
+                    BoxShadow(
+                      color: GREY_COLOR,
+                      offset: Offset(2.0, 5.0),
+                      blurRadius: 4.0,
+                      spreadRadius: 3.0,
+                    ), //BoxShadow
+                  ]),
+              child: Image.network(
+                "${bookList[index].bookImage}",
+                fit: BoxFit.cover,
+              ),
+            );
+          },
+          options: CarouselOptions(
+              enlargeCenterPage: true,
+              viewportFraction: 0.55,
+              enableInfiniteScroll: false,
+              reverse: false,
+              initialPage: 0),
+        ),
       ),
     );
   }

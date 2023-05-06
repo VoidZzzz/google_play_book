@@ -47,27 +47,36 @@ class _MoreEbooksPageState extends State<MoreEbooksPage> {
       ),
       body: Padding(
         padding: const EdgeInsets.only(right: 15.0, left: 3),
-        child: GridView.builder(
-          physics: const BouncingScrollPhysics(),
-          shrinkWrap: true,
-          itemCount: listsResults?.length ?? 0,
-          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2, childAspectRatio: 0.62),
-          itemBuilder: (context, index) => BookView(
-            imageHeight: 250,
-            imageWidth: 180,
-            titleWidth: 180,
-            rightMenuPadding: 5,
-            bottomDownloadPadding: 57,
-            rightDownloadPadding: 5,
-            onTapMenu: () => showBottomSheetForMenu(context),
-            bookCover:
-                "https://i0.wp.com/www.artofvfx.com/wp-content/uploads/2022/01/VikingsValhalla_KeyArt2.jpg?ssl=1",
-            bookName: listsResults?[index].bookDetails?.first.title ?? "",
-            titleColor: Colors.black54, authorColor: Colors.black45, bookAuthorName: listsResults?[index].bookDetails?.first.author ?? "",
-            onTapBookView: () {},
-          ),
-        ),
+        child: (listsResults != null)
+            ? GridView.builder(
+                physics: const BouncingScrollPhysics(),
+                shrinkWrap: true,
+                itemCount: listsResults?.length ?? 0,
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2, childAspectRatio: 0.62),
+                itemBuilder: (context, index) => BookView(
+                  imageHeight: 250,
+                  imageWidth: 180,
+                  titleWidth: 180,
+                  rightMenuPadding: 5,
+                  bottomDownloadPadding: 57,
+                  rightDownloadPadding: 5,
+                  onTapMenu: () => showBottomSheetForMenu(context,bookDetails),
+                  bookCover:
+                      "https://i0.wp.com/www.artofvfx.com/wp-content/uploads/2022/01/VikingsValhalla_KeyArt2.jpg?ssl=1",
+                  bookName: listsResults?[index].bookDetails?.first.title ?? "",
+                  titleColor: Colors.black54,
+                  authorColor: Colors.black45,
+                  bookAuthorName:
+                      listsResults?[index].bookDetails?.first.author ?? "",
+                  onTapBookView: () {},
+                ),
+              )
+            : const Center(
+                child: CircularProgressIndicator(
+                  color: LIGHT_THEME_SELECTED_CHIP_COLOR,
+                ),
+              ),
       ),
     );
   }
@@ -81,7 +90,9 @@ class AppBarLeadingView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const IconView(
-        icon: Icons.keyboard_arrow_left, iconColor: APP_PRIMARY_COLOR, iconSize: 30);
+        icon: Icons.keyboard_arrow_left,
+        iconColor: APP_PRIMARY_COLOR,
+        iconSize: 30);
   }
 }
 

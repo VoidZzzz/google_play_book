@@ -9,6 +9,8 @@ import 'package:google_play_book/widgets/divider_view.dart';
 import 'package:google_play_book/widgets/icon_view.dart';
 import '../data/data_vos/books_vo.dart';
 import '../data/data_vos/lists_vo.dart';
+import '../data/models/google_play_book_model.dart';
+import '../data/models/google_play_book_model_impl.dart';
 import '../widgets/rating_overview_with_progress_bar_indicator.dart';
 import '../widgets/rating_view_by_users.dart';
 import '../widgets/text_view.dart';
@@ -28,6 +30,14 @@ class BookDetails extends StatefulWidget {
 
 class _BookDetailsState extends State<BookDetails> {
   bool seeMoreIsTapped = false; // <==== Ebook details SEE MORE flag
+  GooglePlayBookModel model = GooglePlayBookModelImpl();
+
+
+  @override
+  void initState() {
+    model.saveBook(widget.bookDetails!);
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {

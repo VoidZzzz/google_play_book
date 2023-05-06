@@ -1,11 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:google_play_book/pages/more_audiobooks_page.dart';
+import 'package:google_play_book/pages/search_page.dart';
 import 'package:google_play_book/pages/shelf_details.dart';
 import 'package:google_play_book/resources/colors.dart';
 import 'package:google_play_book/widgets/default_app_bar_view.dart';
 import 'package:google_play_book/widgets/icon_view.dart';
 import 'package:google_play_book/widgets/text_view.dart';
 
+import '../data/data_vos/books_vo.dart';
+import '../data/models/google_play_book_model.dart';
+import '../data/models/google_play_book_model_impl.dart';
 import '../widgets/menu_option_view.dart';
 import '../widgets/modal_bottom_sheet_for_menu.dart';
 import 'book_details_page.dart';
@@ -45,9 +50,19 @@ class _LibraryPageState extends State<LibraryPage>
     false,
   ];
 
+  GooglePlayBookModel model = GooglePlayBookModelImpl();
+  List<BooksVO>? savedBookList;
+  bool isShowClearButton = false;
+
   @override
   void initState() {
     _tabController = TabController(length: 2, vsync: this);
+
+    model.getSavedAllBooks().then((value) {
+      setState(() {
+        savedBookList = value;
+      });
+    });
     super.initState();
   }
 
@@ -57,7 +72,13 @@ class _LibraryPageState extends State<LibraryPage>
       child: Scaffold(
         appBar: AppBar(
           automaticallyImplyLeading: false,
-          title: const DefaultAppBarView(),
+          title: DefaultAppBarView(
+            onTapSearch: () => Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (context) => const SearchPage(),
+              ),
+            ),
+          ),
         ),
         body: NestedScrollView(
           headerSliverBuilder: (context, isScroll) {
@@ -107,65 +128,81 @@ class _LibraryPageState extends State<LibraryPage>
                   children: [
                     SizedBox(
                       height: 60,
-                      child: ListView.builder(
-                          shrinkWrap: true,
-                          physics: const BouncingScrollPhysics(),
-                          itemCount: dummyChipLabels.length + 1,
-                          scrollDirection: Axis.horizontal,
-                          itemBuilder: (context, index) {
-                            if (index == 0) {
-                              return Padding(
-                                padding: const EdgeInsets.only(
-                                    top: 15.0, bottom: 15, left: 20),
-                                child: InkWell(
-                                  onTap: () {
-                                    for (int i = 0;
-                                        i < chipIsSelected.length;
-                                        i++) {
-                                      setState(() {
-                                        chipIsSelected[i] = false;
-                                      });
-                                    }
-                                  },
-                                  child: Container(
-                                    width: 30,
-                                    decoration: BoxDecoration(
-                                        border:
-                                            Border.all(color: Colors.black54),
-                                        borderRadius: BorderRadius.circular(18),
-                                        color: WHITE_COLOR),
-                                    child: const Icon(
-                                      Icons.clear,
-                                      color: Colors.black,
-                                      size: 20,
-                                    ),
-                                  ),
-                                ),
-                              );
-                            } else {
-                              return Padding(
-                                padding: const EdgeInsets.only(left: 8.0),
-                                child: FilterChip(
-                                  backgroundColor: WHITE_COLOR,
-                                  side: (chipIsSelected[index])
-                                      ? const BorderSide(color: WHITE_COLOR)
-                                      : const BorderSide(color: GREY_COLOR),
-                                  selectedColor:
-                                      LIGHT_THEME_SELECTED_CHIP_COLOR,
-                                  showCheckmark: false,
-                                  label: Text(
-                                    dummyChipLabels[index - 1],
-                                  ),
-                                  selected: chipIsSelected[index],
-                                  onSelected: (val) {
-                                    setState(() {
-                                      chipIsSelected[index] = val;
-                                    });
-                                  },
-                                ),
-                              );
-                            }
-                          }),
+                      child: SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        physics: const BouncingScrollPhysics(),
+                        child: Row(
+                          children: [
+                            const SizedBox(width: 12,),
+                            ListView.builder(
+                                shrinkWrap: true,
+                                physics: const NeverScrollableScrollPhysics(),
+                                itemCount: dummyChipLabels.length + 1,
+                                scrollDirection: Axis.horizontal,
+                                itemBuilder: (context, index) {
+                                  if (index == 0) {
+                                    return Visibility(
+                                      visible: isShowClearButton,
+                                      child: Padding(
+                                        padding: const EdgeInsets.only(
+                                            top: 15.0, bottom: 15, left: 8),
+                                        child: InkWell(
+                                          onTap: () {
+                                            for (int i = 0;
+                                                i < chipIsSelected.length;
+                                                i++) {
+                                              setState(() {
+                                                chipIsSelected[i] = false;
+                                              });
+                                            }
+                                            setState(() {
+                                              isShowClearButton = false;
+                                            });
+                                          },
+                                          child: Container(
+                                            width: 30,
+                                            decoration: BoxDecoration(
+                                                border:
+                                                    Border.all(color: Colors.black54),
+                                                borderRadius: BorderRadius.circular(18),
+                                                color: WHITE_COLOR),
+                                            child: const Icon(
+                                              Icons.clear,
+                                              color: Colors.black,
+                                              size: 20,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    );
+                                  } else {
+                                    return Padding(
+                                      padding: const EdgeInsets.only(left: 8.0),
+                                      child: FilterChip(
+                                        backgroundColor: WHITE_COLOR,
+                                        side: (chipIsSelected[index])
+                                            ? const BorderSide(color: WHITE_COLOR)
+                                            : const BorderSide(color: GREY_COLOR),
+                                        selectedColor:
+                                            LIGHT_THEME_SELECTED_CHIP_COLOR,
+                                        showCheckmark: false,
+                                        label: Text(
+                                          dummyChipLabels[index - 1],
+                                        ),
+                                        selected: chipIsSelected[index],
+                                        onSelected: (val) {
+                                          setState(() {
+                                            chipIsSelected[index] = val;
+                                            isShowClearButton = true;
+                                          });
+                                        },
+                                      ),
+                                    );
+                                  }
+                                }),
+                          ],
+                        ),
+                      ),
                     ),
                     const SizedBox(
                       height: 10,
@@ -202,13 +239,13 @@ class _LibraryPageState extends State<LibraryPage>
                     ),
                     (viewTypeValue == 1)
                         ? BooksListView(
-                            onTapMenu: () {
-                              showBottomSheetForMenu(context);
-                            },
+                            savedBookList: savedBookList,
                           )
                         : (viewTypeValue == 2)
-                            ? const LargeGridView()
-                            : const SmallGridView(),
+                            ? LargeGridView(savedBookList: savedBookList)
+                            : SmallGridView(
+                                savedBookList: savedBookList,
+                              ),
                   ],
                 ),
               ),
@@ -458,7 +495,7 @@ class ShelfView extends StatelessWidget {
               SizedBox(
                 width: 230,
                 child: Text(
-                  "10 interactive Design Books To Read",
+                  "Interactive Design Books To Read",
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                   style: GoogleFonts.inter(
@@ -518,15 +555,16 @@ class SortButtonView extends StatelessWidget {
 }
 
 class BooksListView extends StatelessWidget {
-  const BooksListView({Key? key, required this.onTapMenu}) : super(key: key);
+  const BooksListView({Key? key, required this.savedBookList})
+      : super(key: key);
 
-  final Function onTapMenu;
+  final List<BooksVO>? savedBookList;
 
   @override
   Widget build(BuildContext context) {
     return ListView.builder(
       shrinkWrap: true,
-      itemCount: 8,
+      itemCount: savedBookList?.length ?? 0,
       physics: const BouncingScrollPhysics(),
       itemBuilder: (context, index) {
         return Padding(
@@ -541,16 +579,24 @@ class BooksListView extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Container(
-                  height: 80,
-                  width: 55,
-                  clipBehavior: Clip.antiAlias,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(5),
+                InkWell(
+                  onTap: () => Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) => BookDetails(
+                          bookDetails: savedBookList?[index], bookLists: null),
+                    ),
                   ),
-                  child: Image.network(
-                    "https://www.pixelstalk.net/wp-content/uploads/2016/08/Breaking-Bad-HD-Wallpaper-for-Iphone.jpg",
-                    fit: BoxFit.cover,
+                  child: Container(
+                    height: 80,
+                    width: 55,
+                    clipBehavior: Clip.antiAlias,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(5),
+                    ),
+                    child: Image.network(
+                      savedBookList?[index].bookImage ?? "",
+                      fit: BoxFit.cover,
+                    ),
                   ),
                 ),
                 SizedBox(
@@ -561,7 +607,7 @@ class BooksListView extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       Text(
-                        "The Becoming of Heisenburg",
+                        savedBookList?[index].title ?? "",
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                         style: GoogleFonts.inter(
@@ -573,7 +619,7 @@ class BooksListView extends StatelessWidget {
                         height: 5,
                       ),
                       Text(
-                        "Thomas Ipsum",
+                        savedBookList?[index].author ?? "",
                         style: GoogleFonts.inter(
                             fontWeight: FontWeight.w600,
                             fontSize: 13,
@@ -597,7 +643,12 @@ class BooksListView extends StatelessWidget {
                   color: Colors.black87,
                   size: 20,
                 ),
-                CondustrialMenuView(onTapMenu: onTapMenu)
+                CondustrialMenuView(
+                  onTapMenu: () => showBottomSheetForMenu(
+                    context,
+                    savedBookList?[index],
+                  ),
+                ),
               ],
             ),
           ),
@@ -629,9 +680,10 @@ class CondustrialMenuView extends StatelessWidget {
 }
 
 class SmallGridView extends StatelessWidget {
-  const SmallGridView({
-    Key? key,
-  }) : super(key: key);
+  const SmallGridView({Key? key, required this.savedBookList})
+      : super(key: key);
+
+  final List<BooksVO>? savedBookList;
 
   @override
   Widget build(BuildContext context) {
@@ -640,7 +692,7 @@ class SmallGridView extends StatelessWidget {
       child: GridView.builder(
         shrinkWrap: true,
         physics: const BouncingScrollPhysics(),
-        itemCount: 8,
+        itemCount: savedBookList?.length ?? 0,
         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: 3, childAspectRatio: 0.54),
         itemBuilder: (context, index) => BookView(
@@ -655,21 +707,34 @@ class SmallGridView extends StatelessWidget {
           titleColor: Colors.black87,
           authorColor: Colors.black54,
           sampleFontSize: 13,
-          onTapMenu: () => showBottomSheetForMenu(context),
-          bookCover:
-              'https://w0.peakpx.com/wallpaper/290/26/HD-wallpaper-vikings-ragnar-viking.jpg',
-          bookName: "VIKINGS: THE TAKING OVER ROME",
-          onTapBookView: () {},
+          onTapMenu: () =>
+              showBottomSheetForMenu(context, savedBookList?[index]),
+          bookCover: savedBookList?[index].bookImage ?? "",
+          bookName: savedBookList?[index].title ?? "",
+          bookAuthorName: savedBookList?[index].author ?? "",
+          onTapBookView: () {
+            navigateToDetailsPage(context, index);
+          },
         ),
+      ),
+    );
+  }
+
+  Future<dynamic> navigateToDetailsPage(BuildContext context, int index) {
+    return Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) =>
+            BookDetails(bookDetails: savedBookList?[index], bookLists: null),
       ),
     );
   }
 }
 
 class LargeGridView extends StatelessWidget {
-  const LargeGridView({
-    Key? key,
-  }) : super(key: key);
+  const LargeGridView({Key? key, required this.savedBookList})
+      : super(key: key);
+
+  final List<BooksVO>? savedBookList;
 
   @override
   Widget build(BuildContext context) {
@@ -678,7 +743,7 @@ class LargeGridView extends StatelessWidget {
       child: GridView.builder(
         physics: const BouncingScrollPhysics(),
         shrinkWrap: true,
-        itemCount: 8,
+        itemCount: savedBookList?.length ?? 0,
         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: 2, childAspectRatio: 0.625),
         itemBuilder: (context, index) => BookView(
@@ -690,16 +755,15 @@ class LargeGridView extends StatelessWidget {
           rightMenuPadding: 5,
           bottomDownloadPadding: 49,
           rightDownloadPadding: 6,
-          onTapMenu: () => showBottomSheetForMenu(context),
-          bookCover:
-              'https://w0.peakpx.com/wallpaper/290/26/HD-wallpaper-vikings-ragnar-viking.jpg',
-          bookName: "Vikings: The taking over Rome",
+          onTapMenu: () =>
+              showBottomSheetForMenu(context, savedBookList?[index]),
+          bookCover: savedBookList?[index].bookImage ?? "",
+          bookName: savedBookList?[index].title ?? "",
+          bookAuthorName: savedBookList?[index].author ?? "",
           onTapBookView: () => Navigator.of(context).push(
             MaterialPageRoute(
-              builder: (context) => const BookDetails(
-                bookDetails: null,
-                bookLists: null,
-              ),
+              builder: (context) => BookDetails(
+                  bookDetails: savedBookList?[index], bookLists: null),
             ),
           ),
         ),

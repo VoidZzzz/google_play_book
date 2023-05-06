@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:google_play_book/data/data_vos/books_vo.dart';
 import '../resources/colors.dart';
 import 'menu_option_view.dart';
 
-void showBottomSheetForMenu(BuildContext context) {
+void showBottomSheetForMenu(BuildContext context, BooksVO? bookDetails) {
   showModalBottomSheet(
     context: (context),
     builder: (context) => Container(
@@ -22,8 +23,7 @@ void showBottomSheetForMenu(BuildContext context) {
                   SizedBox(
                     height: 70,
                     width: 45,
-                    child: Image.network(
-                      "https://www.pixelstalk.net/wp-content/uploads/2016/08/Breaking-Bad-HD-Wallpaper-for-Iphone.jpg",
+                    child: Image.network(bookDetails?.bookImage ?? "",
                       fit: BoxFit.cover,
                     ),
                   ),
@@ -33,10 +33,10 @@ void showBottomSheetForMenu(BuildContext context) {
                   SizedBox(
                     width: 250,
                     child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Text(
-                          "Viking: The taking over Rome",
+                        Text(bookDetails?.title ?? "",
                           maxLines: 2,
                           style: GoogleFonts.inter(
                             fontWeight: FontWeight.w700,
@@ -46,8 +46,7 @@ void showBottomSheetForMenu(BuildContext context) {
                         ),
                         Row(
                           children: [
-                            Text(
-                              "Thomas Ipsum",
+                            Text(bookDetails?.author ?? "",
                               style: GoogleFonts.inter(
                                 fontWeight: FontWeight.w500,
                                 fontSize: 14,
