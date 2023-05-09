@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:google_play_book/blocs/details_bloc.dart';
 import 'package:google_play_book/pages/about_book_details_page.dart';
 import 'package:google_play_book/pages/home_page.dart';
 import 'package:google_play_book/pages/rating_details_page.dart';
 import 'package:google_play_book/resources/colors.dart';
 import 'package:google_play_book/widgets/divider_view.dart';
 import 'package:google_play_book/widgets/icon_view.dart';
+import 'package:provider/provider.dart';
 import '../data/data_vos/books_vo.dart';
 import '../data/data_vos/lists_vo.dart';
-import '../data/models/google_play_book_model.dart';
-import '../data/models/google_play_book_model_impl.dart';
 import '../widgets/rating_overview_with_progress_bar_indicator.dart';
 import '../widgets/rating_view_by_users.dart';
 import '../widgets/text_view.dart';
@@ -18,7 +18,10 @@ import 'more_ebooks_pages.dart';
 
 class BookDetails extends StatefulWidget {
   const BookDetails(
-      {Key? key, this.isAudiobook = false, required this.bookDetails, required this.bookLists})
+      {Key? key,
+      this.isAudiobook = false,
+      required this.bookDetails,
+      required this.bookLists})
       : super(key: key);
   final bool isAudiobook;
   final BooksVO? bookDetails;
@@ -29,172 +32,183 @@ class BookDetails extends StatefulWidget {
 }
 
 class _BookDetailsState extends State<BookDetails> {
-  bool seeMoreIsTapped = false; // <==== Ebook details SEE MORE flag
-  GooglePlayBookModel model = GooglePlayBookModelImpl();
 
+  final DetailBloc _detailBloc = DetailBloc();
 
   @override
   void initState() {
     /// Save book to Persistence
-    model.saveBook(widget.bookDetails!);
-    print(widget.bookDetails?.categoryName);
+    _detailBloc.saveBook(book: widget.bookDetails);
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        automaticallyImplyLeading: false,
-        title: const AppBarView(),
-      ),
-      body: NestedScrollView(
-        headerSliverBuilder: (context, isScroll) => [
-          SliverAppBar(
-            automaticallyImplyLeading: false,
-            collapsedHeight: 380,
-            expandedHeight: 380,
-            flexibleSpace: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: Column(
-                children: [
-                  BookCoverAndDescriptionView(
-                    author: widget.bookDetails?.author ?? "",
-                    isAudiobook: widget.isAudiobook,
-                    imageUrl: widget.bookDetails?.bookImage ?? "",
-                    bookName: widget.bookDetails?.title ?? "",
-                  ),
-                  BookRatingAndTypeView(
-                    isAudiobook: widget.isAudiobook,
-                  ),
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  const ButtonsView(),
-                  const DiscountPriceView(),
-                  const SizedBox(
-                    height: 17,
-                  ),
-                  const DividerView(
-                      dividerColor: GREY_COLOR, dividerThickness: 1)
-                ],
+    return ChangeNotifierProvider(
+      create: (context) => DetailBloc(),
+      child: Scaffold(
+        appBar: AppBar(
+          automaticallyImplyLeading: false,
+          title: const AppBarView(),
+        ),
+        body: NestedScrollView(
+          headerSliverBuilder: (context, isScroll) => [
+            SliverAppBar(
+              automaticallyImplyLeading: false,
+              collapsedHeight: 380,
+              expandedHeight: 380,
+              flexibleSpace: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: Column(
+                  children: [
+                    BookCoverAndDescriptionView(
+                      author: widget.bookDetails?.author ?? "",
+                      isAudiobook: widget.isAudiobook,
+                      imageUrl: widget.bookDetails?.bookImage ?? "",
+                      bookName: widget.bookDetails?.title ?? "",
+                    ),
+                    BookRatingAndTypeView(
+                      isAudiobook: widget.isAudiobook,
+                    ),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    const ButtonsView(),
+                    const DiscountPriceView(),
+                    const SizedBox(
+                      height: 17,
+                    ),
+                    const DividerView(
+                        dividerColor: GREY_COLOR, dividerThickness: 1)
+                  ],
+                ),
               ),
             ),
-          ),
-        ],
-        body: SingleChildScrollView(
-          physics: const BouncingScrollPhysics(),
-          child: Column(
-            children: [
-              aboutThisEBookView(context),
-              const SizedBox(height: 25,),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  ratingTitleTextView(context),
-                  const SizedBox(
-                    height: 10,
-                  ),
-                  const RatingOverViewWithProgressBarIndicator(),
-                  const SizedBox(
-                    height: 15,
-                  ),
-                  const Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 20.0),
-                    child: RatingViewByUsers(
-                      userName: "Tanner League",
-                      userComment:
-                          "Another good edition to the shockingly former bully of Peter Parker",
-                      reviewDate: "Jun 10, 2016",
-                      userImage: "images/cat2.jpg",
+          ],
+          body: SingleChildScrollView(
+            physics: const BouncingScrollPhysics(),
+            child: Column(
+              children: [
+                aboutThisEBookView(context),
+                const SizedBox(
+                  height: 25,
+                ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    ratingTitleTextView(context),
+                    const SizedBox(
+                      height: 10,
                     ),
-                  ),
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  const Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 20.0),
-                    child: RatingViewByUsers(
-                      userImage: "images/cat1.jpg",
-                      userName: "Danny O'Neal",
-                      userComment:
-                          "Great art and interesting story. What more can you ask for",
-                      reviewDate: "Oct 2, 2023",
+                    const RatingOverViewWithProgressBarIndicator(),
+                    const SizedBox(
+                      height: 15,
                     ),
-                  ),
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  const Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 20.0),
-                    child: RatingViewByUsers(
-                      userImage: "images/cat3.jpg",
-                      userName: "P J",
-                      userComment:
-                          "The dilemma Flash has with the symbiote the demon and himself keep the story captivating",
-                      reviewDate: "Nov 23, 2019",
+                    const Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 20.0),
+                      child: RatingViewByUsers(
+                        userName: "Tanner League",
+                        userComment:
+                            "Another good edition to the shockingly former bully of Peter Parker",
+                        reviewDate: "Jun 10, 2016",
+                        userImage: "images/cat2.jpg",
+                      ),
                     ),
-                  ),
-                  const SizedBox(
-                    height: 15,
-                  ),
-                  HorizontalEBooksListView(
-                    listViewTitle: "More by Thomas Ipsum",
-                    onTapMore: () => _navigateToMoreBooksPage(context),
-                    bookList: widget.bookLists,
-                  ),
-                  const SizedBox(
-                    height: 15,
-                  ),
-                  HorizontalEBooksListView(
-                    listViewTitle: "Similar ebooks",
-                    onTapMore: () => _navigateToMoreBooksPage(context),
-                    bookList: widget.bookLists,
-                  ),
-                  const SizedBox(
-                    height: 15,
-                  ),
-                  const RateThisBookTextView(),
-                  const TellOthersTextView(),
-                  const RatingBarView(),
-                  const SizedBox(
-                    height: 10,
-                  ),
-                  const WriteReviewButtonView(),
-                  const SizedBox(
-                    height: 15,
-                  ),
-                  const Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 20.0),
-                    child: DividerView(
-                        dividerColor: GREY_COLOR, dividerThickness: 0.5),
-                  ),
-                  const SizedBox(
-                    height: 15,
-                  ),
-                  const EbookDetailsTextView(),
-                  const SizedBox(
-                    height: 15,
-                  ),
-                  seeMoreIsTapped
-                      ? Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                          child: columnForMoreView(widget.bookDetails),
-                        )
-                      : Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                          child: columnForLessView(widget.bookDetails),
-                        ),
-                  const SizedBox(
-                    height: 25,
-                  ),
-                  const BookRefundPolicyView(),
-                  const SizedBox(
-                    height: 50,
-                  ),
-                ],
-              ),
-            ],
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    const Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 20.0),
+                      child: RatingViewByUsers(
+                        userImage: "images/cat1.jpg",
+                        userName: "Danny O'Neal",
+                        userComment:
+                            "Great art and interesting story. What more can you ask for",
+                        reviewDate: "Oct 2, 2023",
+                      ),
+                    ),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    const Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 20.0),
+                      child: RatingViewByUsers(
+                        userImage: "images/cat3.jpg",
+                        userName: "P J",
+                        userComment:
+                            "The dilemma Flash has with the symbiote the demon and himself keep the story captivating",
+                        reviewDate: "Nov 23, 2019",
+                      ),
+                    ),
+                    const SizedBox(
+                      height: 15,
+                    ),
+                    HorizontalEBooksListView(
+                      listViewTitle: "More by Thomas Ipsum",
+                      onTapMore: () => _navigateToMoreBooksPage(context),
+                      bookList: widget.bookLists,
+                    ),
+                    const SizedBox(
+                      height: 15,
+                    ),
+                    HorizontalEBooksListView(
+                      listViewTitle: "Similar ebooks",
+                      onTapMore: () => _navigateToMoreBooksPage(context),
+                      bookList: widget.bookLists,
+                    ),
+                    const SizedBox(
+                      height: 15,
+                    ),
+                    const RateThisBookTextView(),
+                    const TellOthersTextView(),
+                    const RatingBarView(),
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    const WriteReviewButtonView(),
+                    const SizedBox(
+                      height: 15,
+                    ),
+                    const Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 20.0),
+                      child: DividerView(
+                          dividerColor: GREY_COLOR, dividerThickness: 0.5),
+                    ),
+                    const SizedBox(
+                      height: 15,
+                    ),
+                    const EbookDetailsTextView(),
+                    const SizedBox(
+                      height: 15,
+                    ),
+                    Selector<DetailBloc, bool>(
+                        shouldRebuild: (previous, next) => previous != next,
+                        selector: ( context, bloc) =>
+                            bloc.seeMoreIsTapped,
+                        builder: (context, seeMoreIsTapped, Widget? child) {
+                          return seeMoreIsTapped
+                              ? Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 20.0),
+                                  child: columnForMoreView(widget.bookDetails),
+                                )
+                              : Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 20.0),
+                                  child: columnForLessView(widget.bookDetails),
+                                );
+                        }),
+                    const SizedBox(
+                      height: 25,
+                    ),
+                    const BookRefundPolicyView(),
+                    const SizedBox(
+                      height: 50,
+                    ),
+                  ],
+                ),
+              ],
+            ),
           ),
         ),
       ),
@@ -203,49 +217,52 @@ class _BookDetailsState extends State<BookDetails> {
 
   Padding ratingTitleTextView(BuildContext context) {
     return Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                  child: InkWell(
-                    onTap: () => _navigateToRatingDetailsScreen(context),
-                    child: const SectionTitleAndSeemoreButtonView(
-                      text: "Ratings and reviews",
-                    ),
-                  ),
-                );
+      padding: const EdgeInsets.symmetric(horizontal: 20.0),
+      child: InkWell(
+        onTap: () => _navigateToRatingDetailsScreen(context),
+        child: const SectionTitleAndSeemoreButtonView(
+          text: "Ratings and reviews",
+        ),
+      ),
+    );
   }
 
   Padding aboutThisEBookView(BuildContext context) {
     return Padding(
-              padding: const EdgeInsets.only(left: 20.0, right: 20, top: 15),
-              child: InkWell(
-                onTap: () => _navigateToAboutBooksDetailsScreen(context),
-                child: SizedBox(
-                  child: Column(
-                    children: [
-                      const SectionTitleAndSeemoreButtonView(
-                        text: "About this ebook",
-                      ),
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      Text(widget.bookDetails?.description ?? "",
-                        style: GoogleFonts.inter(
-                            fontWeight: FontWeight.w600,
-                            color: Colors.black54,
-                            fontSize: 14),
-                        overflow: TextOverflow.ellipsis,
-                        maxLines: 4,
-                      )
-                    ],
-                  ),
-                ),
+      padding: const EdgeInsets.only(left: 20.0, right: 20, top: 15),
+      child: InkWell(
+        onTap: () => _navigateToAboutBooksDetailsScreen(context),
+        child: SizedBox(
+          child: Column(
+            children: [
+              const SectionTitleAndSeemoreButtonView(
+                text: "About this ebook",
               ),
-            );
+              const SizedBox(
+                height: 10,
+              ),
+              Text(
+                widget.bookDetails?.description ?? "",
+                style: GoogleFonts.inter(
+                    fontWeight: FontWeight.w600,
+                    color: Colors.black54,
+                    fontSize: 14),
+                overflow: TextOverflow.ellipsis,
+                maxLines: 4,
+              )
+            ],
+          ),
+        ),
+      ),
+    );
   }
 
   Future<dynamic> _navigateToMoreBooksPage(BuildContext context) {
     return Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (context) => const MoreEbooksPage(listName: "hardcover-fiction",),
+        builder: (context) => const MoreEbooksPage(
+          listName: "hardcover-fiction",
+        ),
       ),
     );
   }
@@ -298,7 +315,7 @@ class _BookDetailsState extends State<BookDetails> {
         ),
         BookDetailsTextRowView(
           title: "ISBN 13",
-          value: bookDetails?.primaryISBN13?? "",
+          value: bookDetails?.primaryISBN13 ?? "",
         ),
         const BookDetailsTextRowView(
             title: "Best for",
@@ -320,9 +337,7 @@ class _BookDetailsState extends State<BookDetails> {
           height: 10,
         ),
         InkWell(
-          onTap: () => setState(() {
-            seeMoreIsTapped = !seeMoreIsTapped;
-          }),
+          onTap: () => _detailBloc.setMoreOrLessStatus(),
           child: const TextView(
             text: "Less",
             fontColor: LIGHT_THEME_SELECTED_CHIP_COLOR,
@@ -357,9 +372,7 @@ class _BookDetailsState extends State<BookDetails> {
           height: 10,
         ),
         InkWell(
-          onTap: () => setState(() {
-            seeMoreIsTapped = !seeMoreIsTapped;
-          }),
+          onTap: () => _detailBloc.setMoreOrLessStatus(),
           child: const TextView(
             text: "More",
             fontColor: LIGHT_THEME_SELECTED_CHIP_COLOR,
@@ -396,8 +409,10 @@ class BookRefundPolicyView extends StatelessWidget {
           SizedBox(
             width: 15,
           ),
-          TextView(text: "Google play refund policy",
-            fontColor: Colors.black87,),
+          TextView(
+            text: "Google play refund policy",
+            fontColor: Colors.black87,
+          ),
           Spacer()
         ],
       ),
@@ -521,15 +536,19 @@ class DiscountPriceView extends StatelessWidget {
           text: TextSpan(
             children: [
               TextSpan(
-                  text: "List price: ",
-                  style: GoogleFonts.inter(
-                      fontSize: 13, fontWeight: FontWeight.w400, color: APP_PRIMARY_COLOR),),
+                text: "List price: ",
+                style: GoogleFonts.inter(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w400,
+                    color: APP_PRIMARY_COLOR),
+              ),
               TextSpan(
                 text: "\$2.99",
                 style: GoogleFonts.inter(
                     decoration: TextDecoration.lineThrough,
                     fontSize: 13,
-                    fontWeight: FontWeight.w400, color: APP_PRIMARY_COLOR),
+                    fontWeight: FontWeight.w400,
+                    color: APP_PRIMARY_COLOR),
               ),
             ],
           ),
@@ -622,7 +641,9 @@ class BookDetailsTextRowView extends StatelessWidget {
               alignment: Alignment.centerLeft,
               child: TextView(
                 text: value,
-                fontColor: isDecorated ? LIGHT_THEME_SELECTED_CHIP_COLOR : Colors.black54,
+                fontColor: isDecorated
+                    ? LIGHT_THEME_SELECTED_CHIP_COLOR
+                    : Colors.black54,
                 isDecorated: isDecorated,
               ),
             ),
@@ -684,7 +705,9 @@ class BookRatingAndTypeView extends StatelessWidget {
                         fontWeight: FontWeight.w600),
                   ),
                   const IconView(
-                      icon: Icons.star, iconColor: Colors.black54, iconSize: 25),
+                      icon: Icons.star,
+                      iconColor: Colors.black54,
+                      iconSize: 25),
                 ],
               ),
               Text(
@@ -758,7 +781,7 @@ class BookCoverAndDescriptionView extends StatelessWidget {
       {Key? key,
       required this.isAudiobook,
       required this.bookName,
-        required this.author,
+      required this.author,
       required this.imageUrl})
       : super(key: key);
   final bool isAudiobook;
@@ -841,7 +864,9 @@ class BookDescriptionTextsView extends StatelessWidget {
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
             style: GoogleFonts.inter(
-                fontWeight: FontWeight.w600, fontSize: 23, color: Colors.black87),
+                fontWeight: FontWeight.w600,
+                fontSize: 23,
+                color: Colors.black87),
           ),
           const SizedBox(
             height: 8,
@@ -849,14 +874,19 @@ class BookDescriptionTextsView extends StatelessWidget {
           Text(
             "(Legacy Edition)",
             style: GoogleFonts.inter(
-                fontWeight: FontWeight.w600, fontSize: 22, color: Colors.black87),
+                fontWeight: FontWeight.w600,
+                fontSize: 22,
+                color: Colors.black87),
           ),
           const SizedBox(
             height: 8,
           ),
-          Text(author,
+          Text(
+            author,
             style: GoogleFonts.inter(
-                fontWeight: FontWeight.w600, fontSize: 16, color: Colors.black87),
+                fontWeight: FontWeight.w600,
+                fontSize: 16,
+                color: Colors.black87),
           ),
           const SizedBox(
             height: 8,

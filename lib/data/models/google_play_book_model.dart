@@ -9,6 +9,7 @@ Future<GetOverviewResponse> getOverview(String apiKey);
 Future<GetMoreListResponse> getMoreList(String apiKey, String list, String offset);
 Future<void> saveBook(BooksVO book);
 Future<List<BooksVO>> getSavedAllBooks();
+Stream<List<BooksVO>> getSaveBookListStream();
 Future<void> createShelf(ShelfVO shelf);
 Future<List<ShelfVO>> getAllShelves();
 }

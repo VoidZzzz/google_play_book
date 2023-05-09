@@ -61,4 +61,12 @@ class GooglePlayBookModelImpl extends GooglePlayBookModel {
   Future<List<ShelfVO>> getAllShelves() {
     return Future.value(_shelfDao.getAllShelves());
   }
+
+  @override
+  Stream<List<BooksVO>> getSaveBookListStream() {
+    return _bookDao
+        .getAllSavedBooksEventStream()
+        .startWith(_bookDao.getAllSavedBooksStream())
+        .map((event) => _bookDao.getAllSavedBooks());
+  }
 }
