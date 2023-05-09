@@ -29,18 +29,8 @@ class _LibraryPageState extends State<LibraryPage>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
   int viewTypeValue = 1;
-  List<String> dummyChipLabels = [];
-  List<bool> chipIsSelected = [
-    false,
-    false,
-    false,
-    false,
-    false,
-    false,
-    false,
-    false,
-    false,
-  ];
+  List<String> categoryChipLabels = [];
+  List<bool> chipIsSelected = [];
   List<ShelfVO>? shelfList;
 
   GooglePlayBookModel model = GooglePlayBookModelImpl();
@@ -52,9 +42,10 @@ class _LibraryPageState extends State<LibraryPage>
     print(savedBookList?.last.saveTime);
     if (savedBookList != null) {
       for (int i = 0; i < savedBookList!.length; i++) {
-        if (!(dummyChipLabels.contains(savedBookList?[i].categoryName)) &&
+        if (!(categoryChipLabels.contains(savedBookList?[i].categoryName)) &&
             savedBookList?[i].categoryName != null) {
-          dummyChipLabels.add(savedBookList?[i].categoryName ?? "");
+          categoryChipLabels.add(savedBookList?[i].categoryName ?? "");
+          chipIsSelected.add(false);
         }
       }
     }
@@ -131,7 +122,9 @@ class _LibraryPageState extends State<LibraryPage>
           shelfList: shelfList ?? [],
           onTapShelf: (shelf) => Navigator.of(context).push(
             MaterialPageRoute(
-              builder: (context) => ShelfDetails(shelf: shelf,),
+              builder: (context) => ShelfDetails(
+                shelf: shelf,
+              ),
             ),
           ),
         ),
@@ -221,7 +214,7 @@ class _LibraryPageState extends State<LibraryPage>
             ListView.builder(
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
-                itemCount: dummyChipLabels.length + 1,
+                itemCount: categoryChipLabels.length + 1,
                 scrollDirection: Axis.horizontal,
                 itemBuilder: (context, index) {
                   if (index == 0) {
@@ -232,13 +225,6 @@ class _LibraryPageState extends State<LibraryPage>
                             top: 15.0, bottom: 15, left: 8),
                         child: InkWell(
                           onTap: () {
-                            for (int i = 0;
-                                i < chipIsSelected.length + 1;
-                                i++) {
-                              setState(() {
-                                chipIsSelected[i] = false;
-                              });
-                            }
                             setState(() {
                               isShowClearButton = false;
                             });
@@ -263,18 +249,18 @@ class _LibraryPageState extends State<LibraryPage>
                       padding: const EdgeInsets.only(left: 8.0),
                       child: FilterChip(
                         backgroundColor: WHITE_COLOR,
-                        side: (chipIsSelected[index])
+                        side: (chipIsSelected[index - 1])
                             ? const BorderSide(color: WHITE_COLOR)
                             : const BorderSide(color: GREY_COLOR),
                         selectedColor: LIGHT_THEME_SELECTED_CHIP_COLOR,
                         showCheckmark: false,
                         label: Text(
-                          dummyChipLabels[index + 1],
+                          categoryChipLabels[index - 1],
                         ),
-                        selected: chipIsSelected[index],
+                        selected: chipIsSelected[index - 1],
                         onSelected: (val) {
                           setState(() {
-                            chipIsSelected[index] = val;
+                            chipIsSelected[index - 1] = val;
                             isShowClearButton = true;
                           });
                         },
@@ -408,7 +394,9 @@ class ShelvesView extends StatelessWidget {
         ? ListView.builder(
             itemCount: shelfList.length,
             itemBuilder: (context, index) => InkWell(
-              onTap: () => onTapShelf(shelfList[index],),
+              onTap: () => onTapShelf(
+                shelfList[index],
+              ),
               child: ShelfView(
                 shelf: shelfList[index],
               ),
@@ -575,7 +563,8 @@ class ShelfView extends StatelessWidget {
                       color: Colors.black87),
                 ),
               ),
-              Text("${shelf.books?.length ?? 0} books",
+              Text(
+                "${shelf.books?.length ?? 0} books",
                 style: GoogleFonts.inter(
                     fontSize: 14,
                     fontWeight: FontWeight.w600,
@@ -715,10 +704,7 @@ class BooksListView extends StatelessWidget {
                 ),
                 CondustrialMenuView(
                   onTapMenu: () => showBottomSheetForMenu(
-                    context,
-                    savedBookList?[index],
-                      (){}
-                  ),
+                      context, savedBookList?[index], () {}),
                 ),
               ],
             ),
@@ -779,7 +765,7 @@ class SmallGridView extends StatelessWidget {
           authorColor: Colors.black54,
           sampleFontSize: 13,
           onTapMenu: () =>
-              showBottomSheetForMenu(context, savedBookList?[index], (){}),
+              showBottomSheetForMenu(context, savedBookList?[index], () {}),
           bookCover: savedBookList?[index].bookImage ?? "",
           bookName: savedBookList?[index].title ?? "",
           bookAuthorName: savedBookList?[index].author ?? "",
@@ -827,7 +813,7 @@ class LargeGridView extends StatelessWidget {
           bottomDownloadPadding: 49,
           rightDownloadPadding: 6,
           onTapMenu: () =>
-              showBottomSheetForMenu(context, savedBookList?[index], (){}),
+              showBottomSheetForMenu(context, savedBookList?[index], () {}),
           bookCover: savedBookList?[index].bookImage ?? "",
           bookName: savedBookList?[index].title ?? "",
           bookAuthorName: savedBookList?[index].author ?? "",
