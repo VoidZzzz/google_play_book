@@ -42,13 +42,15 @@ class BookVOAdapter extends TypeAdapter<BooksVO> {
       fields[22] as String?,
       fields[23] as int?,
       (fields[24] as List?)?.cast<BuyLinksVO>(),
+      fields[26] as String?,
+      fields[25] as int?,
     );
   }
 
   @override
   void write(BinaryWriter writer, BooksVO obj) {
     writer
-      ..writeByte(25)
+      ..writeByte(27)
       ..writeByte(0)
       ..write(obj.ageGroup)
       ..writeByte(1)
@@ -98,7 +100,11 @@ class BookVOAdapter extends TypeAdapter<BooksVO> {
       ..writeByte(23)
       ..write(obj.weeksOnList)
       ..writeByte(24)
-      ..write(obj.buyLinks);
+      ..write(obj.buyLinks)
+      ..writeByte(25)
+      ..write(obj.saveTime)
+      ..writeByte(26)
+      ..write(obj.categoryName);
   }
 
   @override
@@ -144,6 +150,8 @@ BooksVO _$BooksVOFromJson(Map<String, dynamic> json) => BooksVO(
       (json['buy_links'] as List<dynamic>?)
           ?.map((e) => BuyLinksVO.fromJson(e as Map<String, dynamic>))
           .toList(),
+      json['categoryName'] as String?,
+      json['saveTime'] as int?,
     );
 
 Map<String, dynamic> _$BooksVOToJson(BooksVO instance) => <String, dynamic>{
@@ -172,4 +180,6 @@ Map<String, dynamic> _$BooksVOToJson(BooksVO instance) => <String, dynamic>{
       'updated_date': instance.updatedDate,
       'weeks_on_list': instance.weeksOnList,
       'buy_links': instance.buyLinks,
+      'saveTime': instance.saveTime,
+      'categoryName': instance.categoryName,
     };

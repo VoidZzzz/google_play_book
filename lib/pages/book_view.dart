@@ -16,7 +16,7 @@ class BookView extends StatelessWidget {
       this.padding = const EdgeInsets.only(left: 12),
       this.rightMenuPadding = 1,
       this.rightDownloadPadding = 3,
-      this.isDownLoaded = true,
+      this.isDownLoaded = false,
       this.bottomDownloadPadding = 50,
       this.downloadIconSize = 20,
       this.downloadMargin = 1,

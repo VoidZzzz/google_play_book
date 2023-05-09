@@ -35,7 +35,9 @@ class _BookDetailsState extends State<BookDetails> {
 
   @override
   void initState() {
+    /// Save book to Persistence
     model.saveBook(widget.bookDetails!);
+    print(widget.bookDetails?.categoryName);
     super.initState();
   }
 
@@ -68,66 +70,8 @@ class _BookDetailsState extends State<BookDetails> {
                   const SizedBox(
                     height: 20,
                   ),
-                  SizedBox(
-                    height: 50,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Container(
-                          height: 35,
-                          width: 170,
-                          decoration: BoxDecoration(
-                              color: WHITE_COLOR,
-                              borderRadius: BorderRadius.circular(6),
-                              border: Border.all(color: GREY_COLOR)),
-                          child: const Center(
-                            child: TextView(
-                              text: "Free Sample",
-                              fontWeight: FontWeight.w700,
-                              fontColor: LIGHT_THEME_TERTIARY_COLOR,
-                            ),
-                          ),
-                        ),
-                        Container(
-                          height: 35,
-                          width: 170,
-                          decoration: BoxDecoration(
-                            color: LIGHT_THEME_TERTIARY_COLOR,
-                            borderRadius: BorderRadius.circular(6),
-                          ),
-                          child: const Center(
-                            child: TextView(
-                              text: "Buy \$2.5",
-                              fontWeight: FontWeight.w600,
-                              fontColor: WHITE_COLOR,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  Row(
-                    children: [
-                      const Spacer(),
-                      RichText(
-                        text: TextSpan(
-                          children: [
-                            TextSpan(
-                                text: "List price: ",
-                                style: GoogleFonts.inter(
-                                    fontSize: 13, fontWeight: FontWeight.w400, color: APP_PRIMARY_COLOR),),
-                            TextSpan(
-                              text: "\$2.99",
-                              style: GoogleFonts.inter(
-                                  decoration: TextDecoration.lineThrough,
-                                  fontSize: 13,
-                                  fontWeight: FontWeight.w400, color: APP_PRIMARY_COLOR),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
+                  const ButtonsView(),
+                  const DiscountPriceView(),
                   const SizedBox(
                     height: 17,
                   ),
@@ -142,45 +86,12 @@ class _BookDetailsState extends State<BookDetails> {
           physics: const BouncingScrollPhysics(),
           child: Column(
             children: [
-              Padding(
-                padding: const EdgeInsets.only(left: 20.0, right: 20, top: 15),
-                child: InkWell(
-                  onTap: () => _navigateToAboutBooksDetailsScreen(context),
-                  child: SizedBox(
-                    child: Column(
-                      children: [
-                        const SectionTitleAndSeemoreButtonView(
-                          text: "About this ebook",
-                        ),
-                        const SizedBox(
-                          height: 10,
-                        ),
-                        Text(widget.bookDetails?.description ?? "",
-                          style: GoogleFonts.inter(
-                              fontWeight: FontWeight.w600,
-                              color: Colors.black54,
-                              fontSize: 14),
-                          overflow: TextOverflow.ellipsis,
-                          maxLines: 4,
-                        )
-                      ],
-                    ),
-                  ),
-                ),
-              ),
+              aboutThisEBookView(context),
               const SizedBox(height: 25,),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                    child: InkWell(
-                      onTap: () => _navigateToRatingDetailsScreen(context),
-                      child: const SectionTitleAndSeemoreButtonView(
-                        text: "Ratings and reviews",
-                      ),
-                    ),
-                  ),
+                  ratingTitleTextView(context),
                   const SizedBox(
                     height: 10,
                   ),
@@ -243,53 +154,13 @@ class _BookDetailsState extends State<BookDetails> {
                   const SizedBox(
                     height: 15,
                   ),
-                  const Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 20.0),
-                    child: TextView(
-                      text: "Rate this ebook",
-                      fontColor: Colors.black87,
-                      fontSize: 18,
-                    ),
-                  ),
-                  const Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 20.0),
-                    child: TextView(
-                      text: "Tell others what you think",
-                      fontWeight: FontWeight.w400,
-                      fontColor: Colors.black54,
-                    ),
-                  ),
-                  SizedBox(
-                    height: 60,
-                    child: Center(
-                      child: RatingBar.builder(
-                          unratedColor: GREY_COLOR,
-                          itemBuilder: (context, _) => const Icon(
-                                Icons.star,
-                                color: APP_TERTIARY_COLOR,
-                              ),
-                          onRatingUpdate: (val) {}),
-                    ),
-                  ),
+                  const RateThisBookTextView(),
+                  const TellOthersTextView(),
+                  const RatingBarView(),
                   const SizedBox(
                     height: 10,
                   ),
-                  Align(
-                    alignment: Alignment.center,
-                    child: Container(
-                      height: 40,
-                      width: 140,
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(5),
-                          border: Border.all(color: GREY_COLOR, width: 0.5)),
-                      child: const Center(
-                        child: TextView(
-                          text: "Write a review",
-                          fontColor: LIGHT_THEME_SELECTED_CHIP_COLOR,
-                        ),
-                      ),
-                    ),
-                  ),
+                  const WriteReviewButtonView(),
                   const SizedBox(
                     height: 15,
                   ),
@@ -301,14 +172,7 @@ class _BookDetailsState extends State<BookDetails> {
                   const SizedBox(
                     height: 15,
                   ),
-                  const Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 20.0),
-                    child: TextView(
-                      text: "Ebook details",
-                      fontColor: Colors.black87,
-                      fontSize: 20,
-                    ),
-                  ),
+                  const EbookDetailsTextView(),
                   const SizedBox(
                     height: 15,
                   ),
@@ -324,23 +188,7 @@ class _BookDetailsState extends State<BookDetails> {
                   const SizedBox(
                     height: 25,
                   ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                    child: Row(
-                      children: const [
-                        IconView(
-                            icon: Icons.info_outline,
-                            iconColor: Colors.black87,
-                            iconSize: 20),
-                        SizedBox(
-                          width: 15,
-                        ),
-                        TextView(text: "Google play refund policy",
-                          fontColor: Colors.black87,),
-                        Spacer()
-                      ],
-                    ),
-                  ),
+                  const BookRefundPolicyView(),
                   const SizedBox(
                     height: 50,
                   ),
@@ -351,6 +199,47 @@ class _BookDetailsState extends State<BookDetails> {
         ),
       ),
     );
+  }
+
+  Padding ratingTitleTextView(BuildContext context) {
+    return Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                  child: InkWell(
+                    onTap: () => _navigateToRatingDetailsScreen(context),
+                    child: const SectionTitleAndSeemoreButtonView(
+                      text: "Ratings and reviews",
+                    ),
+                  ),
+                );
+  }
+
+  Padding aboutThisEBookView(BuildContext context) {
+    return Padding(
+              padding: const EdgeInsets.only(left: 20.0, right: 20, top: 15),
+              child: InkWell(
+                onTap: () => _navigateToAboutBooksDetailsScreen(context),
+                child: SizedBox(
+                  child: Column(
+                    children: [
+                      const SectionTitleAndSeemoreButtonView(
+                        text: "About this ebook",
+                      ),
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      Text(widget.bookDetails?.description ?? "",
+                        style: GoogleFonts.inter(
+                            fontWeight: FontWeight.w600,
+                            color: Colors.black54,
+                            fontSize: 14),
+                        overflow: TextOverflow.ellipsis,
+                        maxLines: 4,
+                      )
+                    ],
+                  ),
+                ),
+              ),
+            );
   }
 
   Future<dynamic> _navigateToMoreBooksPage(BuildContext context) {
@@ -484,6 +373,215 @@ class _BookDetailsState extends State<BookDetails> {
     return Navigator.of(context).push(
       MaterialPageRoute(
         builder: (context) => const AboutBookDetailsPage(),
+      ),
+    );
+  }
+}
+
+class BookRefundPolicyView extends StatelessWidget {
+  const BookRefundPolicyView({
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20.0),
+      child: Row(
+        children: const [
+          IconView(
+              icon: Icons.info_outline,
+              iconColor: Colors.black87,
+              iconSize: 20),
+          SizedBox(
+            width: 15,
+          ),
+          TextView(text: "Google play refund policy",
+            fontColor: Colors.black87,),
+          Spacer()
+        ],
+      ),
+    );
+  }
+}
+
+class EbookDetailsTextView extends StatelessWidget {
+  const EbookDetailsTextView({
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return const Padding(
+      padding: EdgeInsets.symmetric(horizontal: 20.0),
+      child: TextView(
+        text: "Ebook details",
+        fontColor: Colors.black87,
+        fontSize: 20,
+      ),
+    );
+  }
+}
+
+class WriteReviewButtonView extends StatelessWidget {
+  const WriteReviewButtonView({
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Align(
+      alignment: Alignment.center,
+      child: Container(
+        height: 40,
+        width: 140,
+        decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(5),
+            border: Border.all(color: GREY_COLOR, width: 0.5)),
+        child: const Center(
+          child: TextView(
+            text: "Write a review",
+            fontColor: LIGHT_THEME_SELECTED_CHIP_COLOR,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class RatingBarView extends StatelessWidget {
+  const RatingBarView({
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      height: 60,
+      child: Center(
+        child: RatingBar.builder(
+            unratedColor: GREY_COLOR,
+            itemBuilder: (context, _) => const Icon(
+                  Icons.star,
+                  color: APP_TERTIARY_COLOR,
+                ),
+            onRatingUpdate: (val) {}),
+      ),
+    );
+  }
+}
+
+class TellOthersTextView extends StatelessWidget {
+  const TellOthersTextView({
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return const Padding(
+      padding: EdgeInsets.symmetric(horizontal: 20.0),
+      child: TextView(
+        text: "Tell others what you think",
+        fontWeight: FontWeight.w400,
+        fontColor: Colors.black54,
+      ),
+    );
+  }
+}
+
+class RateThisBookTextView extends StatelessWidget {
+  const RateThisBookTextView({
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return const Padding(
+      padding: EdgeInsets.symmetric(horizontal: 20.0),
+      child: TextView(
+        text: "Rate this ebook",
+        fontColor: Colors.black87,
+        fontSize: 18,
+      ),
+    );
+  }
+}
+
+class DiscountPriceView extends StatelessWidget {
+  const DiscountPriceView({
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        const Spacer(),
+        RichText(
+          text: TextSpan(
+            children: [
+              TextSpan(
+                  text: "List price: ",
+                  style: GoogleFonts.inter(
+                      fontSize: 13, fontWeight: FontWeight.w400, color: APP_PRIMARY_COLOR),),
+              TextSpan(
+                text: "\$2.99",
+                style: GoogleFonts.inter(
+                    decoration: TextDecoration.lineThrough,
+                    fontSize: 13,
+                    fontWeight: FontWeight.w400, color: APP_PRIMARY_COLOR),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class ButtonsView extends StatelessWidget {
+  const ButtonsView({
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      height: 50,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Container(
+            height: 35,
+            width: 170,
+            decoration: BoxDecoration(
+                color: WHITE_COLOR,
+                borderRadius: BorderRadius.circular(6),
+                border: Border.all(color: GREY_COLOR)),
+            child: const Center(
+              child: TextView(
+                text: "Free Sample",
+                fontWeight: FontWeight.w700,
+                fontColor: LIGHT_THEME_TERTIARY_COLOR,
+              ),
+            ),
+          ),
+          Container(
+            height: 35,
+            width: 170,
+            decoration: BoxDecoration(
+              color: LIGHT_THEME_TERTIARY_COLOR,
+              borderRadius: BorderRadius.circular(6),
+            ),
+            child: const Center(
+              child: TextView(
+                text: "Buy \$2.5",
+                fontWeight: FontWeight.w600,
+                fontColor: WHITE_COLOR,
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

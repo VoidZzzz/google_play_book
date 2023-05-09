@@ -100,7 +100,7 @@ class _ShelfDetailsState extends State<ShelfDetails> {
                         InkWell(
                           onTap: () => Navigator.of(context).push(
                             MaterialPageRoute(
-                              builder: (context) => const CreateShelfPage(),
+                              builder: (context) =>  CreateShelfPage(),
                             ),
                           ),
                           child: const MenuOptionsView(

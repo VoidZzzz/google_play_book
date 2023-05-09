@@ -28,16 +28,7 @@ class _LibraryPageState extends State<LibraryPage>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
   int viewTypeValue = 1;
-  List<String> dummyChipLabels = [
-    "Ebooks",
-    "Audiobooks",
-    "Purchased",
-    "Downloaded",
-    "Sci_fi",
-    "Drama",
-    "Educational",
-    "Manga"
-  ];
+  List<String> dummyChipLabels = [];
   List<bool> chipIsSelected = [
     false,
     false,
@@ -54,6 +45,19 @@ class _LibraryPageState extends State<LibraryPage>
   List<BooksVO>? savedBookList;
   bool isShowClearButton = false;
 
+  void chipList() {
+    print(savedBookList?.first.saveTime);
+    print(savedBookList?.last.saveTime);
+      if (savedBookList != null) {
+        for (int i = 0; i < savedBookList!.length; i++) {
+          if (!(dummyChipLabels.contains(savedBookList?[i].categoryName)) && savedBookList?[i].categoryName != null) {
+            dummyChipLabels.add(savedBookList?[i].categoryName ?? "");
+          }
+        }
+      }
+
+  }
+
   @override
   void initState() {
     _tabController = TabController(length: 2, vsync: this);
@@ -62,7 +66,13 @@ class _LibraryPageState extends State<LibraryPage>
       setState(() {
         savedBookList = value;
       });
+      chipList();
     });
+
+    model
+        .getAllShelves()
+        .then((value) => print(value.first.shelfName.toString()));
+
     super.initState();
   }
 
@@ -92,28 +102,7 @@ class _LibraryPageState extends State<LibraryPage>
                     const SizedBox(
                       height: 10,
                     ),
-                    Column(
-                      children: [
-                        TabBar(
-                          unselectedLabelColor: Colors.black54,
-                          labelColor: LIGHT_THEME_SELECTED_CHIP_COLOR,
-                          indicatorColor: LIGHT_THEME_SELECTED_CHIP_COLOR,
-                          indicatorSize: TabBarIndicatorSize.label,
-                          controller: _tabController,
-                          tabs: const [
-                            Tab(
-                              text: "Your Books",
-                            ),
-                            Tab(
-                              text: "Your Shelves",
-                            ),
-                          ],
-                        ),
-                        const Divider(
-                          color: GREY_COLOR,
-                        )
-                      ],
-                    ),
+                    TabViewAndDividerVIew(tabController: _tabController),
                   ],
                 ),
               ),
@@ -122,165 +111,165 @@ class _LibraryPageState extends State<LibraryPage>
           body: TabBarView(
             controller: _tabController,
             children: [
-              SingleChildScrollView(
-                physics: const BouncingScrollPhysics(),
-                child: Column(
-                  children: [
-                    SizedBox(
-                      height: 60,
-                      child: SingleChildScrollView(
-                        scrollDirection: Axis.horizontal,
-                        physics: const BouncingScrollPhysics(),
-                        child: Row(
-                          children: [
-                            const SizedBox(width: 12,),
-                            ListView.builder(
-                                shrinkWrap: true,
-                                physics: const NeverScrollableScrollPhysics(),
-                                itemCount: dummyChipLabels.length + 1,
-                                scrollDirection: Axis.horizontal,
-                                itemBuilder: (context, index) {
-                                  if (index == 0) {
-                                    return Visibility(
-                                      visible: isShowClearButton,
-                                      child: Padding(
-                                        padding: const EdgeInsets.only(
-                                            top: 15.0, bottom: 15, left: 8),
-                                        child: InkWell(
-                                          onTap: () {
-                                            for (int i = 0;
-                                                i < chipIsSelected.length;
-                                                i++) {
-                                              setState(() {
-                                                chipIsSelected[i] = false;
-                                              });
-                                            }
-                                            setState(() {
-                                              isShowClearButton = false;
-                                            });
-                                          },
-                                          child: Container(
-                                            width: 30,
-                                            decoration: BoxDecoration(
-                                                border:
-                                                    Border.all(color: Colors.black54),
-                                                borderRadius: BorderRadius.circular(18),
-                                                color: WHITE_COLOR),
-                                            child: const Icon(
-                                              Icons.clear,
-                                              color: Colors.black,
-                                              size: 20,
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    );
-                                  } else {
-                                    return Padding(
-                                      padding: const EdgeInsets.only(left: 8.0),
-                                      child: FilterChip(
-                                        backgroundColor: WHITE_COLOR,
-                                        side: (chipIsSelected[index])
-                                            ? const BorderSide(color: WHITE_COLOR)
-                                            : const BorderSide(color: GREY_COLOR),
-                                        selectedColor:
-                                            LIGHT_THEME_SELECTED_CHIP_COLOR,
-                                        showCheckmark: false,
-                                        label: Text(
-                                          dummyChipLabels[index - 1],
-                                        ),
-                                        selected: chipIsSelected[index],
-                                        onSelected: (val) {
-                                          setState(() {
-                                            chipIsSelected[index] = val;
-                                            isShowClearButton = true;
-                                          });
-                                        },
-                                      ),
-                                    );
-                                  }
-                                }),
-                          ],
-                        ),
-                      ),
-                    ),
-                    const SizedBox(
-                      height: 10,
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                      child: Row(
-                        children: [
-                          InkWell(
-                            onTap: () {
-                              _showModalBottomSheet(context, "   Sort by",
-                                  "Recent", "Title", "Author");
-                            },
-                            child: const SortButtonView(),
-                          ),
-                          const Spacer(),
-                          InkWell(
-                            onTap: () {
-                              _showModalBottomSheet(context, "   View as",
-                                  "List", "Large grid", "Small grid");
-                            },
-                            child: Icon(
-                              (viewTypeValue == 1)
-                                  ? Icons.view_list_outlined
-                                  : Icons.view_module_outlined,
-                              color: Colors.black54,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(
-                      height: 15,
-                    ),
-                    (viewTypeValue == 1)
-                        ? BooksListView(
-                            savedBookList: savedBookList,
-                          )
-                        : (viewTypeValue == 2)
-                            ? LargeGridView(savedBookList: savedBookList)
-                            : SmallGridView(
-                                savedBookList: savedBookList,
-                              ),
-                  ],
-                ),
-              ),
-              Stack(
-                children: [
-                  ListView(
-                    physics: const BouncingScrollPhysics(),
-                    children: [
-                      InkWell(
-                        onTap: () {
-                          Navigator.of(context).push(
-                            MaterialPageRoute(
-                              builder: (context) => const ShelfDetails(),
-                            ),
-                          );
-                        },
-                        child: const ShelfView(),
-                      ),
-                    ],
-                  ),
-                  Align(
-                    alignment: Alignment.bottomCenter,
-                    child: InkWell(
-                      onTap: () => Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (context) => const CreateShelfPage(),
-                        ),
-                      ),
-                      child: const CreateNewButton(),
-                    ),
-                  ),
-                ],
-              ),
+              yourBooksView(context),
+              yourShelvesView(context),
             ],
           ),
+        ),
+      ),
+    );
+  }
+
+  Stack yourShelvesView(BuildContext context) {
+    return Stack(
+      children: [
+        const ShelvesView(),
+        Align(
+          alignment: Alignment.bottomCenter,
+          child: InkWell(
+            onTap: () => Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (context) => CreateShelfPage(),
+              ),
+            ),
+            child: const CreateNewButton(),
+          ),
+        ),
+      ],
+    );
+  }
+
+  SingleChildScrollView yourBooksView(BuildContext context) {
+    return SingleChildScrollView(
+      physics: const BouncingScrollPhysics(),
+      child: Column(
+        children: [
+          categoryChipsView(),
+          const SizedBox(
+            height: 10,
+          ),
+          sortingViews(context),
+          const SizedBox(
+            height: 15,
+          ),
+          (viewTypeValue == 1)
+              ? BooksListView(
+                  savedBookList: savedBookList,
+                )
+              : (viewTypeValue == 2)
+                  ? LargeGridView(savedBookList: savedBookList)
+                  : SmallGridView(
+                      savedBookList: savedBookList,
+                    ),
+        ],
+      ),
+    );
+  }
+
+  Padding sortingViews(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20.0),
+      child: Row(
+        children: [
+          InkWell(
+            onTap: () {
+              _showModalBottomSheet(
+                  context, "   Sort by", "Recent", "Title", "Author");
+            },
+            child: const SortButtonView(),
+          ),
+          const Spacer(),
+          InkWell(
+            onTap: () {
+              _showModalBottomSheet(
+                  context, "   View as", "List", "Large grid", "Small grid");
+            },
+            child: Icon(
+              (viewTypeValue == 1)
+                  ? Icons.view_list_outlined
+                  : Icons.view_module_outlined,
+              color: Colors.black54,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  SizedBox categoryChipsView() {
+    return SizedBox(
+      height: 60,
+      child: SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        physics: const BouncingScrollPhysics(),
+        child: Row(
+          children: [
+            const SizedBox(
+              width: 12,
+            ),
+            ListView.builder(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                itemCount: dummyChipLabels.length + 1,
+                scrollDirection: Axis.horizontal,
+                itemBuilder: (context, index) {
+                  if (index == 0) {
+                    return Visibility(
+                      visible: isShowClearButton,
+                      child: Padding(
+                        padding: const EdgeInsets.only(
+                            top: 15.0, bottom: 15, left: 8),
+                        child: InkWell(
+                          onTap: () {
+                            for (int i = 0; i < chipIsSelected.length + 1; i++) {
+                              setState(() {
+                                chipIsSelected[i] = false;
+                              });
+                            }
+                            setState(() {
+                              isShowClearButton = false;
+                            });
+                          },
+                          child: Container(
+                            width: 30,
+                            decoration: BoxDecoration(
+                                border: Border.all(color: Colors.black54),
+                                borderRadius: BorderRadius.circular(18),
+                                color: WHITE_COLOR),
+                            child: const Icon(
+                              Icons.clear,
+                              color: Colors.black,
+                              size: 20,
+                            ),
+                          ),
+                        ),
+                      ),
+                    );
+                  } else {
+                    return Padding(
+                      padding: const EdgeInsets.only(left: 8.0),
+                      child: FilterChip(
+                        backgroundColor: WHITE_COLOR,
+                        side: (chipIsSelected[index])
+                            ? const BorderSide(color: WHITE_COLOR)
+                            : const BorderSide(color: GREY_COLOR),
+                        selectedColor: LIGHT_THEME_SELECTED_CHIP_COLOR,
+                        showCheckmark: false,
+                        label: Text(
+                          dummyChipLabels[index + 1],
+                        ),
+                        selected: chipIsSelected[index],
+                        onSelected: (val) {
+                          setState(() {
+                            chipIsSelected[index] = val;
+                            isShowClearButton = true;
+                          });
+                        },
+                      ),
+                    );
+                  }
+                }),
+          ],
         ),
       ),
     );
@@ -388,6 +377,67 @@ class _LibraryPageState extends State<LibraryPage>
           ),
         ),
       ),
+    );
+  }
+}
+
+class ShelvesView extends StatelessWidget {
+  const ShelvesView({
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView(
+      physics: const BouncingScrollPhysics(),
+      children: [
+        InkWell(
+          onTap: () {
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (context) => const ShelfDetails(),
+              ),
+            );
+          },
+          child: const ShelfView(),
+        ),
+      ],
+    );
+  }
+}
+
+class TabViewAndDividerVIew extends StatelessWidget {
+  const TabViewAndDividerVIew({
+    Key? key,
+    required TabController tabController,
+  })  : _tabController = tabController,
+        super(key: key);
+
+  final TabController _tabController;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        TabBar(
+          unselectedLabelColor: Colors.black54,
+          labelColor: LIGHT_THEME_SELECTED_CHIP_COLOR,
+          indicatorColor: LIGHT_THEME_SELECTED_CHIP_COLOR,
+          indicatorSize: TabBarIndicatorSize.label,
+          controller: _tabController,
+          tabs: const [
+            Tab(
+              text: "Your Books",
+            ),
+            Tab(
+              text: "Your Shelves",
+            ),
+          ],
+        ),
+        const Divider(
+          color: GREY_COLOR,
+        )
+      ],
     );
   }
 }

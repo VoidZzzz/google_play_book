@@ -14,7 +14,6 @@ import '../data/data_vos/books_vo.dart';
 import '../data/data_vos/lists_vo.dart';
 import '../widgets/default_app_bar_view.dart';
 import 'package:carousel_slider/carousel_slider.dart';
-
 import '../widgets/icon_view.dart';
 import '../widgets/modal_bottom_sheet_for_menu.dart';
 import 'book_view.dart';
@@ -37,6 +36,7 @@ class _HomepageState extends State<Homepage>
 
   @override
   void initState() {
+    /// Tab Controller
     _controller = TabController(length: 2, vsync: this);
 
     /// network call
@@ -44,7 +44,7 @@ class _HomepageState extends State<Homepage>
       setState(() {
         bookList = response.results?.lists;
       });
-      debugPrint(bookList.toString());
+      print("===========> ${bookList?[2].books?.last.categoryName}");
     }).catchError(
       (error) {
         debugPrint(
@@ -53,6 +53,7 @@ class _HomepageState extends State<Homepage>
       },
     );
 
+    /// Persistence
     model.getSavedAllBooks().then((value) {
       setState(() {
         saveBookList = value;
@@ -88,23 +89,7 @@ class _HomepageState extends State<Homepage>
                       bookList: saveBookList ?? [],
                       savedBooksLength: saveBookList?.length ?? 0,
                     ),
-                    TabBar(
-                      labelStyle:
-                          GoogleFonts.inter(fontWeight: FontWeight.w600),
-                      labelColor: APP_TERTIARY_COLOR,
-                      unselectedLabelColor: Colors.black87,
-                      indicatorSize: TabBarIndicatorSize.label,
-                      indicatorColor: APP_TERTIARY_COLOR,
-                      controller: _controller,
-                      tabs: const [
-                        Tab(
-                          text: "EBooks",
-                        ),
-                        Tab(
-                          text: "AudioBooks",
-                        ),
-                      ],
-                    ),
+                    TabView(controller: _controller),
                   ],
                 ),
               ),
@@ -113,72 +98,80 @@ class _HomepageState extends State<Homepage>
           body: TabBarView(
             controller: _controller,
             children: [
-              ListView(
-                physics: const BouncingScrollPhysics(),
-                children: [
-                  HorizontalEBooksListView(
-                    listViewTitle: bookList?[0].displayName ?? "",
-                    padding: const EdgeInsets.only(left: 20),
-                    onTapMore: () => _navigateToMoreBooksPage(
-                        context, bookList?[0].listName ?? ""),
-                    bookList: bookList?[0],
-                  ),
-                  const SizedBox(
-                    height: 10,
-                  ),
-                  HorizontalEBooksListView(
-                    listViewTitle: bookList?[1].displayName ?? "",
-                    padding: const EdgeInsets.only(left: 20),
-                    onTapMore: () => _navigateToMoreBooksPage(
-                        context, bookList?[1].listName ?? ""),
-                    bookList: bookList?[1],
-                  ),
-                  const SizedBox(
-                    height: 10,
-                  ),
-                  HorizontalEBooksListView(
-                    listViewTitle: bookList?[2].displayName ?? "",
-                    padding: const EdgeInsets.only(left: 20),
-                    onTapMore: () => _navigateToMoreBooksPage(
-                        context, bookList?[2].listName ?? ""),
-                    bookList: bookList?[2],
-                  ),
-                ],
-              ),
-              ListView(
-                physics: const BouncingScrollPhysics(),
-                children: [
-                  HorizontalAudioBooksListView(
-                    titleText: "Audiobooks for you",
-                    onTapMore: () => _navigateToMoreAudiobooksPage(context),
-                    onTapAudiobook: () => navigateToBookDetailsPage(context),
-                  ),
-                  const SizedBox(
-                    height: 10,
-                  ),
-                  HorizontalAudioBooksListView(
-                    titleText: "Self-heal",
-                    onTapMore: () => _navigateToMoreAudiobooksPage(context),
-                    onTapAudiobook: () => navigateToBookDetailsPage(context),
-                  ),
-                  const SizedBox(
-                    height: 10,
-                  ),
-                  HorizontalAudioBooksListView(
-                    titleText: "Educational",
-                    onTapMore: () => _navigateToMoreAudiobooksPage(context),
-                    onTapAudiobook: () => navigateToBookDetailsPage(context),
-                  ),
-                  const SizedBox(
-                    height: 10,
-                  ),
-                ],
-              )
+              eBookTabBarView(context),
+              audioBookTabBarView(context)
             ],
           ),
         ),
       ),
     );
+  }
+
+  ListView audioBookTabBarView(BuildContext context) {
+    return ListView(
+              physics: const BouncingScrollPhysics(),
+              children: [
+                HorizontalAudioBooksListView(
+                  titleText: "Audiobooks for you",
+                  onTapMore: () => _navigateToMoreAudiobooksPage(context),
+                  onTapAudiobook: () => navigateToBookDetailsPage(context),
+                ),
+                const SizedBox(
+                  height: 10,
+                ),
+                HorizontalAudioBooksListView(
+                  titleText: "Self-heal",
+                  onTapMore: () => _navigateToMoreAudiobooksPage(context),
+                  onTapAudiobook: () => navigateToBookDetailsPage(context),
+                ),
+                const SizedBox(
+                  height: 10,
+                ),
+                HorizontalAudioBooksListView(
+                  titleText: "Educational",
+                  onTapMore: () => _navigateToMoreAudiobooksPage(context),
+                  onTapAudiobook: () => navigateToBookDetailsPage(context),
+                ),
+                const SizedBox(
+                  height: 10,
+                ),
+              ],
+            );
+  }
+
+  ListView eBookTabBarView(BuildContext context) {
+    return ListView(
+              physics: const BouncingScrollPhysics(),
+              children: [
+                HorizontalEBooksListView(
+                  listViewTitle: bookList?[3].displayName ?? "",
+                  padding: const EdgeInsets.only(left: 20),
+                  onTapMore: () => _navigateToMoreBooksPage(
+                      context, bookList?[3].listName ?? ""),
+                  bookList: bookList?[3],
+                ),
+                const SizedBox(
+                  height: 10,
+                ),
+                HorizontalEBooksListView(
+                  listViewTitle: bookList?[4].displayName ?? "",
+                  padding: const EdgeInsets.only(left: 20),
+                  onTapMore: () => _navigateToMoreBooksPage(
+                      context, bookList?[4].listName ?? ""),
+                  bookList: bookList?[1],
+                ),
+                const SizedBox(
+                  height: 10,
+                ),
+                HorizontalEBooksListView(
+                  listViewTitle: bookList?[5].displayName ?? "",
+                  padding: const EdgeInsets.only(left: 20),
+                  onTapMore: () => _navigateToMoreBooksPage(
+                      context, bookList?[5].listName ?? ""),
+                  bookList: bookList?[5 ],
+                ),
+              ],
+            );
   }
 
   Future<dynamic> _navigateToMoreAudiobooksPage(BuildContext context) {
@@ -197,6 +190,36 @@ class _HomepageState extends State<Homepage>
           listName: listName,
         ),
       ),
+    );
+  }
+}
+
+class TabView extends StatelessWidget {
+  const TabView({
+    Key? key,
+    required TabController controller,
+  }) : _controller = controller, super(key: key);
+
+  final TabController _controller;
+
+  @override
+  Widget build(BuildContext context) {
+    return TabBar(
+      labelStyle:
+          GoogleFonts.inter(fontWeight: FontWeight.w600),
+      labelColor: APP_TERTIARY_COLOR,
+      unselectedLabelColor: Colors.black87,
+      indicatorSize: TabBarIndicatorSize.label,
+      indicatorColor: APP_TERTIARY_COLOR,
+      controller: _controller,
+      tabs: const [
+        Tab(
+          text: "EBooks",
+        ),
+        Tab(
+          text: "AudioBooks",
+        ),
+      ],
     );
   }
 }
@@ -366,6 +389,7 @@ class HorizontalEBooksListView extends StatelessWidget {
                       bookCover: bookList?.books?[index].bookImage ?? "",
                       bookName: bookList?.books?[index].title ?? "",
                       padding: padding,
+                      bookAuthorName: bookList?.books?[index].author ?? "",
                       onTapMenu: () => showBottomSheetForMenu(
                           context, bookList?.books?[index]),
                       bottomDownloadPadding: 48,
@@ -486,7 +510,7 @@ class CarouselView extends StatelessWidget {
           },
           options: CarouselOptions(
               enlargeCenterPage: true,
-              viewportFraction: 0.55,
+              viewportFraction: 0.4,
               enableInfiniteScroll: false,
               reverse: false,
               initialPage: 0),

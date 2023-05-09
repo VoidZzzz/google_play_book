@@ -12,7 +12,6 @@ class BookDao{
   BookDao._internal();
 
   void saveBook(BooksVO book) async {
-    print('----------------------> Books Saved');
     return getBookBox().put(book.title, book);
   }
 

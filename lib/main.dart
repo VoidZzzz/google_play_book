@@ -7,14 +7,17 @@ import 'package:hive/hive.dart';
 import 'package:hive_flutter/adapters.dart';
 
 import 'data/data_vos/buy_links_vo.dart';
+import 'data/data_vos/shelf_vo.dart';
 
 void main() async{
   await Hive.initFlutter();
 
   Hive.registerAdapter(BuyLinkVOAdapter());
   Hive.registerAdapter(BookVOAdapter());
+  Hive.registerAdapter(ShelfVOAdapter());
 
   await Hive.openBox<BooksVO>(BOX_NAME_BOOK_VO);
+  await Hive.openBox<ShelfVO>(BOX_NAME_SHELF_VO);
   runApp(const MyApp());
 }
 

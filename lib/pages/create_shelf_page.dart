@@ -1,12 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:google_play_book/data/data_vos/shelf_vo.dart';
+import 'package:google_play_book/data/models/google_play_book_model.dart';
 import 'package:google_play_book/resources/colors.dart';
 import 'package:google_play_book/widgets/divider_view.dart';
 import 'package:google_play_book/widgets/icon_view.dart';
 import 'package:google_play_book/widgets/text_view.dart';
 
+import '../data/models/google_play_book_model_impl.dart';
+
 class CreateShelfPage extends StatelessWidget {
-  const CreateShelfPage({Key? key}) : super(key: key);
+  CreateShelfPage({Key? key}) : super(key: key);
+
+  GooglePlayBookModel model = GooglePlayBookModelImpl();
 
   @override
   Widget build(BuildContext context) {
@@ -37,7 +43,13 @@ class CreateShelfPage extends StatelessWidget {
               ),
               child: TextFormField(
                 autofocus: true,
-                onFieldSubmitted: (str) => Navigator.of(context).pop(),
+                onFieldSubmitted: (str) {
+                  model.createShelf(
+                    ShelfVO(str, DateTime.now().microsecondsSinceEpoch, null,
+                        false),
+                  );
+                  Navigator.of(context).pop();
+                },
                 decoration: InputDecoration(
                   filled: true,
                   fillColor: WHITE_COLOR,
