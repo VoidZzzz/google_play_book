@@ -4,7 +4,7 @@ import 'package:google_play_book/data/data_vos/books_vo.dart';
 import '../resources/colors.dart';
 import 'menu_option_view.dart';
 
-void showBottomSheetForMenu(BuildContext context, BooksVO? bookDetails) {
+void showBottomSheetForMenu(BuildContext context, BooksVO? bookDetails, Function onTapAddToShelf) {
   showModalBottomSheet(
     context: (context),
     builder: (context) => Container(
@@ -99,9 +99,12 @@ void showBottomSheetForMenu(BuildContext context, BooksVO? bookDetails) {
             const SizedBox(
               height: 17,
             ),
-            const MenuOptionsView(
-              menuIcon: Icons.add,
-              menuName: "Add to shelves",
+            InkWell(
+              onTap: () => onTapAddToShelf(),
+              child: const MenuOptionsView(
+                menuIcon: Icons.add,
+                menuName: "Add to shelves",
+              ),
             ),
             const SizedBox(
               height: 17,

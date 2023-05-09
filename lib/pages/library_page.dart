@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:google_play_book/data/data_vos/shelf_vo.dart';
 import 'package:google_play_book/pages/more_audiobooks_page.dart';
 import 'package:google_play_book/pages/search_page.dart';
 import 'package:google_play_book/pages/shelf_details.dart';
@@ -40,6 +41,7 @@ class _LibraryPageState extends State<LibraryPage>
     false,
     false,
   ];
+  List<ShelfVO>? shelfList;
 
   GooglePlayBookModel model = GooglePlayBookModelImpl();
   List<BooksVO>? savedBookList;
@@ -48,30 +50,32 @@ class _LibraryPageState extends State<LibraryPage>
   void chipList() {
     print(savedBookList?.first.saveTime);
     print(savedBookList?.last.saveTime);
-      if (savedBookList != null) {
-        for (int i = 0; i < savedBookList!.length; i++) {
-          if (!(dummyChipLabels.contains(savedBookList?[i].categoryName)) && savedBookList?[i].categoryName != null) {
-            dummyChipLabels.add(savedBookList?[i].categoryName ?? "");
-          }
+    if (savedBookList != null) {
+      for (int i = 0; i < savedBookList!.length; i++) {
+        if (!(dummyChipLabels.contains(savedBookList?[i].categoryName)) &&
+            savedBookList?[i].categoryName != null) {
+          dummyChipLabels.add(savedBookList?[i].categoryName ?? "");
         }
       }
-
+    }
   }
 
   @override
   void initState() {
     _tabController = TabController(length: 2, vsync: this);
 
+    /// getAllShelves from DB
+    model.getAllShelves().then((response) {
+      shelfList = response;
+    });
+
+    /// getAllBooks from DB
     model.getSavedAllBooks().then((value) {
       setState(() {
         savedBookList = value;
       });
       chipList();
     });
-
-    model
-        .getAllShelves()
-        .then((value) => print(value.first.shelfName.toString()));
 
     super.initState();
   }
@@ -112,7 +116,7 @@ class _LibraryPageState extends State<LibraryPage>
             controller: _tabController,
             children: [
               yourBooksView(context),
-              yourShelvesView(context),
+              yourShelvesView(context, shelfList),
             ],
           ),
         ),
@@ -120,10 +124,17 @@ class _LibraryPageState extends State<LibraryPage>
     );
   }
 
-  Stack yourShelvesView(BuildContext context) {
+  Stack yourShelvesView(BuildContext context, List<ShelfVO>? shelfList) {
     return Stack(
       children: [
-        const ShelvesView(),
+        ShelvesView(
+          shelfList: shelfList ?? [],
+          onTapShelf: (shelf) => Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (context) => ShelfDetails(shelf: shelf,),
+            ),
+          ),
+        ),
         Align(
           alignment: Alignment.bottomCenter,
           child: InkWell(
@@ -221,7 +232,9 @@ class _LibraryPageState extends State<LibraryPage>
                             top: 15.0, bottom: 15, left: 8),
                         child: InkWell(
                           onTap: () {
-                            for (int i = 0; i < chipIsSelected.length + 1; i++) {
+                            for (int i = 0;
+                                i < chipIsSelected.length + 1;
+                                i++) {
                               setState(() {
                                 chipIsSelected[i] = false;
                               });
@@ -382,27 +395,35 @@ class _LibraryPageState extends State<LibraryPage>
 }
 
 class ShelvesView extends StatelessWidget {
-  const ShelvesView({
-    Key? key,
-  }) : super(key: key);
+  const ShelvesView(
+      {Key? key, required this.shelfList, required this.onTapShelf})
+      : super(key: key);
+
+  final List<ShelfVO> shelfList;
+  final Function(ShelfVO) onTapShelf;
 
   @override
   Widget build(BuildContext context) {
-    return ListView(
-      physics: const BouncingScrollPhysics(),
-      children: [
-        InkWell(
-          onTap: () {
-            Navigator.of(context).push(
-              MaterialPageRoute(
-                builder: (context) => const ShelfDetails(),
+    return (shelfList.isNotEmpty)
+        ? ListView.builder(
+            itemCount: shelfList.length,
+            itemBuilder: (context, index) => InkWell(
+              onTap: () => onTapShelf(shelfList[index],),
+              child: ShelfView(
+                shelf: shelfList[index],
               ),
-            );
-          },
-          child: const ShelfView(),
-        ),
-      ],
-    );
+            ),
+          )
+        : SizedBox(
+            height: MediaQuery.of(context).size.height * 0.8,
+            // color: Colors.red,
+            child: const Center(
+                child: TextView(
+              text: "Empty",
+              fontSize: 20,
+              fontColor: LIGHT_THEME_SELECTED_CHIP_COLOR,
+            )),
+          );
   }
 }
 
@@ -494,9 +515,9 @@ class CreateNewButton extends StatelessWidget {
 }
 
 class ShelfView extends StatelessWidget {
-  const ShelfView({
-    Key? key,
-  }) : super(key: key);
+  const ShelfView({Key? key, required this.shelf}) : super(key: key);
+
+  final ShelfVO shelf;
 
   @override
   Widget build(BuildContext context) {
@@ -545,7 +566,7 @@ class ShelfView extends StatelessWidget {
               SizedBox(
                 width: 230,
                 child: Text(
-                  "Interactive Design Books To Read",
+                  shelf.shelfName ?? "",
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                   style: GoogleFonts.inter(
@@ -554,8 +575,7 @@ class ShelfView extends StatelessWidget {
                       color: Colors.black87),
                 ),
               ),
-              Text(
-                "10 books",
+              Text("${shelf.books?.length ?? 0} books",
                 style: GoogleFonts.inter(
                     fontSize: 14,
                     fontWeight: FontWeight.w600,
@@ -697,6 +717,7 @@ class BooksListView extends StatelessWidget {
                   onTapMenu: () => showBottomSheetForMenu(
                     context,
                     savedBookList?[index],
+                      (){}
                   ),
                 ),
               ],
@@ -758,7 +779,7 @@ class SmallGridView extends StatelessWidget {
           authorColor: Colors.black54,
           sampleFontSize: 13,
           onTapMenu: () =>
-              showBottomSheetForMenu(context, savedBookList?[index]),
+              showBottomSheetForMenu(context, savedBookList?[index], (){}),
           bookCover: savedBookList?[index].bookImage ?? "",
           bookName: savedBookList?[index].title ?? "",
           bookAuthorName: savedBookList?[index].author ?? "",
@@ -806,7 +827,7 @@ class LargeGridView extends StatelessWidget {
           bottomDownloadPadding: 49,
           rightDownloadPadding: 6,
           onTapMenu: () =>
-              showBottomSheetForMenu(context, savedBookList?[index]),
+              showBottomSheetForMenu(context, savedBookList?[index], (){}),
           bookCover: savedBookList?[index].bookImage ?? "",
           bookName: savedBookList?[index].title ?? "",
           bookAuthorName: savedBookList?[index].author ?? "",

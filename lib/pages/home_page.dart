@@ -299,7 +299,7 @@ class AudiobooksView extends StatelessWidget {
                 right: 7,
                 top: 5,
                 child: InkWell(
-                  onTap: () => showBottomSheetForMenu(context, null),
+                  onTap: () => showBottomSheetForMenu(context, null,(){}),
                   child: const IconView(
                       icon: Icons.more_horiz_outlined,
                       iconColor: GREY_COLOR,
@@ -391,7 +391,7 @@ class HorizontalEBooksListView extends StatelessWidget {
                       padding: padding,
                       bookAuthorName: bookList?.books?[index].author ?? "",
                       onTapMenu: () => showBottomSheetForMenu(
-                          context, bookList?.books?[index]),
+                          context, bookList?.books?[index], (){}),
                       bottomDownloadPadding: 48,
                       downloadIconSize: 17,
                       authorColor: Colors.black54,

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:google_play_book/data/data_vos/shelf_vo.dart';
 import 'package:google_play_book/pages/bottom_navigation_bar_home_page.dart';
 import 'package:google_play_book/pages/create_shelf_page.dart';
 import 'package:google_play_book/pages/library_page.dart';
@@ -14,7 +15,8 @@ import '../data/models/google_play_book_model_impl.dart';
 import '../widgets/modal_bottom_sheet_for_menu.dart';
 
 class ShelfDetails extends StatefulWidget {
-  const ShelfDetails({Key? key}) : super(key: key);
+  const ShelfDetails({Key? key, required this.shelf}) : super(key: key);
+  final ShelfVO shelf;
 
   @override
   State<ShelfDetails> createState() => _ShelfDetailsState();
@@ -154,7 +156,7 @@ class _ShelfDetailsState extends State<ShelfDetails> {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20.0),
               child: TextView(
-                text: "${savedBookList?.length} books",
+                text: "${widget.shelf.books?.length ?? 0} books",
                 fontColor: GREY_COLOR,
               ),
             ),

@@ -61,7 +61,7 @@ class _MoreEbooksPageState extends State<MoreEbooksPage> {
                   rightMenuPadding: 5,
                   bottomDownloadPadding: 57,
                   rightDownloadPadding: 5,
-                  onTapMenu: () => showBottomSheetForMenu(context,bookDetails),
+                  onTapMenu: () => showBottomSheetForMenu(context,bookDetails, (){}),
                   bookCover:
                       "https://i0.wp.com/www.artofvfx.com/wp-content/uploads/2022/01/VikingsValhalla_KeyArt2.jpg?ssl=1",
                   bookName: listsResults?[index].bookDetails?.first.title ?? "",
