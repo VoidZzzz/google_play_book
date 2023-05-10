@@ -45,7 +45,7 @@ class CreateShelfPage extends StatelessWidget {
                 autofocus: true,
                 onFieldSubmitted: (str) {
                   model.createShelf(
-                    ShelfVO(str, DateTime.now().microsecondsSinceEpoch, null,
+                    ShelfVO(str, DateTime.now().millisecond, [],
                         false),
                   );
                   Navigator.of(context).pop();

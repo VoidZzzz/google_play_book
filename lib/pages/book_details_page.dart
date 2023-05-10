@@ -14,6 +14,7 @@ import '../data/data_vos/lists_vo.dart';
 import '../widgets/rating_overview_with_progress_bar_indicator.dart';
 import '../widgets/rating_view_by_users.dart';
 import '../widgets/text_view.dart';
+import 'add_to_shelf_page.dart';
 import 'more_ebooks_pages.dart';
 
 class BookDetails extends StatefulWidget {
@@ -147,6 +148,11 @@ class _BookDetailsState extends State<BookDetails> {
                       listViewTitle: "More by Thomas Ipsum",
                       onTapMore: () => _navigateToMoreBooksPage(context),
                       bookList: widget.bookLists,
+                      onTapAddToShelf: (index) => Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) => AddToShelfPage(selectedBook: widget.bookLists!.books![index],),
+                        ),
+                      ),
                     ),
                     const SizedBox(
                       height: 15,
@@ -155,6 +161,11 @@ class _BookDetailsState extends State<BookDetails> {
                       listViewTitle: "Similar ebooks",
                       onTapMore: () => _navigateToMoreBooksPage(context),
                       bookList: widget.bookLists,
+                      onTapAddToShelf: (index) => Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) => AddToShelfPage(selectedBook: widget.bookLists!.books![index],),
+                        ),
+                      ),
                     ),
                     const SizedBox(
                       height: 15,

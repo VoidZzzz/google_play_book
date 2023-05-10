@@ -4,6 +4,7 @@ import 'package:google_play_book/data/models/google_play_book_model.dart';
 import 'package:google_play_book/data/models/google_play_book_model_impl.dart';
 import 'package:google_play_book/blocs/home_bloc.dart';
 import 'package:google_play_book/network/api_constants.dart';
+import 'package:google_play_book/pages/add_to_shelf_page.dart';
 import 'package:google_play_book/pages/book_details_page.dart';
 import 'package:google_play_book/pages/more_audiobooks_page.dart';
 import 'package:google_play_book/pages/more_ebooks_pages.dart';
@@ -142,6 +143,13 @@ class _HomepageState extends State<Homepage>
                 onTapMore: () => _navigateToMoreBooksPage(
                     context, bookList?[3].listName ?? ""),
                 bookList: bookList?[3],
+                onTapAddToShelf: (index) => Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => AddToShelfPage(
+                      selectedBook: bookList![3].books![index],
+                    ),
+                  ),
+                ),
               );
             }),
         const SizedBox(
@@ -157,6 +165,13 @@ class _HomepageState extends State<Homepage>
                 onTapMore: () => _navigateToMoreBooksPage(
                     context, bookList?[4].listName ?? ""),
                 bookList: bookList?[4],
+                onTapAddToShelf: (index) => Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => AddToShelfPage(
+                      selectedBook: bookList![4].books![index],
+                    ),
+                  ),
+                ),
               );
             }),
         const SizedBox(
@@ -172,6 +187,13 @@ class _HomepageState extends State<Homepage>
                 onTapMore: () => _navigateToMoreBooksPage(
                     context, bookList?[5].listName ?? ""),
                 bookList: bookList?[5],
+                onTapAddToShelf: (index) => Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => AddToShelfPage(
+                      selectedBook: bookList![5].books![index],
+                    ),
+                  ),
+                ),
               );
             }),
       ],
@@ -363,12 +385,14 @@ class HorizontalEBooksListView extends StatelessWidget {
       required this.listViewTitle,
       required this.onTapMore,
       this.padding = const EdgeInsets.only(left: 12),
-      required this.bookList})
+      required this.bookList,
+      required this.onTapAddToShelf})
       : super(key: key);
 
   final String listViewTitle;
   final EdgeInsets padding;
   final Function onTapMore;
+  final Function(int index) onTapAddToShelf;
   final ListsVO? bookList;
 
   @override
@@ -395,7 +419,9 @@ class HorizontalEBooksListView extends StatelessWidget {
                       padding: padding,
                       bookAuthorName: bookList?.books?[index].author ?? "",
                       onTapMenu: () => showBottomSheetForMenu(
-                          context, bookList?.books?[index], () {}),
+                          context,
+                          bookList?.books?[index],
+                          () => onTapAddToShelf(index)),
                       bottomDownloadPadding: 48,
                       downloadIconSize: 17,
                       authorColor: Colors.black54,

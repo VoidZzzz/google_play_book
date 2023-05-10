@@ -69,4 +69,21 @@ class GooglePlayBookModelImpl extends GooglePlayBookModel {
         .startWith(_bookDao.getAllSavedBooksStream())
         .map((event) => _bookDao.getAllSavedBooks());
   }
+
+  @override
+  void addBookToShelf(BooksVO book) {
+    _shelfDao.addBookToShelf(book);
+  }
+
+  @override
+  void deleteShelf(int shelfId) {
+    _shelfDao.deleteShelf(shelfId);
+  }
+
+  @override
+  Future<ShelfVO> renameShelf(int shelfId, String newName) {
+    return Future.value(_shelfDao.renameShelf(shelfId, newName));
+  }
+  
+  
 }

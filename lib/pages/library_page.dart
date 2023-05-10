@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_play_book/data/data_vos/shelf_vo.dart';
+import 'package:google_play_book/pages/add_to_shelf_page.dart';
 import 'package:google_play_book/pages/more_audiobooks_page.dart';
 import 'package:google_play_book/pages/search_page.dart';
 import 'package:google_play_book/pages/shelf_details.dart';
@@ -28,7 +29,7 @@ class LibraryPage extends StatefulWidget {
 class _LibraryPageState extends State<LibraryPage>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
-  int viewTypeValue = 1;
+  int viewTypeValue = 3;
   List<String> categoryChipLabels = [];
   List<bool> chipIsSelected = [];
   List<ShelfVO>? shelfList;
@@ -57,7 +58,9 @@ class _LibraryPageState extends State<LibraryPage>
 
     /// getAllShelves from DB
     model.getAllShelves().then((response) {
-      shelfList = response;
+      setState(() {
+        shelfList = response;
+      });
     });
 
     /// getAllBooks from DB
@@ -106,8 +109,40 @@ class _LibraryPageState extends State<LibraryPage>
           body: TabBarView(
             controller: _tabController,
             children: [
-              yourBooksView(context),
-              yourShelvesView(context, shelfList),
+              YourBooksView(
+                savedBookList: savedBookList,
+                categoryChipLabels: categoryChipLabels,
+                isShowClearButton: isShowClearButton,
+                chipIsSelected: chipIsSelected,
+                viewTypeValue: viewTypeValue,
+                onTapCategoryChip: (val, index) {
+                  setState(() {
+                    chipIsSelected[index - 1] = val;
+
+                    isShowClearButton = true;
+                  });
+                },
+                onTapClearButtonInChipView: () {
+                  setState(() {
+                    isShowClearButton = false;
+                  });
+                },
+                onTapViewTypeMenu: () => _showModalBottomSheet(
+                    context, "   View as", "List", "Large grid", "Small grid"),
+                onTapSortByMenu: () => _showModalBottomSheet(
+                    context, "   Sort by", "Recent", "Title", "Author"),
+                onTapAddToShelfInMenu: (index) => Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => AddToShelfPage(
+                      selectedBook: savedBookList![index],
+                    ),
+                  ),
+                ),
+              ),
+              YourShelvesView(
+                shelfList: shelfList,
+                onTapCreateNewShelf: () => _navigateToCreateNewShelf(context),
+              ),
             ],
           ),
         ),
@@ -115,161 +150,10 @@ class _LibraryPageState extends State<LibraryPage>
     );
   }
 
-  Stack yourShelvesView(BuildContext context, List<ShelfVO>? shelfList) {
-    return Stack(
-      children: [
-        ShelvesView(
-          shelfList: shelfList ?? [],
-          onTapShelf: (shelf) => Navigator.of(context).push(
-            MaterialPageRoute(
-              builder: (context) => ShelfDetails(
-                shelf: shelf,
-              ),
-            ),
-          ),
-        ),
-        Align(
-          alignment: Alignment.bottomCenter,
-          child: InkWell(
-            onTap: () => Navigator.of(context).push(
-              MaterialPageRoute(
-                builder: (context) => CreateShelfPage(),
-              ),
-            ),
-            child: const CreateNewButton(),
-          ),
-        ),
-      ],
-    );
-  }
-
-  SingleChildScrollView yourBooksView(BuildContext context) {
-    return SingleChildScrollView(
-      physics: const BouncingScrollPhysics(),
-      child: Column(
-        children: [
-          categoryChipsView(),
-          const SizedBox(
-            height: 10,
-          ),
-          sortingViews(context),
-          const SizedBox(
-            height: 15,
-          ),
-          (viewTypeValue == 1)
-              ? BooksListView(
-                  savedBookList: savedBookList,
-                )
-              : (viewTypeValue == 2)
-                  ? LargeGridView(savedBookList: savedBookList)
-                  : SmallGridView(
-                      savedBookList: savedBookList,
-                    ),
-        ],
-      ),
-    );
-  }
-
-  Padding sortingViews(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20.0),
-      child: Row(
-        children: [
-          InkWell(
-            onTap: () {
-              _showModalBottomSheet(
-                  context, "   Sort by", "Recent", "Title", "Author");
-            },
-            child: const SortButtonView(),
-          ),
-          const Spacer(),
-          InkWell(
-            onTap: () {
-              _showModalBottomSheet(
-                  context, "   View as", "List", "Large grid", "Small grid");
-            },
-            child: Icon(
-              (viewTypeValue == 1)
-                  ? Icons.view_list_outlined
-                  : Icons.view_module_outlined,
-              color: Colors.black54,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  SizedBox categoryChipsView() {
-    return SizedBox(
-      height: 60,
-      child: SingleChildScrollView(
-        scrollDirection: Axis.horizontal,
-        physics: const BouncingScrollPhysics(),
-        child: Row(
-          children: [
-            const SizedBox(
-              width: 12,
-            ),
-            ListView.builder(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                itemCount: categoryChipLabels.length + 1,
-                scrollDirection: Axis.horizontal,
-                itemBuilder: (context, index) {
-                  if (index == 0) {
-                    return Visibility(
-                      visible: isShowClearButton,
-                      child: Padding(
-                        padding: const EdgeInsets.only(
-                            top: 15.0, bottom: 15, left: 8),
-                        child: InkWell(
-                          onTap: () {
-                            setState(() {
-                              isShowClearButton = false;
-                            });
-                          },
-                          child: Container(
-                            width: 30,
-                            decoration: BoxDecoration(
-                                border: Border.all(color: Colors.black54),
-                                borderRadius: BorderRadius.circular(18),
-                                color: WHITE_COLOR),
-                            child: const Icon(
-                              Icons.clear,
-                              color: Colors.black,
-                              size: 20,
-                            ),
-                          ),
-                        ),
-                      ),
-                    );
-                  } else {
-                    return Padding(
-                      padding: const EdgeInsets.only(left: 8.0),
-                      child: FilterChip(
-                        backgroundColor: WHITE_COLOR,
-                        side: (chipIsSelected[index - 1])
-                            ? const BorderSide(color: WHITE_COLOR)
-                            : const BorderSide(color: GREY_COLOR),
-                        selectedColor: LIGHT_THEME_SELECTED_CHIP_COLOR,
-                        showCheckmark: false,
-                        label: Text(
-                          categoryChipLabels[index - 1],
-                        ),
-                        selected: chipIsSelected[index - 1],
-                        onSelected: (val) {
-                          setState(() {
-                            chipIsSelected[index - 1] = val;
-                            isShowClearButton = true;
-                          });
-                        },
-                      ),
-                    );
-                  }
-                }),
-          ],
-        ),
+  Future<dynamic> _navigateToCreateNewShelf(BuildContext context) {
+    return Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => CreateShelfPage(),
       ),
     );
   }
@@ -376,6 +260,232 @@ class _LibraryPageState extends State<LibraryPage>
           ),
         ),
       ),
+    );
+  }
+}
+
+class YourBooksView extends StatelessWidget {
+  const YourBooksView(
+      {Key? key,
+      required this.categoryChipLabels,
+      required this.isShowClearButton,
+      required this.chipIsSelected,
+      required this.viewTypeValue,
+      required this.savedBookList,
+      required this.onTapCategoryChip,
+      required this.onTapSortByMenu,
+      required this.onTapViewTypeMenu,
+      required this.onTapClearButtonInChipView,
+      required this.onTapAddToShelfInMenu})
+      : super(key: key);
+
+  final List<String> categoryChipLabels;
+  final bool isShowClearButton;
+  final List<bool> chipIsSelected;
+  final int viewTypeValue;
+  final List<BooksVO>? savedBookList;
+  final Function onTapClearButtonInChipView;
+  final Function(bool, int) onTapCategoryChip;
+  final Function onTapSortByMenu;
+  final Function onTapViewTypeMenu;
+  final Function(int) onTapAddToShelfInMenu;
+
+  @override
+  Widget build(BuildContext context) {
+    return SingleChildScrollView(
+      physics: const BouncingScrollPhysics(),
+      child: Column(
+        children: [
+          CategoryChipView(
+            categoryChipLabels: categoryChipLabels,
+            isShowClearButton: isShowClearButton,
+            chipIsSelected: chipIsSelected,
+            onTapClearButtonInChipView: () => onTapClearButtonInChipView(),
+            onTapCategoryChip: (val, index) {
+              onTapCategoryChip(val, index);
+            },
+          ),
+          const SizedBox(
+            height: 10,
+          ),
+          SortingViews(
+            viewTypeValue: viewTypeValue,
+            onTapSortByMenu: () => onTapSortByMenu(),
+            onTapViewTypeMenu: () => onTapViewTypeMenu(),
+          ),
+          const SizedBox(
+            height: 15,
+          ),
+          (viewTypeValue == 1)
+              ? BooksListView(
+                  savedBookList: savedBookList,
+                )
+              : (viewTypeValue == 2)
+                  ? LargeGridView(savedBookList: savedBookList)
+                  : SmallGridView(
+                      savedBookList: savedBookList,
+                      onTapAddToShelfInMenu: (index) =>
+                          onTapAddToShelfInMenu(index),
+                    ),
+        ],
+      ),
+    );
+  }
+}
+
+class SortingViews extends StatelessWidget {
+  const SortingViews(
+      {Key? key,
+      required this.viewTypeValue,
+      required this.onTapSortByMenu,
+      required this.onTapViewTypeMenu})
+      : super(key: key);
+
+  final int viewTypeValue;
+  final Function onTapSortByMenu;
+  final Function onTapViewTypeMenu;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20.0),
+      child: Row(
+        children: [
+          InkWell(
+            onTap: () => onTapSortByMenu(),
+            child: const SortButtonView(),
+          ),
+          const Spacer(),
+          InkWell(
+            onTap: () => onTapViewTypeMenu(),
+            child: Icon(
+              (viewTypeValue == 1)
+                  ? Icons.view_list_outlined
+                  : Icons.view_module_outlined,
+              color: Colors.black54,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class CategoryChipView extends StatelessWidget {
+  const CategoryChipView(
+      {Key? key,
+      required this.categoryChipLabels,
+      required this.isShowClearButton,
+      required this.chipIsSelected,
+      required this.onTapClearButtonInChipView,
+      required this.onTapCategoryChip})
+      : super(key: key);
+
+  final List<String> categoryChipLabels;
+  final bool isShowClearButton;
+  final List<bool> chipIsSelected;
+  final Function onTapClearButtonInChipView;
+  final Function(bool, int) onTapCategoryChip;
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      height: 60,
+      child: SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        physics: const BouncingScrollPhysics(),
+        child: Row(
+          children: [
+            const SizedBox(
+              width: 12,
+            ),
+            ListView.builder(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                itemCount: categoryChipLabels.length + 1,
+                scrollDirection: Axis.horizontal,
+                itemBuilder: (context, index) {
+                  if (index == 0) {
+                    return Visibility(
+                      visible: isShowClearButton,
+                      child: Padding(
+                        padding: const EdgeInsets.only(
+                            top: 15.0, bottom: 15, left: 8),
+                        child: InkWell(
+                          onTap: () => onTapClearButtonInChipView(),
+                          child: Container(
+                            width: 30,
+                            decoration: BoxDecoration(
+                                border: Border.all(color: Colors.black54),
+                                borderRadius: BorderRadius.circular(18),
+                                color: WHITE_COLOR),
+                            child: const Icon(
+                              Icons.clear,
+                              color: Colors.black,
+                              size: 20,
+                            ),
+                          ),
+                        ),
+                      ),
+                    );
+                  } else {
+                    return Padding(
+                      padding: const EdgeInsets.only(left: 8.0),
+                      child: FilterChip(
+                        backgroundColor: WHITE_COLOR,
+                        side: (chipIsSelected[index - 1])
+                            ? const BorderSide(color: WHITE_COLOR)
+                            : const BorderSide(color: GREY_COLOR),
+                        selectedColor: LIGHT_THEME_SELECTED_CHIP_COLOR,
+                        showCheckmark: false,
+                        label: Text(
+                          categoryChipLabels[index - 1],
+                        ),
+                        selected: chipIsSelected[index - 1],
+                        onSelected: (val) {
+                          onTapCategoryChip(val, index);
+                        },
+                      ),
+                    );
+                  }
+                }),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class YourShelvesView extends StatelessWidget {
+  const YourShelvesView(
+      {Key? key, required this.shelfList, required this.onTapCreateNewShelf})
+      : super(key: key);
+
+  final List<ShelfVO>? shelfList;
+  final Function onTapCreateNewShelf;
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      children: [
+        ShelvesView(
+          shelfList: shelfList ?? [],
+          onTapShelf: (shelf) => Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (context) => ShelfDetails(
+                shelf: shelf,
+              ),
+            ),
+          ),
+        ),
+        Align(
+          alignment: Alignment.bottomCenter,
+          child: InkWell(
+            onTap: () => onTapCreateNewShelf(),
+            child: const CreateNewButton(),
+          ),
+        ),
+      ],
     );
   }
 }
@@ -530,15 +640,15 @@ class ShelfView extends StatelessWidget {
               Container(
                 height: 80,
                 clipBehavior: Clip.antiAlias,
-                width: 50,
+                width: 55,
                 decoration: const BoxDecoration(
                   borderRadius: BorderRadius.only(
                     topLeft: Radius.circular(5),
                     topRight: Radius.circular(5),
                   ),
                 ),
-                child: Image.network(
-                  "https://www.pixelstalk.net/wp-content/uploads/2016/08/Breaking-Bad-HD-Wallpaper-for-Iphone.jpg",
+                child: (shelf.books?.isEmpty ?? true)? Container(color: Colors.black26,) : Image.network(
+                  shelf.books?.last.bookImage ?? "",
                   fit: BoxFit.cover,
                 ),
               ),
@@ -737,10 +847,14 @@ class CondustrialMenuView extends StatelessWidget {
 }
 
 class SmallGridView extends StatelessWidget {
-  const SmallGridView({Key? key, required this.savedBookList})
+  const SmallGridView(
+      {Key? key,
+      required this.savedBookList,
+      required this.onTapAddToShelfInMenu})
       : super(key: key);
 
   final List<BooksVO>? savedBookList;
+  final Function(int) onTapAddToShelfInMenu;
 
   @override
   Widget build(BuildContext context) {
@@ -764,8 +878,11 @@ class SmallGridView extends StatelessWidget {
           titleColor: Colors.black87,
           authorColor: Colors.black54,
           sampleFontSize: 13,
-          onTapMenu: () =>
-              showBottomSheetForMenu(context, savedBookList?[index], () {}),
+          onTapMenu: () => showBottomSheetForMenu(
+            context,
+            savedBookList?[index],
+            () => onTapAddToShelfInMenu(index),
+          ),
           bookCover: savedBookList?[index].bookImage ?? "",
           bookName: savedBookList?[index].title ?? "",
           bookAuthorName: savedBookList?[index].author ?? "",

@@ -49,14 +49,14 @@ class _ShelfDetailsState extends State<ShelfDetails> {
 
   GooglePlayBookModel model = GooglePlayBookModelImpl();
   List<BooksVO>? savedBookList;
+  List<BooksVO>? booksInShelves;
   bool isShowClearButton = false;
+  bool isEditMode = false;
 
   @override
   void initState() {
-    model.getSavedAllBooks().then((value) {
-      setState(() {
-        savedBookList = value;
-      });
+    setState(() {
+      booksInShelves = widget.shelf.books;
     });
     super.initState();
   }
@@ -89,8 +89,8 @@ class _ShelfDetailsState extends State<ShelfDetails> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const TextView(
-                          text: "Interactive Books to Read",
+                        TextView(
+                          text: widget.shelf.shelfName ?? "",
                           fontColor: APP_PRIMARY_COLOR,
                           fontSize: 18,
                         ),
@@ -100,23 +100,22 @@ class _ShelfDetailsState extends State<ShelfDetails> {
                         ),
                         const SizedBox(height: 10),
                         InkWell(
-                          onTap: () => Navigator.of(context).push(
-                            MaterialPageRoute(
-                              builder: (context) =>  CreateShelfPage(),
-                            ),
-                          ),
+                          onTap: () {
+                            setState(() {
+                              isEditMode = true;
+                            });
+                            Navigator.of(context).pop();
+                          },
                           child: const MenuOptionsView(
                               menuIcon: Icons.mode_edit_outline_outlined,
                               menuName: "Rename shelf"),
                         ),
                         const SizedBox(height: 20),
                         InkWell(
-                            onTap: () => Navigator.of(context).push(
-                                  MaterialPageRoute(
-                                    builder: (context) =>
-                                        const BottomNavigationBarHomePage(),
-                                  ),
-                                ),
+                            onTap: () {
+                              model.deleteShelf(widget.shelf.shelfId!);
+                              _navigateToHomePage(context);
+                            },
                             child: const MenuOptionsView(
                                 menuIcon: Icons.delete_outline_sharp,
                                 menuName: "Delete shelf"))
@@ -141,28 +140,42 @@ class _ShelfDetailsState extends State<ShelfDetails> {
             const SizedBox(
               height: 25,
             ),
-            const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 20.0),
-              child: TextView(
-                text: "Interactive Design Books to Read",
-                fontColor: APP_PRIMARY_COLOR,
-                fontSize: 18,
-                maxLines: 2,
-              ),
-            ),
-            const SizedBox(
-              height: 2,
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20.0),
-              child: TextView(
-                text: "${widget.shelf.books?.length ?? 0} books",
-                fontColor: GREY_COLOR,
-              ),
-            ),
-            const SizedBox(
-              height: 8,
-            ),
+            !isEditMode
+                ? Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                        child: TextView(
+                          text: widget.shelf.shelfName ?? "",
+                          fontColor: APP_PRIMARY_COLOR,
+                          fontSize: 18,
+                          maxLines: 2,
+                        ),
+                      ),
+                      const SizedBox(
+                        height: 2,
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                        child: TextView(
+                          text: "${widget.shelf.books?.length ?? 0} books",
+                          fontColor: GREY_COLOR,
+                        ),
+                      ),
+                      const SizedBox(
+                        height: 8,
+                      )
+                    ],
+                  )
+                : RenameView(
+                    onSubmit: (newShelf) {
+                      setState(() {
+                        model.renameShelf(widget.shelf.shelfId ?? 0, newShelf);
+                        isEditMode = false;
+                      });
+                    },
+                  ),
             const Divider(
               color: GREY_COLOR,
               thickness: 0.5,
@@ -283,17 +296,26 @@ class _ShelfDetailsState extends State<ShelfDetails> {
             ),
             (viewTypeValue == 1)
                 ? BooksListView(
-                    savedBookList: savedBookList,
+                    savedBookList: widget.shelf.books,
                   )
                 : (viewTypeValue == 2)
                     ? LargeGridView(
-                        savedBookList: savedBookList,
+                        savedBookList: widget.shelf.books,
                       )
                     : SmallGridView(
-                        savedBookList: savedBookList,
+                        savedBookList: widget.shelf.books,
+                        onTapAddToShelfInMenu: (index) {},
                       )
           ],
         ),
+      ),
+    );
+  }
+
+  Future<dynamic> _navigateToHomePage(BuildContext context) {
+    return Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => const BottomNavigationBarHomePage(),
       ),
     );
   }
@@ -396,6 +418,41 @@ class _ShelfDetailsState extends State<ShelfDetails> {
                   ],
                 ),
               ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class RenameView extends StatelessWidget {
+  const RenameView({Key? key, required this.onSubmit}) : super(key: key);
+
+  final Function(String newShelf) onSubmit;
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      height: 60,
+      // color: GREY_COLOR,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 20),
+        child: TextField(
+          cursorColor: LIGHT_THEME_SELECTED_CHIP_COLOR,
+          cursorHeight: 30,
+          cursorWidth: 1,
+          onSubmitted: (text) {
+            onSubmit(text);
+          },
+          decoration: const InputDecoration(
+            enabledBorder: UnderlineInputBorder(
+              borderSide:
+                  BorderSide(color: LIGHT_THEME_TERTIARY_COLOR, width: 2),
+            ),
+            focusedBorder: UnderlineInputBorder(
+              borderSide:
+                  BorderSide(color: LIGHT_THEME_SELECTED_CHIP_COLOR, width: 2),
             ),
           ),
         ),

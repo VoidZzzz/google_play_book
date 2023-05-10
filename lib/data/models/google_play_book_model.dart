@@ -11,5 +11,8 @@ Future<void> saveBook(BooksVO book);
 Future<List<BooksVO>> getSavedAllBooks();
 Stream<List<BooksVO>> getSaveBookListStream();
 Future<void> createShelf(ShelfVO shelf);
+void addBookToShelf(BooksVO book);
 Future<List<ShelfVO>> getAllShelves();
+void deleteShelf(int shelfId);
+Future<ShelfVO> renameShelf(int shelfId, String newName);
 }
