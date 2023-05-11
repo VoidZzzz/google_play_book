@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:google_play_book/widgets/text_view.dart';
 import '../resources/colors.dart';
+
 class DefaultAppBarView extends StatelessWidget {
-  const DefaultAppBarView({Key? key, required this.onTapSearch}) : super(key: key);
+  const DefaultAppBarView({Key? key, required this.onTapSearch})
+      : super(key: key);
 
   final Function onTapSearch;
 
@@ -14,7 +17,7 @@ class DefaultAppBarView extends StatelessWidget {
         padding: const EdgeInsets.only(left: 2.0, right: 2.0, top: 10),
         child: Container(
           decoration: BoxDecoration(
-            border: Border.all(color: Colors.grey, width: 0.5),
+              border: Border.all(color: Colors.grey, width: 0.5),
               borderRadius: BorderRadius.circular(8),
               color: WHITE_COLOR),
           child: Column(
@@ -24,27 +27,23 @@ class DefaultAppBarView extends StatelessWidget {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Icon(Icons.search, color: Colors.black87,),
+                    const Icon(
+                      Icons.search,
+                      color: Colors.black87,
+                    ),
                     const SizedBox(
                       width: 10,
                     ),
                     SizedBox(
                       width: MediaQuery.of(context).size.width * 0.68,
                       height: 44,
-                      child: TextFormField(
-                        cursorColor: Colors.blueGrey,
-                        decoration: InputDecoration(
-                          filled: true, fillColor: WHITE_COLOR,
-                          contentPadding: const EdgeInsets.symmetric(vertical: 10),
-                          hintText: "Search Play Books",
-                          hintStyle: GoogleFonts.inter(
-                              fontWeight: FontWeight.w500, color: Colors.black54),
-                          enabledBorder:
-                          const OutlineInputBorder(borderSide: BorderSide.none),
-                          focusedBorder:
-                          const OutlineInputBorder(borderSide: BorderSide.none),
-                        ),
-                      ),
+                      child: const Align(
+                          alignment: Alignment.centerLeft,
+                          child: TextView(
+                            text: "Search Play Books",
+                            fontColor: Colors.black54,
+                            fontSize: 16, fontWeight: FontWeight.w500,
+                          )),
                     ),
                     Container(
                       height: 30,

@@ -297,6 +297,7 @@ class _ShelfDetailsState extends State<ShelfDetails> {
             (viewTypeValue == 1)
                 ? BooksListView(
                     savedBookList: widget.shelf.books,
+              onTapAddToShelfInBookListView: (index){},
                   )
                 : (viewTypeValue == 2)
                     ? LargeGridView(

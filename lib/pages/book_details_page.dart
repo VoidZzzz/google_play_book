@@ -194,7 +194,7 @@ class _BookDetailsState extends State<BookDetails> {
                     ),
                     Selector<DetailBloc, bool>(
                         shouldRebuild: (previous, next) => previous != next,
-                        selector: ( context, bloc) =>
+                        selector: (context, bloc) =>
                             bloc.seeMoreIsTapped,
                         builder: (context, seeMoreIsTapped, Widget? child) {
                           return seeMoreIsTapped

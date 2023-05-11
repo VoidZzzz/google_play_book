@@ -5,7 +5,6 @@ import 'package:google_play_book/persistence/daos/shelf_dao.dart';
 import 'package:google_play_book/resources/colors.dart';
 import 'package:google_play_book/widgets/icon_view.dart';
 import 'package:google_play_book/widgets/text_view.dart';
-
 import '../data/data_vos/shelf_vo.dart';
 import '../data/models/google_play_book_model_impl.dart';
 
@@ -25,9 +24,8 @@ class _AddToShelfPageState extends State<AddToShelfPage> {
 
   @override
   void initState() {
-    print("==============> selected book => ${widget.selectedBook.title}");
 
-    model.getAllShelves().then((value) {
+    model.getAllShelvesStream().listen((value) {
       setState(() {
         allShelf = value;
       });
@@ -45,8 +43,6 @@ class _AddToShelfPageState extends State<AddToShelfPage> {
                     ?.where((element) => element.isSelected == true)
                     .toList() ??
                 [];
-            print('-------------------> length ${allShelf?.length}');
-            print('------------------------> ${widget.selectedBook.title}');
             model.addBookToShelf(widget.selectedBook);
             Navigator.of(context).pop();
           },
@@ -93,7 +89,7 @@ class _AddToShelfPageState extends State<AddToShelfPage> {
                   width: 20,
                 ),
                 SizedBox(
-                  width: 250,
+                  width: 260,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -104,6 +100,7 @@ class _AddToShelfPageState extends State<AddToShelfPage> {
                         fontSize: 18,
                         fontWeight: FontWeight.w600,
                       ),
+                      const SizedBox(height: 5,),
                       TextView(
                         text: "${allShelf?[index].books?.length ?? 0} books",
                         fontColor: Colors.black54,
@@ -123,11 +120,11 @@ class _AddToShelfPageState extends State<AddToShelfPage> {
                   child: allShelf?[index].isSelected ?? false
                       ? const IconView(
                           icon: Icons.check_box_outlined,
-                          iconColor: GREY_COLOR,
+                          iconColor: Colors.black87,
                           iconSize: 22)
                       : const IconView(
                           icon: Icons.check_box_outline_blank,
-                          iconColor: GREY_COLOR,
+                          iconColor: Colors.black87,
                           iconSize: 22),
                 ),
               ],
@@ -149,7 +146,7 @@ class AppBarView extends StatelessWidget {
     return Row(
       children: [
         SizedBox(
-          width: MediaQuery.of(context).size.width * 0.13,
+          width: MediaQuery.of(context).size.width * 0.12,
         ),
         const TextView(
           text: "Add to Shelves",
@@ -159,11 +156,10 @@ class AppBarView extends StatelessWidget {
         const Spacer(),
         InkWell(
           onTap: () => onTapDone(),
-          child: const IconView(
-              icon: Icons.clear, iconColor: Colors.black54, iconSize: 25),
+          child: const TextView(text: "Done", fontColor: LIGHT_THEME_SELECTED_CHIP_COLOR, fontSize: 16,),
         ),
         const SizedBox(
-          width: 15,
+          width: 10,
         ),
       ],
     );

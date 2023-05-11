@@ -15,6 +15,8 @@ import '../data/models/google_play_book_model.dart';
 import '../data/models/google_play_book_model_impl.dart';
 import '../widgets/menu_option_view.dart';
 import '../widgets/modal_bottom_sheet_for_menu.dart';
+import '../widgets/your_books_view.dart';
+import '../widgets/your_shelves_vew.dart';
 import 'book_details_page.dart';
 import 'book_view.dart';
 import 'create_shelf_page.dart';
@@ -29,7 +31,7 @@ class LibraryPage extends StatefulWidget {
 class _LibraryPageState extends State<LibraryPage>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
-  int viewTypeValue = 3;
+  int viewTypeValue = 1;
   List<String> categoryChipLabels = [];
   List<bool> chipIsSelected = [];
   List<ShelfVO>? shelfList;
@@ -57,16 +59,18 @@ class _LibraryPageState extends State<LibraryPage>
     _tabController = TabController(length: 2, vsync: this);
 
     /// getAllShelves from DB
-    model.getAllShelves().then((response) {
+    model.getAllShelvesStream().listen((event) {
+      event.sort((a, b) => (a.shelfName ?? "").compareTo(b.shelfName ?? ""));
       setState(() {
-        shelfList = response;
+        shelfList = event.toList();
       });
     });
 
     /// getAllBooks from DB
-    model.getSavedAllBooks().then((value) {
+    model.getSaveBookListStream().listen((value) {
+      value.sort((a, b) => (a.saveTime ?? 0).compareTo(b.saveTime ?? 0));
       setState(() {
-        savedBookList = value;
+        savedBookList = value.reversed.toList();
       });
       chipList();
     });
@@ -132,6 +136,13 @@ class _LibraryPageState extends State<LibraryPage>
                 onTapSortByMenu: () => _showModalBottomSheet(
                     context, "   Sort by", "Recent", "Title", "Author"),
                 onTapAddToShelfInMenu: (index) => Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => AddToShelfPage(
+                      selectedBook: savedBookList![index],
+                    ),
+                  ),
+                ),
+                onTapAddToShelfInBookListView: (index) => Navigator.of(context).push(
                   MaterialPageRoute(
                     builder: (context) => AddToShelfPage(
                       selectedBook: savedBookList![index],
@@ -264,75 +275,6 @@ class _LibraryPageState extends State<LibraryPage>
   }
 }
 
-class YourBooksView extends StatelessWidget {
-  const YourBooksView(
-      {Key? key,
-      required this.categoryChipLabels,
-      required this.isShowClearButton,
-      required this.chipIsSelected,
-      required this.viewTypeValue,
-      required this.savedBookList,
-      required this.onTapCategoryChip,
-      required this.onTapSortByMenu,
-      required this.onTapViewTypeMenu,
-      required this.onTapClearButtonInChipView,
-      required this.onTapAddToShelfInMenu})
-      : super(key: key);
-
-  final List<String> categoryChipLabels;
-  final bool isShowClearButton;
-  final List<bool> chipIsSelected;
-  final int viewTypeValue;
-  final List<BooksVO>? savedBookList;
-  final Function onTapClearButtonInChipView;
-  final Function(bool, int) onTapCategoryChip;
-  final Function onTapSortByMenu;
-  final Function onTapViewTypeMenu;
-  final Function(int) onTapAddToShelfInMenu;
-
-  @override
-  Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      physics: const BouncingScrollPhysics(),
-      child: Column(
-        children: [
-          CategoryChipView(
-            categoryChipLabels: categoryChipLabels,
-            isShowClearButton: isShowClearButton,
-            chipIsSelected: chipIsSelected,
-            onTapClearButtonInChipView: () => onTapClearButtonInChipView(),
-            onTapCategoryChip: (val, index) {
-              onTapCategoryChip(val, index);
-            },
-          ),
-          const SizedBox(
-            height: 10,
-          ),
-          SortingViews(
-            viewTypeValue: viewTypeValue,
-            onTapSortByMenu: () => onTapSortByMenu(),
-            onTapViewTypeMenu: () => onTapViewTypeMenu(),
-          ),
-          const SizedBox(
-            height: 15,
-          ),
-          (viewTypeValue == 1)
-              ? BooksListView(
-                  savedBookList: savedBookList,
-                )
-              : (viewTypeValue == 2)
-                  ? LargeGridView(savedBookList: savedBookList)
-                  : SmallGridView(
-                      savedBookList: savedBookList,
-                      onTapAddToShelfInMenu: (index) =>
-                          onTapAddToShelfInMenu(index),
-                    ),
-        ],
-      ),
-    );
-  }
-}
-
 class SortingViews extends StatelessWidget {
   const SortingViews(
       {Key? key,
@@ -452,40 +394,6 @@ class CategoryChipView extends StatelessWidget {
           ],
         ),
       ),
-    );
-  }
-}
-
-class YourShelvesView extends StatelessWidget {
-  const YourShelvesView(
-      {Key? key, required this.shelfList, required this.onTapCreateNewShelf})
-      : super(key: key);
-
-  final List<ShelfVO>? shelfList;
-  final Function onTapCreateNewShelf;
-
-  @override
-  Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        ShelvesView(
-          shelfList: shelfList ?? [],
-          onTapShelf: (shelf) => Navigator.of(context).push(
-            MaterialPageRoute(
-              builder: (context) => ShelfDetails(
-                shelf: shelf,
-              ),
-            ),
-          ),
-        ),
-        Align(
-          alignment: Alignment.bottomCenter,
-          child: InkWell(
-            onTap: () => onTapCreateNewShelf(),
-            child: const CreateNewButton(),
-          ),
-        ),
-      ],
     );
   }
 }
@@ -647,10 +555,14 @@ class ShelfView extends StatelessWidget {
                     topRight: Radius.circular(5),
                   ),
                 ),
-                child: (shelf.books?.isEmpty ?? true)? Container(color: Colors.black26,) : Image.network(
-                  shelf.books?.last.bookImage ?? "",
-                  fit: BoxFit.cover,
-                ),
+                child: (shelf.books?.isEmpty ?? true)
+                    ? Container(
+                        color: Colors.black26,
+                      )
+                    : Image.network(
+                        shelf.books?.last.bookImage ?? "",
+                        fit: BoxFit.cover,
+                      ),
               ),
             ],
           ),
@@ -724,10 +636,11 @@ class SortButtonView extends StatelessWidget {
 }
 
 class BooksListView extends StatelessWidget {
-  const BooksListView({Key? key, required this.savedBookList})
+  const BooksListView({Key? key, required this.savedBookList, required this.onTapAddToShelfInBookListView})
       : super(key: key);
 
   final List<BooksVO>? savedBookList;
+  final Function(int) onTapAddToShelfInBookListView;
 
   @override
   Widget build(BuildContext context) {
@@ -814,7 +727,9 @@ class BooksListView extends StatelessWidget {
                 ),
                 CondustrialMenuView(
                   onTapMenu: () => showBottomSheetForMenu(
-                      context, savedBookList?[index], () {}),
+                      context, savedBookList?[index], () {
+                        onTapAddToShelfInBookListView(index);
+                  }),
                 ),
               ],
             ),

@@ -21,6 +21,14 @@ class ShelfDao{
     return getShelfBox().values.toList();
   }
 
+  Stream<List<ShelfVO>> getAllShelvesStream() {
+    return Stream.value(getAllShelves());
+  }
+
+  Stream<void> getAllShelvesEventStream() {
+    return getShelfBox().watch();
+  }
+
   Box<ShelfVO> getShelfBox(){
     return Hive.box<ShelfVO>(BOX_NAME_SHELF_VO);
   }

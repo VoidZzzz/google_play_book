@@ -27,9 +27,10 @@ class GooglePlayBookModelImpl extends GooglePlayBookModel {
   @override
   Future<GetOverviewResponse> getOverview(String apiKey) {
     return _dataAgent.getOverview(apiKey).then((response) {
-      for(int i = 0; i< response.results!.lists!.length; i++){
-        for(int j = 0; j < response.results!.lists![i].books!.length; j++){
-          response.results?.lists?[i].books?[j].categoryName = response.results?.lists?[i].displayName;
+      for (int i = 0; i < response.results!.lists!.length; i++) {
+        for (int j = 0; j < response.results!.lists![i].books!.length; j++) {
+          response.results?.lists?[i].books?[j].categoryName =
+              response.results?.lists?[i].displayName;
         }
       }
       return response;
@@ -37,12 +38,13 @@ class GooglePlayBookModelImpl extends GooglePlayBookModel {
   }
 
   @override
-  Future<GetMoreListResponse> getMoreList(String apiKey, String list, String offset) {
-    return _dataAgent.getMoreList(apiKey,list, offset);
+  Future<GetMoreListResponse> getMoreList(
+      String apiKey, String list, String offset) {
+    return _dataAgent.getMoreList(apiKey, list, offset);
   }
 
   @override
-  Future<void> saveBook(BooksVO book) async{
+  Future<void> saveBook(BooksVO book) async {
     book.saveTime = DateTime.now().microsecondsSinceEpoch;
     _bookDao.saveBook(book);
   }
@@ -71,6 +73,14 @@ class GooglePlayBookModelImpl extends GooglePlayBookModel {
   }
 
   @override
+  Stream<List<ShelfVO>> getAllShelvesStream() {
+    return _shelfDao
+        .getAllShelvesEventStream()
+        .startWith(_shelfDao.getAllShelvesStream())
+        .map((event) => _shelfDao.getAllShelves());
+  }
+
+  @override
   void addBookToShelf(BooksVO book) {
     _shelfDao.addBookToShelf(book);
   }
@@ -84,6 +94,4 @@ class GooglePlayBookModelImpl extends GooglePlayBookModel {
   Future<ShelfVO> renameShelf(int shelfId, String newName) {
     return Future.value(_shelfDao.renameShelf(shelfId, newName));
   }
-  
-  
 }

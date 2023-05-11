@@ -13,6 +13,7 @@ Stream<List<BooksVO>> getSaveBookListStream();
 Future<void> createShelf(ShelfVO shelf);
 void addBookToShelf(BooksVO book);
 Future<List<ShelfVO>> getAllShelves();
+Stream<List<ShelfVO>> getAllShelvesStream();
 void deleteShelf(int shelfId);
 Future<ShelfVO> renameShelf(int shelfId, String newName);
 }

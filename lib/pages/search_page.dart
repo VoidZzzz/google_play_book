@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:google_play_book/blocs/search_bloc.dart';
 import 'package:google_play_book/data/models/google_search_model.dart';
 import 'package:google_play_book/data/models/google_search_model_impl.dart';
 import 'package:google_play_book/pages/book_details_page.dart';
 import 'package:google_play_book/pages/home_page.dart';
 import 'package:google_play_book/widgets/icon_view.dart';
 import 'package:google_play_book/widgets/text_view.dart';
+import 'package:provider/provider.dart';
 
 import '../data/data_vos/books_vo.dart';
 import '../data/data_vos/items_vo.dart';
@@ -23,173 +25,113 @@ class SearchPage extends StatefulWidget {
 
 class _SearchPageState extends State<SearchPage> {
   final _searchController = TextEditingController();
-  bool onChanged = false;
-  bool onSubmit = false;
 
-  GooglePlayBookModel model = GooglePlayBookModelImpl();
-  GoogleSearchModel gModel = GoogleSearchModelImpl();
-  List<BooksVO>? savedBookList;
-  List<BooksVO>? searchItems;
-
-  @override
-  void initState() {
-    /// persistence layer
-    model.getSavedAllBooks().then((value) {
-      setState(() {
-        savedBookList = value;
-      });
-    });
-    super.initState();
+  SearchBloc bloc = SearchBloc();
+  void _searchBook(BuildContext context, String text) {
+    bloc = Provider.of<SearchBloc>(context, listen: false);
+    bloc.onUserSubmit();
+    bloc.getGoogleSearch(text);
   }
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        body: SingleChildScrollView(
-          child: Column(
-            children: [
-              AppBarView(
-                onTapClear: () => _searchController.clear(),
-                controller: _searchController,
-                onTapBack: () => Navigator.of(context).pop(),
-                onChangedText: (str) {
-                  if (str.isNotEmpty) {
-                    setState(() {
-                      onChanged = true;
-                      onSubmit = false;
-                    });
-                  } else {
-                    setState(() {
-                      onChanged = false;
-                    });
-                  }
-                },
-                onSubmitText: (text) {
-                  /// GoogleSearch Api
-                  gModel.getGoogleSearch(text)?.then((searchResponse) {
-                    setState(() {
-                      searchItems = searchResponse;
-                    });
-                    print("Search fst ============> ${searchItems?.length}");
-                  });
-                  setState(() {
-                    onSubmit = true;
-                  });
-                },
-              ),
-              // Visibility(
-              //   visible: onSubmit,
-              //   child: SizedBox(
-              //     height: 295,
-              //     width: double.infinity,
-              //     child: Column(
-              //       children: [
-              //         const CategoryTitleView(
-              //           listViewTitle: "From your Library",
-              //         ),
-              //         SizedBox(
-              //             height: 245,
-              //             child: ListView.builder(
-              //               itemBuilder: (context, index) => BookView(
-              //                 onTapMenu: () {},
-              //                 bookCover: savedBookList?[index].bookImage ?? "",
-              //                 bookName: savedBookList?[index].title ?? "",
-              //                 bookAuthorName:
-              //                     savedBookList?[index].author ?? "",
-              //                 onTapBookView: () {
-              //                   Navigator.of(context).push(
-              //                     MaterialPageRoute(
-              //                       builder: (context) => BookDetails(
-              //                           bookDetails: savedBookList?[index],
-              //                           bookLists: null),
-              //                     ),
-              //                   );
-              //                 },
-              //               ),
-              //               itemCount: savedBookList?.length ?? 0,
-              //               scrollDirection: Axis.horizontal,
-              //               shrinkWrap: true,
-              //               padding: EdgeInsets.zero,
-              //               physics: const BouncingScrollPhysics(),
-              //             )),
-              //       ],
-              //     ),
-              //   ),
-              // ),
-              Visibility(
-                visible: onSubmit,
-                child: SizedBox(
-                  height: 772,
-                  child: ListView.builder(
-                    physics: const BouncingScrollPhysics(),
-                    itemCount: searchItems?.length,
-                    itemBuilder: (context, index) {
-                      return InkWell(
-                        onTap: () => Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (context) => BookDetails(
-                                bookDetails: searchItems?[index],
-                                bookLists: null),
-                          ),
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.only(top: 8.0, left: 20),
-                          child: SizedBox(
-                            height: 80,
-                            child: Row(
-                              children: [
-                                Container(
-                                  clipBehavior: Clip.antiAlias,
-                                  height: 75,
-                                  width: 50,
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(5),
-                                  ),
-                                  child: Image.network(
-                                    searchItems?[index].bookImage ?? "",
-                                    fit: BoxFit.cover,
-                                  ),
-                                ),
-                                const SizedBox(
-                                  width: 15,
-                                ),
-                                SizedBox(
-                                  width: 300,
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      TextView(
-                                        fontColor: Colors.black87,
-                                        fontSize: 15,
-                                        text: searchItems?[index].title ?? "",
-                                      ),
-                                      TextView(
-                                        text: searchItems?[index].author ?? "",
-                                        fontColor: Colors.black54,
-                                      ),
-                                      const TextView(
-                                        text: "Ebook",
-                                        fontColor: Colors.black54,
-                                      ),
-                                    ],
-                                  ),
-                                )
-                              ],
-                            ),
-                          ),
-                        ),
-                      );
+    return ChangeNotifierProvider(
+      create: (context) => bloc,
+      builder: (context, child){
+        return SafeArea(
+          child: Scaffold(
+            body: SingleChildScrollView(
+              child: Column(
+                children: [
+                  AppBarView(
+                    onTapClear: () => _searchController.clear(),
+                    controller: _searchController,
+                    onTapBack: () => Navigator.of(context).pop(),
+                    onSubmitText: (text) {
+                      _searchBook(context,text);
                     },
                   ),
-                ),
+                  Selector<SearchBloc, bool>(
+                    selector: (context, bloc) => bloc.onSubmit,
+                    builder: (context, onSubmit, child) => Visibility(
+                      visible: onSubmit,
+                      child: SizedBox(
+                        height: 772,
+                        child: Selector<SearchBloc, List<BooksVO>?>(
+                          selector: (context, bloc) => bloc.searchItems,
+                          builder: (context, searchItems, child) => ListView.builder(
+                            physics: const BouncingScrollPhysics(),
+                            itemCount: searchItems?.length,
+                            itemBuilder: (context, index) {
+                              return InkWell(
+                                onTap: () => Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                    builder: (context) => BookDetails(
+                                        bookDetails: searchItems?[index],
+                                        bookLists: null),
+                                  ),
+                                ),
+                                child: Padding(
+                                  padding: const EdgeInsets.only(top: 8.0, left: 20),
+                                  child: SizedBox(
+                                    height: 80,
+                                    child: Row(
+                                      children: [
+                                        Container(
+                                          clipBehavior: Clip.antiAlias,
+                                          height: 75,
+                                          width: 50,
+                                          decoration: BoxDecoration(
+                                            borderRadius: BorderRadius.circular(5),
+                                          ),
+                                          child: Image.network(
+                                            searchItems?[index].bookImage ?? "",
+                                            fit: BoxFit.cover,
+                                          ),
+                                        ),
+                                        const SizedBox(
+                                          width: 15,
+                                        ),
+                                        SizedBox(
+                                          width: 300,
+                                          child: Column(
+                                            crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                            mainAxisAlignment: MainAxisAlignment.center,
+                                            children: [
+                                              TextView(
+                                                fontColor: Colors.black87,
+                                                fontSize: 15,
+                                                text: searchItems?[index].title ?? "",
+                                              ),
+                                              TextView(
+                                                text: searchItems?[index].author ?? "",
+                                                fontColor: Colors.black54,
+                                              ),
+                                              const TextView(
+                                                text: "Ebook",
+                                                fontColor: Colors.black54,
+                                              ),
+                                            ],
+                                          ),
+                                        )
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              );
+                            },
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
               ),
-            ],
+            ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 }
@@ -199,7 +141,6 @@ class AppBarView extends StatefulWidget {
       {Key? key,
       required this.controller,
       required this.onTapBack,
-      required this.onChangedText,
       required this.onSubmitText,
       required this.onTapClear})
       : super(key: key);
@@ -207,7 +148,6 @@ class AppBarView extends StatefulWidget {
   final TextEditingController controller;
   final Function onTapBack;
   final Function onTapClear;
-  final Function(String) onChangedText;
   final Function(String) onSubmitText;
 
   @override
@@ -228,23 +168,21 @@ class _AppBarViewState extends State<AppBarView> {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           const SizedBox(
-            width: 10,
+            width: 5,
           ),
           InkWell(
             onTap: () => widget.onTapBack(),
             child: const IconView(
                 icon: Icons.keyboard_arrow_left,
                 iconColor: Colors.black54,
-                iconSize: 30),
+                iconSize: 33),
           ),
           SizedBox(
             width: 300,
             child: TextFormField(
+              cursorHeight: 23, cursorWidth: 1.5,
               controller: widget.controller,
               cursorColor: LIGHT_THEME_SELECTED_CHIP_COLOR,
-              onChanged: (str) {
-                widget.onChangedText(str);
-              },
               onFieldSubmitted: (text) {
                 widget.onSubmitText(text);
               },
