@@ -33,7 +33,6 @@ class BookDetails extends StatefulWidget {
 }
 
 class _BookDetailsState extends State<BookDetails> {
-
   final DetailBloc _detailBloc = DetailBloc();
 
   @override
@@ -50,7 +49,10 @@ class _BookDetailsState extends State<BookDetails> {
       child: Scaffold(
         appBar: AppBar(
           automaticallyImplyLeading: false,
-          title: const AppBarView(),
+          title: AppBarView(
+            onTapBack: () => Navigator.of(context).pop(),
+            iconKey: const ValueKey("HomeBackButton"),
+          ),
         ),
         body: NestedScrollView(
           headerSliverBuilder: (context, isScroll) => [
@@ -67,6 +69,8 @@ class _BookDetailsState extends State<BookDetails> {
                       isAudiobook: widget.isAudiobook,
                       imageUrl: widget.bookDetails?.bookImage ?? "",
                       bookName: widget.bookDetails?.title ?? "",
+                      bookNameKey: "BookNameOne",
+                      authorNameKey: "AuthorNameOne",
                     ),
                     BookRatingAndTypeView(
                       isAudiobook: widget.isAudiobook,
@@ -150,7 +154,9 @@ class _BookDetailsState extends State<BookDetails> {
                       bookList: widget.bookLists,
                       onTapAddToShelf: (index) => Navigator.of(context).push(
                         MaterialPageRoute(
-                          builder: (context) => AddToShelfPage(selectedBook: widget.bookLists!.books![index],),
+                          builder: (context) => AddToShelfPage(
+                            selectedBook: widget.bookLists!.books![index],
+                          ),
                         ),
                       ),
                     ),
@@ -163,7 +169,9 @@ class _BookDetailsState extends State<BookDetails> {
                       bookList: widget.bookLists,
                       onTapAddToShelf: (index) => Navigator.of(context).push(
                         MaterialPageRoute(
-                          builder: (context) => AddToShelfPage(selectedBook: widget.bookLists!.books![index],),
+                          builder: (context) => AddToShelfPage(
+                            selectedBook: widget.bookLists!.books![index],
+                          ),
                         ),
                       ),
                     ),
@@ -194,8 +202,7 @@ class _BookDetailsState extends State<BookDetails> {
                     ),
                     Selector<DetailBloc, bool>(
                         shouldRebuild: (previous, next) => previous != next,
-                        selector: (context, bloc) =>
-                            bloc.seeMoreIsTapped,
+                        selector: (context, bloc) => bloc.seeMoreIsTapped,
                         builder: (context, seeMoreIsTapped, Widget? child) {
                           return seeMoreIsTapped
                               ? Padding(
@@ -793,12 +800,16 @@ class BookCoverAndDescriptionView extends StatelessWidget {
       required this.isAudiobook,
       required this.bookName,
       required this.author,
+      required this.authorNameKey,
+      required this.bookNameKey,
       required this.imageUrl})
       : super(key: key);
   final bool isAudiobook;
   final String imageUrl;
   final String bookName;
   final String author;
+  final String authorNameKey;
+  final String bookNameKey;
 
   @override
   Widget build(BuildContext context) {
@@ -817,6 +828,8 @@ class BookCoverAndDescriptionView extends StatelessWidget {
             author: author,
             isAudiobook: isAudiobook,
             bookName: bookName,
+            bookNameKey: bookNameKey,
+            authorNameKey: authorNameKey,
           )
         ],
       ),
@@ -854,12 +867,16 @@ class BookDescriptionTextsView extends StatelessWidget {
       {Key? key,
       required this.bookName,
       required this.isAudiobook,
-      required this.author})
+      required this.author,
+      required this.bookNameKey,
+      required this.authorNameKey})
       : super(key: key);
 
   final bool isAudiobook;
   final String bookName;
   final String author;
+  final String bookNameKey;
+  final String authorNameKey;
 
   @override
   Widget build(BuildContext context) {
@@ -872,6 +889,7 @@ class BookDescriptionTextsView extends StatelessWidget {
         children: [
           Text(
             bookName,
+            key: ValueKey(bookNameKey),
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
             style: GoogleFonts.inter(
@@ -894,6 +912,7 @@ class BookDescriptionTextsView extends StatelessWidget {
           ),
           Text(
             author,
+            key: ValueKey(authorNameKey),
             style: GoogleFonts.inter(
                 fontWeight: FontWeight.w600,
                 fontSize: 16,
@@ -926,31 +945,37 @@ class BookDescriptionTextsView extends StatelessWidget {
 }
 
 class AppBarView extends StatelessWidget {
-  const AppBarView({
-    Key? key,
-  }) : super(key: key);
+  const AppBarView({Key? key, required this.onTapBack, required this.iconKey}) : super(key: key);
+
+  final Function onTapBack;
+  final Key iconKey;
 
   @override
   Widget build(BuildContext context) {
     return Row(
-      children: const [
-        IconView(
-            icon: Icons.keyboard_arrow_left,
-            iconColor: Colors.black54,
-            iconSize: 30),
-        Spacer(),
-        IconView(icon: Icons.search, iconColor: Colors.black54, iconSize: 25),
-        SizedBox(
+      children: [
+        InkWell(
+          onTap: () => onTapBack(),
+          child: IconView(
+            iconKey: iconKey,
+              icon: Icons.keyboard_arrow_left,
+              iconColor: Colors.black54,
+              iconSize: 30),
+        ),
+        const Spacer(),
+        const IconView(
+            icon: Icons.search, iconColor: Colors.black54, iconSize: 25),
+        const SizedBox(
           width: 15,
         ),
-        IconView(
+        const IconView(
             icon: Icons.bookmark_add_outlined,
             iconColor: Colors.black54,
             iconSize: 22),
-        SizedBox(
+        const SizedBox(
           width: 15,
         ),
-        IconView(
+        const IconView(
             icon: Icons.more_horiz_outlined,
             iconColor: Colors.black54,
             iconSize: 25),

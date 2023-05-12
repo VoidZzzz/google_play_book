@@ -518,6 +518,7 @@ class CarouselView extends StatelessWidget {
         height: 300,
         width: double.infinity,
         child: CarouselSlider.builder(
+          key: const ValueKey("Carousel Book"),
           itemCount: bookList.length,
           itemBuilder: (context, index, i) {
             return Container(
