@@ -20,7 +20,7 @@ class ShelfVOAdapter extends TypeAdapter<ShelfVO> {
       fields[0] as String?,
       fields[1] as int?,
       (fields[2] as List?)?.cast<BooksVO>(),
-      fields[3] as bool?,
+      fields[3] as bool,
     );
   }
 
@@ -59,7 +59,7 @@ ShelfVO _$ShelfVOFromJson(Map<String, dynamic> json) => ShelfVO(
       (json['books'] as List<dynamic>?)
           ?.map((e) => BooksVO.fromJson(e as Map<String, dynamic>))
           .toList(),
-      json['isSelected'] as bool?,
+      json['isSelected'] as bool,
     );
 
 Map<String, dynamic> _$ShelfVOToJson(ShelfVO instance) => <String, dynamic>{

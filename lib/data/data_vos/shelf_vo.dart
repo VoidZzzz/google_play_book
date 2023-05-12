@@ -19,7 +19,7 @@ class ShelfVO {
   List<BooksVO>? books;
 
   @HiveField(3)
-  bool? isSelected;
+  bool isSelected = false;
 
   ShelfVO(this.shelfName, this.shelfId, this.books, this.isSelected);
 }

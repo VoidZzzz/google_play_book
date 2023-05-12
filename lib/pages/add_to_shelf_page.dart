@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:google_play_book/blocs/add_to_shelf_bloc.dart';
 import 'package:google_play_book/data/data_vos/books_vo.dart';
 import 'package:google_play_book/data/models/google_play_book_model.dart';
 import 'package:google_play_book/persistence/daos/shelf_dao.dart';
 import 'package:google_play_book/resources/colors.dart';
 import 'package:google_play_book/widgets/icon_view.dart';
 import 'package:google_play_book/widgets/text_view.dart';
+import 'package:provider/provider.dart';
 import '../data/data_vos/shelf_vo.dart';
 import '../data/models/google_play_book_model_impl.dart';
 
@@ -19,115 +21,113 @@ class AddToShelfPage extends StatefulWidget {
 }
 
 class _AddToShelfPageState extends State<AddToShelfPage> {
-  GooglePlayBookModel model = GooglePlayBookModelImpl();
-  List<ShelfVO>? allShelf;
-
-  @override
-  void initState() {
-
-    model.getAllShelvesStream().listen((value) {
-      setState(() {
-        allShelf = value;
-      });
-    });
-    super.initState();
-  }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: AppBarView(
-          onTapDone: () {
-            allShelf = allShelf
+    return ChangeNotifierProvider(
+      create: (context) => AddToShelfBloc(),
+      child: Scaffold(
+        appBar: AppBar(
+          title: Selector<AddToShelfBloc, List<ShelfVO>?>(
+            selector: (context, bloc) => bloc.allShelf,
+            builder: (context, allShelf, child) => AppBarView(
+              onTapDone: () {
+                allShelf = allShelf
                     ?.where((element) => element.isSelected == true)
                     .toList() ??
-                [];
-            model.addBookToShelf(widget.selectedBook);
-            Navigator.of(context).pop();
-          },
-        ),
-      ),
-      body: ListView.builder(
-        physics: const BouncingScrollPhysics(),
-        itemCount: allShelf?.length ?? 0,
-        itemBuilder: (context, index) => Padding(
-          padding: const EdgeInsets.symmetric(vertical: 8.0),
-          child: Container(
-            height: 90,
-            decoration: const BoxDecoration(
-              border: Border(
-                bottom: BorderSide(color: GREY_COLOR, width: 0.5),
-              ),
+                    [];
+                AddToShelfBloc bloc = AddToShelfBloc();
+                bloc = Provider.of<AddToShelfBloc>(context, listen: false);
+                bloc.addBookToSelectedShelves(widget.selectedBook);
+                Navigator.of(context).pop();
+              },
             ),
-            child: Row(
-              children: [
-                const SizedBox(
-                  width: 20,
+          ),
+        ),
+        body: Selector<AddToShelfBloc, List<ShelfVO>?>(
+          selector: (context, bloc) => bloc.allShelf,
+          builder: (context, allShelf, child) => ListView.builder(
+            physics: const BouncingScrollPhysics(),
+            itemCount: allShelf?.length ?? 0,
+            itemBuilder: (context, index) => Padding(
+              padding: const EdgeInsets.symmetric(vertical: 8.0),
+              child: Container(
+                height: 90,
+                decoration: const BoxDecoration(
+                  border: Border(
+                    bottom: BorderSide(color: GREY_COLOR, width: 0.5),
+                  ),
                 ),
-                Align(
-                  alignment: Alignment.bottomLeft,
-                  child: Container(
-                    height: 75,
-                    width: 50,
-                    clipBehavior: Clip.antiAlias,
-                    decoration: const BoxDecoration(
-                      borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(5),
-                        topRight: Radius.circular(5),
+                child: Row(
+                  children: [
+                    const SizedBox(
+                      width: 20,
+                    ),
+                    Align(
+                      alignment: Alignment.bottomLeft,
+                      child: Container(
+                        height: 75,
+                        width: 50,
+                        clipBehavior: Clip.antiAlias,
+                        decoration: const BoxDecoration(
+                          borderRadius: BorderRadius.only(
+                            topLeft: Radius.circular(5),
+                            topRight: Radius.circular(5),
+                          ),
+                        ),
+                        child: (allShelf?[index].books?.isEmpty ?? true)
+                            ? Container(
+                          color: GREY_COLOR,
+                        )
+                            : Image.network(
+                          allShelf?[index].books?.last.bookImage ?? "", fit: BoxFit.cover,),
                       ),
                     ),
-                    child: (allShelf?[index].books?.isEmpty ?? true)
-                        ? Container(
-                            color: GREY_COLOR,
-                          )
-                        : Image.network(
-                            allShelf?[index].books?.last.bookImage ?? "", fit: BoxFit.cover,),
-                  ),
-                ),
-                const SizedBox(
-                  width: 20,
-                ),
-                SizedBox(
-                  width: 260,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      TextView(
-                        text: allShelf?[index].shelfName ?? "",
-                        fontColor: Colors.black87,
-                        fontSize: 18,
-                        fontWeight: FontWeight.w600,
+                    const SizedBox(
+                      width: 20,
+                    ),
+                    SizedBox(
+                      width: 260,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          TextView(
+                            text: allShelf?[index].shelfName ?? "",
+                            fontColor: Colors.black87,
+                            fontSize: 18,
+                            fontWeight: FontWeight.w600,
+                          ),
+                          const SizedBox(height: 5,),
+                          TextView(
+                            text: "${allShelf?[index].books?.length ?? 0} books",
+                            fontColor: Colors.black54,
+                            fontSize: 15,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ],
                       ),
-                      const SizedBox(height: 5,),
-                      TextView(
-                        text: "${allShelf?[index].books?.length ?? 0} books",
-                        fontColor: Colors.black54,
-                        fontSize: 15,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ],
-                  ),
-                ),
-                InkWell(
-                  onTap: () {
-                    setState(() {
-                      allShelf?[index].isSelected =
+                    ),
+                    InkWell(
+                      onTap: () {
+                        setState(() {
+                          allShelf?[index].isSelected =
                           !(allShelf?[index].isSelected ?? false);
-                    });
-                  },
-                  child: allShelf?[index].isSelected ?? false
-                      ? const IconView(
+                        });
+                      },
+                      child: allShelf?[index].isSelected ?? false
+                          ? const IconView(
                           icon: Icons.check_box_outlined,
                           iconColor: Colors.black87,
                           iconSize: 22)
-                      : const IconView(
+                          : const IconView(
                           icon: Icons.check_box_outline_blank,
                           iconColor: Colors.black87,
                           iconSize: 22),
+                    ),
+                  ],
                 ),
-              ],
+              ),
             ),
           ),
         ),

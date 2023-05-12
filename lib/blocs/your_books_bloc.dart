@@ -18,22 +18,22 @@ class YourBooksBloc extends ChangeNotifier{
 
   YourBooksBloc(){
     /// getAllShelves from DB
-    model.getAllShelves().then((response) {
-      shelfList = response;
+    model.getAllShelvesStream().listen((event) {
+      event.sort((a, b) => (a.shelfName ?? "").compareTo(b.shelfName ?? ""));
+      shelfList = event.toList();
       notifyListeners();
     });
 
     /// getAllBooks from DB
-    model.getSavedAllBooks().then((value) {
-      savedBookList = value;
-      print('----------------------> save books list  ${savedBookList?.length}');
+    model.getSaveBookListStream().listen((value) {
+      value.sort((a, b) => (a.saveTime ?? 0).compareTo(b.saveTime ?? 0));
+      savedBookList = value.reversed.toList();
       chipList();
       notifyListeners();
     });
   }
 
   void chipList() {
-    print('----------------------> chip list');
     if (savedBookList != null) {
       for (int i = 0; i < savedBookList!.length; i++) {
         if (!(categoryChipLabels.contains(savedBookList?[i].categoryName)) &&
@@ -52,7 +52,7 @@ class YourBooksBloc extends ChangeNotifier{
   }
 
   void setSelectedChipIndex({required int index,required bool isSelected}){
-    chipIsSelected[index] = isSelected;
+    chipIsSelected[index - 1] = isSelected;
     notifyListeners();
   }
 
