@@ -12,7 +12,11 @@ import 'package:google_play_book/widgets/text_view.dart';
 import '../data/data_vos/books_vo.dart';
 import '../data/models/google_play_book_model.dart';
 import '../data/models/google_play_book_model_impl.dart';
+import '../widgets/books_list_view.dart';
+import '../widgets/large_grid_view.dart';
 import '../widgets/modal_bottom_sheet_for_menu.dart';
+import '../widgets/small_grid_view.dart';
+import '../widgets/sort_button_view.dart';
 
 class ShelfDetails extends StatefulWidget {
   const ShelfDetails({Key? key, required this.shelf}) : super(key: key);

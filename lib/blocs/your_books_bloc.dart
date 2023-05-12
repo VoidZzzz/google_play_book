@@ -15,13 +15,15 @@ class YourBooksBloc extends ChangeNotifier{
   GooglePlayBookModel model = GooglePlayBookModelImpl();
   List<BooksVO>? savedBookList;
   bool isShowClearButton = false;
+  bool isDisposed = false;
+  int count = 0;
 
   YourBooksBloc(){
     /// getAllShelves from DB
     model.getAllShelvesStream().listen((event) {
       event.sort((a, b) => (a.shelfName ?? "").compareTo(b.shelfName ?? ""));
       shelfList = event.toList();
-      notifyListeners();
+      checkNotifyListener();
     });
 
     /// getAllBooks from DB
@@ -29,7 +31,7 @@ class YourBooksBloc extends ChangeNotifier{
       value.sort((a, b) => (a.saveTime ?? 0).compareTo(b.saveTime ?? 0));
       savedBookList = value.reversed.toList();
       chipList();
-      notifyListeners();
+      checkNotifyListener();
     });
   }
 
@@ -40,7 +42,7 @@ class YourBooksBloc extends ChangeNotifier{
             savedBookList?[i].categoryName != null) {
           categoryChipLabels.add(savedBookList?[i].categoryName ?? "");
           chipIsSelected.add(false);
-          notifyListeners();
+          checkNotifyListener();
         }
       }
     }
@@ -48,16 +50,29 @@ class YourBooksBloc extends ChangeNotifier{
 
   void setViewTypeValue({required int val}){
     viewTypeValue = val;
-    notifyListeners();
+    checkNotifyListener();
   }
 
   void setSelectedChipIndex({required int index,required bool isSelected}){
     chipIsSelected[index - 1] = isSelected;
-    notifyListeners();
+    checkNotifyListener();
   }
 
   void showClearBtn({required bool value}){
     isShowClearButton = value;
-    notifyListeners();
+    checkNotifyListener();
+  }
+
+
+
+  void checkNotifyListener() {
+    if (!isDisposed) {
+      notifyListeners();
+    }
+  }
+  void clearDisposeNotify() {
+    if (!isDisposed) {
+      isDisposed = true;
+    }
   }
 }

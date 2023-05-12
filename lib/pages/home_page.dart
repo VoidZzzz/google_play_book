@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:google_play_book/data/models/google_play_book_model.dart';
-import 'package:google_play_book/data/models/google_play_book_model_impl.dart';
 import 'package:google_play_book/blocs/home_bloc.dart';
-import 'package:google_play_book/network/api_constants.dart';
 import 'package:google_play_book/pages/add_to_shelf_page.dart';
 import 'package:google_play_book/pages/book_details_page.dart';
 import 'package:google_play_book/pages/more_audiobooks_page.dart';
@@ -40,7 +37,11 @@ class _HomepageState extends State<Homepage>
     _controller = TabController(length: 2, vsync: this);
     super.initState();
   }
-
+  @override
+  void dispose() {
+    homeBloc.clearDisposeNotify();
+    super.dispose();
+  }
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
