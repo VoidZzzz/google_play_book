@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:google_play_book/widgets/small_grid_view.dart';
 import 'package:google_play_book/widgets/sorting_views.dart';
 import '../data/data_vos/books_vo.dart';
-import '../pages/library_page.dart';
 import 'books_list_view.dart';
 import 'category_chip_view.dart';
 import 'large_grid_view.dart';

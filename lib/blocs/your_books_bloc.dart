@@ -5,8 +5,7 @@ import '../data/data_vos/shelf_vo.dart';
 import '../data/models/google_play_book_model.dart';
 import '../data/models/google_play_book_model_impl.dart';
 
-class YourBooksBloc extends ChangeNotifier{
-
+class YourBooksBloc extends ChangeNotifier {
   int viewTypeValue = 1;
   List<String> categoryChipLabels = [];
   List<bool> chipIsSelected = [];
@@ -18,15 +17,26 @@ class YourBooksBloc extends ChangeNotifier{
   bool isDisposed = false;
   int count = 0;
 
-  YourBooksBloc(){
+  List<BooksVO>? temp;
+  List<BooksVO> tempCombined = [];
+
+  YourBooksBloc() {
     /// getAllShelves from DB
+    getAllShelvesStream();
+
+    /// getAllBooks from DB
+    getSavedBookList();
+  }
+
+  Future<void> getAllShelvesStream() async{
     model.getAllShelvesStream().listen((event) {
       event.sort((a, b) => (a.shelfName ?? "").compareTo(b.shelfName ?? ""));
       shelfList = event.toList();
       checkNotifyListener();
     });
+  }
 
-    /// getAllBooks from DB
+  Future<void> getSavedBookList() async {
     model.getSaveBookListStream().listen((value) {
       value.sort((a, b) => (a.saveTime ?? 0).compareTo(b.saveTime ?? 0));
       savedBookList = value.reversed.toList();
@@ -48,28 +58,62 @@ class YourBooksBloc extends ChangeNotifier{
     }
   }
 
-  void setViewTypeValue({required int val}){
+  void setViewTypeValue({required int val}) {
     viewTypeValue = val;
     checkNotifyListener();
   }
 
-  void setSelectedChipIndex({required int index,required bool isSelected}){
-    chipIsSelected[index - 1] = isSelected;
+  void sortBookByType({required int val}) {
+    setViewTypeValue(val: val);
+    if (val == 1) {
+      savedBookList?.sort((a, b) => (a.saveTime ?? 0).compareTo(b.saveTime ?? 0));
+      checkNotifyListener();
+    } else if (val == 2) {
+      savedBookList?.sort((a, b) => (a.title ?? "").compareTo(b.title ?? ""));
+      checkNotifyListener();
+    } else if (val == 3) {
+      savedBookList?.sort((a, b) => (a.author ?? "").compareTo(b.author ?? ""));
+      checkNotifyListener();
+    }
+  }
+
+  void setSelectedChipIndex(
+      {required int index, required bool isSelected}) async {
+    chipIsSelected[index] = isSelected;
+    await getBookByCategory(categoryChipLabels[index]);
     checkNotifyListener();
   }
 
-  void showClearBtn({required bool value}){
+  void showClearBtn({required bool value}) {
     isShowClearButton = value;
     checkNotifyListener();
   }
 
+  void setToDefault() async {
+    showClearBtn(value: false);
+    chipIsSelected = chipIsSelected.map((e) => false).toList();
+    tempCombined.clear();
+    temp?.clear();
+    await getSavedBookList();
+    checkNotifyListener();
+  }
 
+  Future<void> getBookByCategory(String name) async {
+    model.getSavedAllBooks().then((value) {
+      temp = value.where((e) => e.categoryName == name).toList();
+      tempCombined += temp ?? [];
+      temp?.clear();
+      savedBookList = tempCombined.toSet().toList();
+      notifyListeners();
+    });
+  }
 
   void checkNotifyListener() {
     if (!isDisposed) {
       notifyListeners();
     }
   }
+
   void clearDisposeNotify() {
     if (!isDisposed) {
       isDisposed = true;

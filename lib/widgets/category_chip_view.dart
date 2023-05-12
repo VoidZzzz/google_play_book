@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
 
 import '../resources/colors.dart';
+
 class CategoryChipView extends StatelessWidget {
   const CategoryChipView(
       {Key? key,
-        required this.categoryChipLabels,
-        required this.isShowClearButton,
-        required this.chipIsSelected,
-        required this.onTapClearButtonInChipView,
-        required this.onTapCategoryChip})
+      required this.categoryChipLabels,
+      required this.isShowClearButton,
+      required this.chipIsSelected,
+      required this.onTapClearButtonInChipView,
+      required this.onTapCategoryChip})
       : super(key: key);
 
   final List<String> categoryChipLabels;
@@ -53,7 +54,7 @@ class CategoryChipView extends StatelessWidget {
             ListView.builder(
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
-              itemCount: categoryChipLabels.length ,
+              itemCount: categoryChipLabels.length,
               scrollDirection: Axis.horizontal,
               itemBuilder: (context, index) {
                 return Padding(
@@ -67,6 +68,9 @@ class CategoryChipView extends StatelessWidget {
                     showCheckmark: false,
                     label: Text(
                       categoryChipLabels[index],
+                      style: TextStyle(
+                        color: chipIsSelected[index] ? Colors.white : null,
+                      ),
                     ),
                     selected: chipIsSelected[index],
                     onSelected: (val) {

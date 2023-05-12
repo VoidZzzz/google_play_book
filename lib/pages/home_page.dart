@@ -37,11 +37,13 @@ class _HomepageState extends State<Homepage>
     _controller = TabController(length: 2, vsync: this);
     super.initState();
   }
+
   @override
   void dispose() {
     homeBloc.clearDisposeNotify();
     super.dispose();
   }
+
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
@@ -62,27 +64,27 @@ class _HomepageState extends State<Homepage>
             headerSliverBuilder: (context, isScroll) {
               return [
                 Selector<HomeBloc, List<BooksVO>?>(
-                    shouldRebuild: (previous, next) => previous != next,
-                    selector: (BuildContext context, bloc) => bloc.saveBookList,
-                    builder:
-                        (BuildContext context, saveBookList, Widget? child) {
-                      return SliverAppBar(
-                        automaticallyImplyLeading: false,
-                        collapsedHeight:
-                            (saveBookList?.isEmpty ?? true) ? 60 : 350,
-                        expandedHeight:
-                            (saveBookList?.isEmpty ?? true) ? 60 : 350,
-                        flexibleSpace: Column(
-                          children: [
-                            CarouselView(
-                              bookList: saveBookList ?? [],
-                              savedBooksLength: saveBookList?.length ?? 0,
-                            ),
-                            TabView(controller: _controller),
-                          ],
-                        ),
-                      );
-                    }),
+                  shouldRebuild: (previous, next) => previous != next,
+                  selector: (BuildContext context, bloc) => bloc.saveBookList,
+                  builder: (BuildContext context, saveBookList, Widget? child) {
+                    return SliverAppBar(
+                      automaticallyImplyLeading: false,
+                      collapsedHeight:
+                          (saveBookList?.isEmpty ?? true) ? 60 : 350,
+                      expandedHeight:
+                          (saveBookList?.isEmpty ?? true) ? 60 : 350,
+                      flexibleSpace: Column(
+                        children: [
+                          CarouselView(
+                            bookList: saveBookList ?? [],
+                            savedBooksLength: saveBookList?.length ?? 0,
+                          ),
+                          TabView(controller: _controller),
+                        ],
+                      ),
+                    );
+                  },
+                ),
               ];
             },
             body: TabBarView(
@@ -135,68 +137,71 @@ class _HomepageState extends State<Homepage>
       physics: const BouncingScrollPhysics(),
       children: [
         Selector<HomeBloc, List<ListsVO>?>(
-            shouldRebuild: (previous, next) => previous != next,
-            selector: (BuildContext context, bloc) => bloc.bookList,
-            builder: (context, bookList, Widget? child) {
-              return HorizontalEBooksListView(
-                listViewTitle: bookList?[3].displayName ?? "",
-                padding: const EdgeInsets.only(left: 20),
-                onTapMore: () => _navigateToMoreBooksPage(
-                    context, bookList?[3].listName ?? ""),
-                bookList: bookList?[3],
-                onTapAddToShelf: (index) => Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (context) => AddToShelfPage(
-                      selectedBook: bookList![3].books![index],
-                    ),
+          shouldRebuild: (previous, next) => previous != next,
+          selector: (BuildContext context, bloc) => bloc.bookList,
+          builder: (context, bookList, Widget? child) {
+            return HorizontalEBooksListView(
+              listViewTitle: bookList?[3].displayName ?? "",
+              padding: const EdgeInsets.only(left: 20),
+              onTapMore: () => _navigateToMoreBooksPage(
+                  context, bookList?[3].listName ?? ""),
+              bookList: bookList?[3],
+              onTapAddToShelf: (index) => Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) => AddToShelfPage(
+                    selectedBook: bookList![3].books![index],
                   ),
                 ),
-              );
-            }),
+              ),
+            );
+          },
+        ),
         const SizedBox(
           height: 10,
         ),
         Selector<HomeBloc, List<ListsVO>?>(
-            shouldRebuild: (previous, next) => previous != next,
-            selector: (BuildContext context, bloc) => bloc.bookList,
-            builder: (context, bookList, Widget? child) {
-              return HorizontalEBooksListView(
-                listViewTitle: bookList?[4].displayName ?? "",
-                padding: const EdgeInsets.only(left: 20),
-                onTapMore: () => _navigateToMoreBooksPage(
-                    context, bookList?[4].listName ?? ""),
-                bookList: bookList?[4],
-                onTapAddToShelf: (index) => Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (context) => AddToShelfPage(
-                      selectedBook: bookList![4].books![index],
-                    ),
+          shouldRebuild: (previous, next) => previous != next,
+          selector: (BuildContext context, bloc) => bloc.bookList,
+          builder: (context, bookList, Widget? child) {
+            return HorizontalEBooksListView(
+              listViewTitle: bookList?[4].displayName ?? "",
+              padding: const EdgeInsets.only(left: 20),
+              onTapMore: () => _navigateToMoreBooksPage(
+                  context, bookList?[4].listName ?? ""),
+              bookList: bookList?[4],
+              onTapAddToShelf: (index) => Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) => AddToShelfPage(
+                    selectedBook: bookList![4].books![index],
                   ),
                 ),
-              );
-            }),
+              ),
+            );
+          },
+        ),
         const SizedBox(
           height: 10,
         ),
         Selector<HomeBloc, List<ListsVO>?>(
-            shouldRebuild: (previous, next) => previous != next,
-            selector: (BuildContext context, bloc) => bloc.bookList,
-            builder: (context, bookList, Widget? child) {
-              return HorizontalEBooksListView(
-                listViewTitle: bookList?[5].displayName ?? "",
-                padding: const EdgeInsets.only(left: 20),
-                onTapMore: () => _navigateToMoreBooksPage(
-                    context, bookList?[5].listName ?? ""),
-                bookList: bookList?[5],
-                onTapAddToShelf: (index) => Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (context) => AddToShelfPage(
-                      selectedBook: bookList![5].books![index],
-                    ),
+          shouldRebuild: (previous, next) => previous != next,
+          selector: (BuildContext context, bloc) => bloc.bookList,
+          builder: (context, bookList, Widget? child) {
+            return HorizontalEBooksListView(
+              listViewTitle: bookList?[5].displayName ?? "",
+              padding: const EdgeInsets.only(left: 20),
+              onTapMore: () => _navigateToMoreBooksPage(
+                  context, bookList?[5].listName ?? ""),
+              bookList: bookList?[5],
+              onTapAddToShelf: (index) => Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) => AddToShelfPage(
+                    selectedBook: bookList![5].books![index],
                   ),
                 ),
-              );
-            }),
+              ),
+            );
+          },
+        ),
       ],
     );
   }
