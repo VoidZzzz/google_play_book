@@ -39,12 +39,16 @@ class AddToShelfBloc extends ChangeNotifier{
   }
 
   void checkNotifyListener() {
-      notifyListeners();
+      if(!isDisposed){
+        notifyListeners();
+      }
   }
 
   void clearDisposeNotify() {
-    print('AddToShelf Disposed');
+    if(!isDisposed){
+      print('AddToShelf Disposed');
       isDisposed = true;
+    }
 
   }
 

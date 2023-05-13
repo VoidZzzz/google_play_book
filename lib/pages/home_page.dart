@@ -43,7 +43,7 @@ class _HomepageState extends State<Homepage>
   @override
   void dispose() {
     homeBloc.clearDisposeNotify();
-    addToShelfBloc?.clearDisposeNotify();
+    addToShelfBloc?.dispose();
     _controller.dispose();
     super.dispose();
   }
