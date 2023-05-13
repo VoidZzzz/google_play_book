@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_play_book/blocs/add_to_shelf_bloc.dart';
 import 'package:google_play_book/blocs/create_shelf_bloc.dart';
+import 'package:google_play_book/blocs/your_books_bloc.dart';
 import 'package:google_play_book/data/data_vos/shelf_vo.dart';
 import 'package:google_play_book/data/models/google_play_book_model.dart';
 import 'package:google_play_book/resources/colors.dart';
@@ -22,11 +23,16 @@ class CreateShelfPage extends StatefulWidget {
 class _CreateShelfPageState extends State<CreateShelfPage> {
   CreateShelfBloc bloc = CreateShelfBloc();
   AddToShelfBloc? addToShelfBloc;
+  YourBooksBloc? yourBooksBloc;
 
   @override
   void dispose() {
     bloc.clearDisposeNotify();
+    bloc.dispose();
     addToShelfBloc?.dispose();
+    addToShelfBloc?.clearDisposeNotify();
+    yourBooksBloc?.dispose();
+    yourBooksBloc?.clearDisposeNotify();
     super.dispose();
   }
 

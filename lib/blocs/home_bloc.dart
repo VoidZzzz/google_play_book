@@ -7,7 +7,10 @@ import '../data/data_vos/lists_vo.dart';
 import '../network/api_constants.dart';
 
 class HomeBloc extends ChangeNotifier {
+  /// Model
   final GooglePlayBookModel _bookModel = GooglePlayBookModelImpl();
+
+  /// State Variable
   List<ListsVO>? bookList;
   List<BooksVO>? saveBookList;
   bool isDisposed = false;

@@ -80,7 +80,7 @@ class _LibraryPageState extends State<LibraryPage>
                       savedBookList: bloc.savedBookList,
                       categoryChipLabels: bloc.categoryChipLabels,
                       isShowClearButton: bloc.isShowClearButton,
-                      chipSelectedList: bloc.chipSelectedList,
+                      chipSelectedList: bloc.selectedChipList,
                       viewTypeValue: bloc.viewTypeValue,
                       onTapCategoryChip: (val, index) {
                         bloc.setSelectedChipIndex(
@@ -90,7 +90,7 @@ class _LibraryPageState extends State<LibraryPage>
                       onTapClearButtonInChipView: () {
                         bloc.setToDefault();
                       },
-                      onTapViewTypeMenu: () => _showModalBottomSheetLayoutView(
+                      onTapViewTypeMenu: () => showModalBottomSheetLayoutView(
                         context,
                         "   View as",
                         "List",
@@ -99,7 +99,7 @@ class _LibraryPageState extends State<LibraryPage>
                         bloc.viewTypeValue,
                         bloc,
                       ),
-                      onTapSortByMenu: () => _showModalBottomSheetSortByView(
+                      onTapSortByMenu: () => showModalBottomSheetSortByView(
                         context,
                         "   Sort by",
                         "Recent",
@@ -154,7 +154,7 @@ class _LibraryPageState extends State<LibraryPage>
     );
   }
 
-  Future<dynamic> _showModalBottomSheetLayoutView(
+  Future<dynamic> showModalBottomSheetLayoutView(
       BuildContext context,
       String title,
       String radioOne,
@@ -260,7 +260,7 @@ class _LibraryPageState extends State<LibraryPage>
     );
   }
 
-  Future<dynamic> _showModalBottomSheetSortByView(
+  Future<dynamic> showModalBottomSheetSortByView(
       BuildContext context,
       String title,
       String radioOne,

@@ -38,7 +38,7 @@ class ShelfDao{
     List<int?> id = selectedShelf.map((e) => e.shelfId).toList();
     selectedShelf.mapIndexed((index,e) {
       e.books?.add(book);
-      getShelfBox().put(id  [index], e);
+      getShelfBox().put(id[index], e);
       return e;
     }).toList();
   }

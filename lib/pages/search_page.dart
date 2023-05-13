@@ -27,6 +27,7 @@ class _SearchPageState extends State<SearchPage> {
   final _searchController = TextEditingController();
 
   SearchBloc bloc = SearchBloc();
+
   void _searchBook(BuildContext context, String text) {
     bloc = Provider.of<SearchBloc>(context, listen: false);
     bloc.onUserSubmit();
@@ -37,7 +38,7 @@ class _SearchPageState extends State<SearchPage> {
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
       create: (context) => bloc,
-      builder: (context, child){
+      builder: (context, child) {
         return SafeArea(
           child: Scaffold(
             body: SingleChildScrollView(
@@ -48,7 +49,7 @@ class _SearchPageState extends State<SearchPage> {
                     controller: _searchController,
                     onTapBack: () => Navigator.of(context).pop(),
                     onSubmitText: (text) {
-                      _searchBook(context,text);
+                      _searchBook(context, text);
                     },
                   ),
                   Selector<SearchBloc, bool>(
@@ -59,69 +60,82 @@ class _SearchPageState extends State<SearchPage> {
                         height: 772,
                         child: Selector<SearchBloc, List<BooksVO>?>(
                           selector: (context, bloc) => bloc.searchItems,
-                          builder: (context, searchItems, child) => ListView.builder(
-                            physics: const BouncingScrollPhysics(),
-                            itemCount: searchItems?.length,
-                            itemBuilder: (context, index) {
-                              return InkWell(
-                                onTap: () => Navigator.of(context).push(
-                                  MaterialPageRoute(
-                                    builder: (context) => BookDetails(
-                                        bookDetails: searchItems?[index],
-                                        bookLists: null),
-                                  ),
-                                ),
-                                child: Padding(
-                                  padding: const EdgeInsets.only(top: 8.0, left: 20),
-                                  child: SizedBox(
-                                    height: 80,
-                                    child: Row(
-                                      children: [
-                                        Container(
-                                          clipBehavior: Clip.antiAlias,
-                                          height: 75,
-                                          width: 50,
-                                          decoration: BoxDecoration(
-                                            borderRadius: BorderRadius.circular(5),
-                                          ),
-                                          child: Image.network(
-                                            searchItems?[index].bookImage ?? "",
-                                            fit: BoxFit.cover,
-                                          ),
+                          builder: (context, searchItems, child) => (bloc
+                                      .searchItems !=
+                                  null)
+                              ? ListView.builder(
+                                  physics: const BouncingScrollPhysics(),
+                                  itemCount: searchItems?.length,
+                                  itemBuilder: (context, index) {
+                                    return InkWell(
+                                      onTap: () => Navigator.of(context).push(
+                                        MaterialPageRoute(
+                                          builder: (context) => BookDetails(
+                                              bookDetails: searchItems?[index],
+                                              bookLists: null),
                                         ),
-                                        const SizedBox(
-                                          width: 15,
-                                        ),
-                                        SizedBox(
-                                          width: 300,
-                                          child: Column(
-                                            crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                            mainAxisAlignment: MainAxisAlignment.center,
+                                      ),
+                                      child: Padding(
+                                        padding: const EdgeInsets.only(
+                                            top: 8.0, left: 20),
+                                        child: SizedBox(
+                                          height: 80,
+                                          child: Row(
                                             children: [
-                                              TextView(
-                                                fontColor: Colors.black87,
-                                                fontSize: 15,
-                                                text: searchItems?[index].title ?? "",
+                                              Container(
+                                                clipBehavior: Clip.antiAlias,
+                                                height: 75,
+                                                width: 50,
+                                                decoration: BoxDecoration(
+                                                  borderRadius:
+                                                      BorderRadius.circular(5),
+                                                ),
+                                                child: Image.network(
+                                                  searchItems?[index]
+                                                          .bookImage ??
+                                                      "",
+                                                  fit: BoxFit.cover,
+                                                ),
                                               ),
-                                              TextView(
-                                                text: searchItems?[index].author ?? "",
-                                                fontColor: Colors.black54,
+                                              const SizedBox(
+                                                width: 15,
                                               ),
-                                              const TextView(
-                                                text: "Ebook",
-                                                fontColor: Colors.black54,
-                                              ),
+                                              SizedBox(
+                                                width: 300,
+                                                child: Column(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.center,
+                                                  children: [
+                                                    TextView(
+                                                      fontColor: Colors.black87,
+                                                      fontSize: 15,
+                                                      text: searchItems?[index]
+                                                              .title ??
+                                                          "",
+                                                    ),
+                                                    TextView(
+                                                      text: searchItems?[index]
+                                                              .author ??
+                                                          "",
+                                                      fontColor: Colors.black54,
+                                                    ),
+                                                    const TextView(
+                                                      text: "Ebook",
+                                                      fontColor: Colors.black54,
+                                                    ),
+                                                  ],
+                                                ),
+                                              )
                                             ],
                                           ),
-                                        )
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              );
-                            },
-                          ),
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                )
+                              : const CircularProgressIndicatorView(),
                         ),
                       ),
                     ),
@@ -133,6 +147,21 @@ class _SearchPageState extends State<SearchPage> {
         );
       },
     );
+  }
+}
+
+class CircularProgressIndicatorView extends StatelessWidget {
+  const CircularProgressIndicatorView({
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return const Center(
+        child: CircularProgressIndicator(
+          color: LIGHT_THEME_SELECTED_CHIP_COLOR,
+        ),
+      );
   }
 }
 
@@ -180,7 +209,8 @@ class _AppBarViewState extends State<AppBarView> {
           SizedBox(
             width: 300,
             child: TextFormField(
-              cursorHeight: 23, cursorWidth: 1.5,
+              cursorHeight: 23,
+              cursorWidth: 1.5,
               controller: widget.controller,
               cursorColor: LIGHT_THEME_SELECTED_CHIP_COLOR,
               onFieldSubmitted: (text) {

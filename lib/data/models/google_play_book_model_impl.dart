@@ -51,7 +51,9 @@ class GooglePlayBookModelImpl extends GooglePlayBookModel {
 
   @override
   Future<List<BooksVO>> getSavedAllBooks() {
-    return Future.value(_bookDao.getAllSavedBooks());
+    return Future.value(
+      _bookDao.getAllSavedBooks(),
+    );
   }
 
   @override
@@ -61,23 +63,33 @@ class GooglePlayBookModelImpl extends GooglePlayBookModel {
 
   @override
   Future<List<ShelfVO>> getAllShelves() {
-    return Future.value(_shelfDao.getAllShelves());
+    return Future.value(
+      _shelfDao.getAllShelves(),
+    );
   }
 
   @override
   Stream<List<BooksVO>> getSaveBookListStream() {
     return _bookDao
         .getAllSavedBooksEventStream()
-        .startWith(_bookDao.getAllSavedBooksStream())
-        .map((event) => _bookDao.getAllSavedBooks());
+        .startWith(
+          _bookDao.getAllSavedBooksStream(),
+        )
+        .map(
+          (event) => _bookDao.getAllSavedBooks(),
+        );
   }
 
   @override
   Stream<List<ShelfVO>> getAllShelvesStream() {
     return _shelfDao
         .getAllShelvesEventStream()
-        .startWith(_shelfDao.getAllShelvesStream())
-        .map((event) => _shelfDao.getAllShelves());
+        .startWith(
+          _shelfDao.getAllShelvesStream(),
+        )
+        .map(
+          (event) => _shelfDao.getAllShelves(),
+        );
   }
 
   @override
@@ -92,6 +104,8 @@ class GooglePlayBookModelImpl extends GooglePlayBookModel {
 
   @override
   Future<ShelfVO> renameShelf(int shelfId, String newName) {
-    return Future.value(_shelfDao.renameShelf(shelfId, newName));
+    return Future.value(
+      _shelfDao.renameShelf(shelfId, newName),
+    );
   }
 }

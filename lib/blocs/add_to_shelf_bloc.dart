@@ -6,8 +6,7 @@ import '../data/data_vos/shelf_vo.dart';
 import '../data/models/google_play_book_model.dart';
 import '../data/models/google_play_book_model_impl.dart';
 
-class AddToShelfBloc extends ChangeNotifier{
-
+class AddToShelfBloc extends ChangeNotifier {
   /// Model
   GooglePlayBookModel model = GooglePlayBookModelImpl();
   ShelfDao shelfDao = ShelfDao();
@@ -16,41 +15,45 @@ class AddToShelfBloc extends ChangeNotifier{
   List<ShelfVO>? allShelf;
   bool isDisposed = false;
 
-  AddToShelfBloc(){
+  AddToShelfBloc() {
     /// getAllShelves From Database
     model.getAllShelvesStream().listen((value) {
-        allShelf = value;
-        notifyListeners();
+      allShelf = value;
+      checkNotifyListener();
     });
 
     /// setting all values of selected bool to false
-    shelfDao.getAllShelvesStream().listen((event) {
-      event.map((e) {e.isSelected = false;
-      print('-------------------> ${e.isSelected}');
-      });
-      notifyListeners();
-      print("-----> >allll false");
-    });
-
+    setToDefault();
   }
-  void addBookToSelectedShelves(BooksVO selectedBook){
+
+  void setToDefault() {
+    shelfDao.getAllShelvesStream().listen((event) {
+      event.map((e) {
+        e.isSelected = false;
+      });
+      checkNotifyListener();
+    });
+  }
+
+  void setSelectedShelf(int index) {
+    allShelf?[index].isSelected = !(allShelf?[index].isSelected ?? false);
+    checkNotifyListener();
+  }
+
+  void addBookToSelectedShelves(BooksVO selectedBook) {
     model.addBookToShelf(selectedBook);
-    notifyListeners();
+    checkNotifyListener();
   }
 
   void checkNotifyListener() {
-      if(!isDisposed){
-        notifyListeners();
-      }
+    if (!isDisposed) {
+      notifyListeners();
+    }
   }
 
   void clearDisposeNotify() {
-    if(!isDisposed){
-      print('AddToShelf Disposed');
+    if (!isDisposed) {
       isDisposed = true;
     }
-
   }
-
-
 }
