@@ -9,22 +9,22 @@ import 'large_grid_view.dart';
 class YourBooksView extends StatelessWidget {
   const YourBooksView(
       {Key? key,
-        required this.categoryChipLabels,
-        required this.isShowClearButton,
-        required this.chipIsSelected,
-        required this.viewTypeValue,
-        required this.savedBookList,
-        required this.onTapCategoryChip,
-        required this.onTapSortByMenu,
-        required this.onTapViewTypeMenu,
-        required this.onTapClearButtonInChipView,
-        required this.onTapAddToShelfInMenu,
-        required this.onTapAddToShelfInBookListView})
+      required this.categoryChipLabels,
+      required this.isShowClearButton,
+      required this.chipSelectedList,
+      required this.viewTypeValue,
+      required this.savedBookList,
+      required this.onTapCategoryChip,
+      required this.onTapSortByMenu,
+      required this.onTapViewTypeMenu,
+      required this.onTapClearButtonInChipView,
+      required this.onTapAddToShelfInMenu,
+      required this.onTapAddToShelfInBookListView})
       : super(key: key);
 
   final List<String> categoryChipLabels;
   final bool isShowClearButton;
-  final List<bool> chipIsSelected;
+  final List<bool> chipSelectedList;
   final int viewTypeValue;
   final List<BooksVO>? savedBookList;
   final Function onTapClearButtonInChipView;
@@ -43,7 +43,7 @@ class YourBooksView extends StatelessWidget {
           CategoryChipView(
             categoryChipLabels: categoryChipLabels,
             isShowClearButton: isShowClearButton,
-            chipIsSelected: chipIsSelected,
+            chipIsSelected: chipSelectedList,
             onTapClearButtonInChipView: () => onTapClearButtonInChipView(),
             onTapCategoryChip: (val, index) {
               onTapCategoryChip(val, index);
@@ -62,16 +62,20 @@ class YourBooksView extends StatelessWidget {
           ),
           (viewTypeValue == 1)
               ? BooksListView(
-            savedBookList: savedBookList,
-            onTapAddToShelfInBookListView: (index) => onTapAddToShelfInBookListView(index),
-          )
+                  savedBookList: savedBookList,
+                  onTapAddToShelfInBookListView: (index) {
+                    Navigator.of(context).pop();
+                    onTapAddToShelfInBookListView(index);
+                  },
+                )
               : (viewTypeValue == 2)
-              ? LargeGridView(savedBookList: savedBookList)
-              : SmallGridView(
-            savedBookList: savedBookList,
-            onTapAddToShelfInMenu: (index) =>
-                onTapAddToShelfInMenu(index),
-          ),
+                  ? LargeGridView(savedBookList: savedBookList)
+                  : SmallGridView(
+                      savedBookList: savedBookList,
+                      onTapAddToShelfInMenu: (index) {
+                        Navigator.of(context).pop();
+                        onTapAddToShelfInMenu(index);
+                      }),
         ],
       ),
     );

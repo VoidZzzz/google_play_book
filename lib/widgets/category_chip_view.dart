@@ -38,6 +38,7 @@ class CategoryChipView extends StatelessWidget {
                   onTap: () => onTapClearButtonInChipView(),
                   child: Container(
                     width: 30,
+                    height: 30,
                     decoration: BoxDecoration(
                         border: Border.all(color: Colors.black54),
                         borderRadius: BorderRadius.circular(18),

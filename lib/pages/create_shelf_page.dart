@@ -11,9 +11,21 @@ import 'package:provider/provider.dart';
 
 import '../data/models/google_play_book_model_impl.dart';
 
-class CreateShelfPage extends StatelessWidget {
+class CreateShelfPage extends StatefulWidget {
   const CreateShelfPage({Key? key}) : super(key: key);
 
+  @override
+  State<CreateShelfPage> createState() => _CreateShelfPageState();
+}
+
+class _CreateShelfPageState extends State<CreateShelfPage> {
+  CreateShelfBloc bloc = CreateShelfBloc();
+
+  @override
+  void dispose() {
+    bloc.clearDisposeNotify();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {

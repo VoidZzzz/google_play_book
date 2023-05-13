@@ -43,6 +43,12 @@ class _BookDetailsState extends State<BookDetails> {
   }
 
   @override
+  void dispose() {
+    _detailBloc.clearDisposeNotify();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
       create: (context) => DetailBloc(),

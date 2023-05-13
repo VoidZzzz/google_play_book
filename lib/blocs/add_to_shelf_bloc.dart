@@ -14,6 +14,7 @@ class AddToShelfBloc extends ChangeNotifier{
 
   /// State Variable
   List<ShelfVO>? allShelf;
+  bool isDisposed = false;
 
   AddToShelfBloc(){
     /// getAllShelves From Database
@@ -35,6 +36,16 @@ class AddToShelfBloc extends ChangeNotifier{
   void addBookToSelectedShelves(BooksVO selectedBook){
     model.addBookToShelf(selectedBook);
     notifyListeners();
+  }
+
+  void checkNotifyListener() {
+      notifyListeners();
+  }
+
+  void clearDisposeNotify() {
+    print('AddToShelf Disposed');
+      isDisposed = true;
+
   }
 
 

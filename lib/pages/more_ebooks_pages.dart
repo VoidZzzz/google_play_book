@@ -24,6 +24,13 @@ class MoreEbooksPage extends StatefulWidget {
 
 class _MoreEbooksPageState extends State<MoreEbooksPage> {
   @override
+  void dispose() {
+    MoreEbooksDetailsBloc bloc = MoreEbooksDetailsBloc(widget.listName);
+    bloc.clearDisposeNotify();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
       create: (context) => MoreEbooksDetailsBloc(widget.listName),

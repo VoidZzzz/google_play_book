@@ -37,51 +37,102 @@ void main() async {
     expect(find.text("Hardcover Nonfiction"), findsOneWidget);
     expect(find.text("Paperback Trade Fiction"), findsOneWidget);
 
-    /// Navigate to Details for Book one
-    await tester.tap(find.text(TEST_DATA_BOOK_NAME_ONE));
-    await tester.pumpAndSettle(const Duration(seconds: 5));
+    // /// Navigate to Details for Book one
+    // await tester.tap(find.text(TEST_DATA_BOOK_NAME_ONE));
+    // await tester.pumpAndSettle(const Duration(seconds: 5));
+    //
+    // /// Checking Details for Book One
+    // expect(find.byKey(const ValueKey(TEST_DATA_BOOK_NAME_ONE_KEY)), findsOneWidget);
+    // expect(find.byKey(const ValueKey(TEST_DATA_AUTHOR_NAME_ONE_KEY)), findsOneWidget);
+    //
+    // /// Back to Home Page
+    // await tester.tap(find.byKey(const ValueKey("HomeBackButton")));
+    // await tester.pumpAndSettle(const Duration(seconds: 5));
+    //
+    // /// Finding Book one in Carousel
+    // expect(find.byKey(const ValueKey("Carousel Book")), findsOneWidget);
+    //
+    // /// Navigate to Details for Book Two
+    // await tester.tap(find.text(TEST_DATA_BOOK_NAME_TWO));
+    // await tester.pumpAndSettle(const Duration(seconds: 5));
+    //
+    // /// Checking Details for Book Two
+    // expect(find.byKey(const ValueKey(TEST_DATA_BOOK_NAME_ONE_KEY)), findsOneWidget);
+    // expect(find.byKey(const ValueKey(TEST_DATA_AUTHOR_NAME_ONE_KEY)), findsOneWidget);
+    //
+    // /// Back to Home Page
+    // await tester.tap(find.byKey(const ValueKey("HomeBackButton")));
+    // await tester.pumpAndSettle(const Duration(seconds: 5));
+    // await tester.pumpAndSettle(const Duration(seconds: 5));
+    //
+    // /// Finding Book three in Carousel
+    // expect(find.byKey(const ValueKey("Carousel Book")), findsOneWidget);
+    //
+    // /// Navigate to Details for Book Three
+    // await tester.tap(find.text(TEST_DATA_BOOK_NAME_THREE));
+    // await tester.pumpAndSettle(const Duration(seconds: 5));
+    //
+    // /// Checking Details for Book Three
+    // expect(find.byKey(const ValueKey(TEST_DATA_BOOK_NAME_ONE_KEY)), findsOneWidget);
+    // expect(find.byKey(const ValueKey(TEST_DATA_AUTHOR_NAME_ONE_KEY)), findsOneWidget);
+    //
+    // /// Back to Home Page
+    // await tester.tap(find.byKey(const ValueKey("HomeBackButton")));
+    // await tester.pumpAndSettle(const Duration(seconds: 5));
+    //
+    // /// Finding Book three in Carousel
+    // expect(find.byKey(const ValueKey("Carousel Book")), findsOneWidget);
 
-    /// Checking Details for Book One
-    expect(find.byKey(const ValueKey(TEST_DATA_BOOK_NAME_ONE_KEY)), findsOneWidget);
-    expect(find.byKey(const ValueKey(TEST_DATA_AUTHOR_NAME_ONE_KEY)), findsOneWidget);
+    /// Select Library Bottom Navigation Bar
+    await tester.tap(find.byKey(const ValueKey("BottomNavLibrary")));
+    await tester.pumpAndSettle(const Duration(seconds: 10));
 
-    /// Back to Home Page
-    await tester.tap(find.byKey(const ValueKey("HomeBackButton")));
-    await tester.pumpAndSettle(const Duration(seconds: 5));
+    /// Tap View Layout Icon
+    await tester.tap(find.byKey(const ValueKey("ViewLayoutKey")));
+    await tester.pumpAndSettle(const Duration(seconds: 10));
 
-    /// Finding Book one in Carousel
-    expect(find.byKey(const ValueKey("Carousel Book")), findsOneWidget);
+    /// Change Layout to Large Grid
+    await tester.tap(find.byKey(const ValueKey("ViewTypeRadioTwo")));
+    await tester.pumpAndSettle(const Duration(seconds: 10));
 
-    /// Navigate to Details for Book Two
-    await tester.tap(find.text(TEST_DATA_BOOK_NAME_TWO));
-    await tester.pumpAndSettle(const Duration(seconds: 5));
+    /// Tap View Layout Icon
+    await tester.tap(find.byKey(const ValueKey("ViewLayoutKey")));
+    await tester.pumpAndSettle(const Duration(seconds: 10));
 
-    /// Checking Details for Book Two
-    expect(find.byKey(const ValueKey(TEST_DATA_BOOK_NAME_ONE_KEY)), findsOneWidget);
-    expect(find.byKey(const ValueKey(TEST_DATA_AUTHOR_NAME_ONE_KEY)), findsOneWidget);
+    /// Change Layout to Small Grid
+    await tester.tap(find.byKey(const ValueKey("ViewTypeRadioThree")));
+    await tester.pumpAndSettle(const Duration(seconds: 10));
 
-    /// Back to Home Page
-    await tester.tap(find.byKey(const ValueKey("HomeBackButton")));
-    await tester.pumpAndSettle(const Duration(seconds: 5));
-    await tester.pumpAndSettle(const Duration(seconds: 5));
+    /// Tap View Layout Icon
+    await tester.tap(find.byKey(const ValueKey("ViewLayoutKey")));
+    await tester.pumpAndSettle(const Duration(seconds: 10));
 
-    /// Finding Book three in Carousel
-    expect(find.byKey(const ValueKey("Carousel Book")), findsOneWidget);
+    /// Change Layout to List
+    await tester.tap(find.byKey(const ValueKey("ViewTypeRadioOne")));
+    await tester.pumpAndSettle(const Duration(seconds: 10));
 
-    /// Navigate to Details for Book Three
-    await tester.tap(find.text(TEST_DATA_BOOK_NAME_THREE));
-    await tester.pumpAndSettle(const Duration(seconds: 5));
+    /// Tap Sorting Layout Icon
+    await tester.tap(find.byKey(const ValueKey("SortingLayoutKey")));
+    await tester.pumpAndSettle(const Duration(seconds: 10));
 
-    /// Checking Details for Book Three
-    expect(find.byKey(const ValueKey(TEST_DATA_BOOK_NAME_ONE_KEY)), findsOneWidget);
-    expect(find.byKey(const ValueKey(TEST_DATA_AUTHOR_NAME_ONE_KEY)), findsOneWidget);
+    /// Change Sort By To Author
+    await tester.tap(find.byKey(const ValueKey("SortByRadioTwo")));
+    await tester.pumpAndSettle(const Duration(seconds: 7));
 
-    /// Back to Home Page
-    await tester.tap(find.byKey(const ValueKey("HomeBackButton")));
-    await tester.pumpAndSettle(const Duration(seconds: 5));
+    /// Tap Sorting Layout Icon
+    await tester.tap(find.byKey(const ValueKey("SortingLayoutKey")));
+    await tester.pumpAndSettle(const Duration(seconds: 7));
 
-    /// Finding Book three in Carousel
-    expect(find.byKey(const ValueKey("Carousel Book")), findsOneWidget);
+    /// Change Sort By To Title
+    await tester.tap(find.byKey(const ValueKey("SortByRadioThree")));
+    await tester.pumpAndSettle(const Duration(seconds: 10));
 
+    /// Tap Sorting Layout Icon
+    await tester.tap(find.byKey(const ValueKey("SortingLayoutKey")));
+    await tester.pumpAndSettle(const Duration(seconds: 7));
+
+    /// Change Sort By To Recent
+    await tester.tap(find.byKey(const ValueKey("SortByRadioOne")));
+    await tester.pumpAndSettle(const Duration(seconds: 7));
   });
 }

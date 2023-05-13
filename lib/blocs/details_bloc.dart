@@ -6,6 +6,7 @@ import '../data/models/google_play_book_model_impl.dart';
 
 class DetailBloc extends ChangeNotifier{
   bool seeMoreIsTapped = false; // <==== Ebook details SEE MORE flag
+  bool isDisposed = false;
   GooglePlayBookModel model = GooglePlayBookModelImpl();
 
   void saveBook({required BooksVO? book}){
@@ -16,5 +17,17 @@ class DetailBloc extends ChangeNotifier{
   void setMoreOrLessStatus(){
     seeMoreIsTapped = !seeMoreIsTapped;
     notifyListeners();
+  }
+
+  void checkNotifyListener() {
+    if (!isDisposed) {
+      notifyListeners();
+    }
+  }
+
+  void clearDisposeNotify() {
+    if (!isDisposed) {
+      isDisposed = true;
+    }
   }
 }

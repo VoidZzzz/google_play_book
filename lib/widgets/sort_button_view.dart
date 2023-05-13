@@ -13,6 +13,7 @@ class SortButtonView extends StatelessWidget {
       children: [
         const Icon(
           Icons.sort,
+          key: ValueKey("SortingLayoutKey"),
           color: LIGHT_GREY_COLOR,
         ),
         const SizedBox(

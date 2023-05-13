@@ -13,23 +13,22 @@ class SearchBloc extends ChangeNotifier{
   List<BooksVO>? searchItems;
 
   /// Models
-  GooglePlayBookModel model = GooglePlayBookModelImpl();
+  // GooglePlayBookModel model = GooglePlayBookModelImpl();
   GoogleSearchModel gModel = GoogleSearchModelImpl();
-
-  SearchBloc() {
-    /// persistence layer
-    model.getSavedAllBooks().then((value) {
-        savedBookList = value;
-        notifyListeners();
-    });
-  }
+  //
+  // SearchBloc() {
+  //   /// persistence layer
+  //   model.getSavedAllBooks().then((value) {
+  //       savedBookList = value;
+  //       notifyListeners();
+  //   });
+  // }
 
   /// GoogleSearch Api
   void getGoogleSearch(String text){
     gModel.getGoogleSearch(text)?.then((searchResponse) {
       searchItems = searchResponse;
       notifyListeners();
-      print("======> searar c ${searchItems?.first.title}");
     });
   }
 

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:google_play_book/blocs/add_to_shelf_bloc.dart';
 import 'package:google_play_book/blocs/home_bloc.dart';
 import 'package:google_play_book/pages/add_to_shelf_page.dart';
 import 'package:google_play_book/pages/book_details_page.dart';
@@ -30,6 +31,7 @@ class _HomepageState extends State<Homepage>
   late TabController _controller;
 
   HomeBloc homeBloc = HomeBloc();
+  AddToShelfBloc? addToShelfBloc;
 
   @override
   void initState() {
@@ -41,6 +43,8 @@ class _HomepageState extends State<Homepage>
   @override
   void dispose() {
     homeBloc.clearDisposeNotify();
+    addToShelfBloc?.clearDisposeNotify();
+    _controller.dispose();
     super.dispose();
   }
 
@@ -141,19 +145,21 @@ class _HomepageState extends State<Homepage>
           selector: (BuildContext context, bloc) => bloc.bookList,
           builder: (context, bookList, Widget? child) {
             return HorizontalEBooksListView(
-              listViewTitle: bookList?[3].displayName ?? "",
-              padding: const EdgeInsets.only(left: 20),
-              onTapMore: () => _navigateToMoreBooksPage(
-                  context, bookList?[3].listName ?? ""),
-              bookList: bookList?[3],
-              onTapAddToShelf: (index) => Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (context) => AddToShelfPage(
-                    selectedBook: bookList![3].books![index],
-                  ),
-                ),
-              ),
-            );
+                listViewTitle: bookList?[3].displayName ?? "",
+                padding: const EdgeInsets.only(left: 20),
+                onTapMore: () => _navigateToMoreBooksPage(
+                    context, bookList?[3].listName ?? ""),
+                bookList: bookList?[3],
+                onTapAddToShelf: (index) {
+                  Navigator.of(context).pop();
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) => AddToShelfPage(
+                        selectedBook: bookList![3].books![index],
+                      ),
+                    ),
+                  );
+                },);
           },
         ),
         const SizedBox(
@@ -169,13 +175,16 @@ class _HomepageState extends State<Homepage>
               onTapMore: () => _navigateToMoreBooksPage(
                   context, bookList?[4].listName ?? ""),
               bookList: bookList?[4],
-              onTapAddToShelf: (index) => Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (context) => AddToShelfPage(
-                    selectedBook: bookList![4].books![index],
+              onTapAddToShelf: (index) {
+                Navigator.of(context).pop();
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => AddToShelfPage(
+                      selectedBook: bookList![4].books![index],
+                    ),
                   ),
-                ),
-              ),
+                );
+              },
             );
           },
         ),
@@ -192,17 +201,25 @@ class _HomepageState extends State<Homepage>
               onTapMore: () => _navigateToMoreBooksPage(
                   context, bookList?[5].listName ?? ""),
               bookList: bookList?[5],
-              onTapAddToShelf: (index) => Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (context) => AddToShelfPage(
-                    selectedBook: bookList![5].books![index],
-                  ),
-                ),
-              ),
+              onTapAddToShelf: (index) {
+                Navigator.of(context).pop();
+                navigateToAddToDetailsScreen(context, bookList, index);
+              },
             );
           },
         ),
       ],
+    );
+  }
+
+  Future<dynamic> navigateToAddToDetailsScreen(
+      BuildContext context, List<ListsVO>? bookList, int index) {
+    return Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => AddToShelfPage(
+          selectedBook: bookList![5].books![index],
+        ),
+      ),
     );
   }
 

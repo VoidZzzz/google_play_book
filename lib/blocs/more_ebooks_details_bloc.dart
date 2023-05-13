@@ -10,6 +10,7 @@ class MoreEbooksDetailsBloc extends ChangeNotifier{
 
   /// Model
   GooglePlayBookModel model = GooglePlayBookModelImpl();
+  bool isDisposed = false;
 
   /// State Variables
   List<MoreListResultsVO>? listsResults;
@@ -20,6 +21,18 @@ class MoreEbooksDetailsBloc extends ChangeNotifier{
         listsResults = response.results;
         notifyListeners();
     });
+  }
+
+  void checkNotifyListener() {
+    if (!isDisposed) {
+      notifyListeners();
+    }
+  }
+
+  void clearDisposeNotify() {
+    if (!isDisposed) {
+      isDisposed = true;
+    }
   }
 
 

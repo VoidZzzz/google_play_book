@@ -18,10 +18,7 @@ class _BottomNavigationBarHomePageState
     with SingleTickerProviderStateMixin {
   int currentIndex = 0;
 
-  final List<Widget> _body = [
-    Homepage(),
-    LibraryPage()
-  ];
+  final List<Widget> _body = const [Homepage(), LibraryPage()];
 
   @override
   Widget build(BuildContext context) {
@@ -42,9 +39,18 @@ class _BottomNavigationBarHomePageState
             currentIndex = index;
           }),
           items: const [
-            BottomNavigationBarItem(icon: Icon(Icons.home), label: "Home"),
             BottomNavigationBarItem(
-                icon: Icon(Icons.message), label: "Library"),
+                icon: Icon(
+                  Icons.home,
+                  key: ValueKey("BottomNavHome"),
+                ),
+                label: "Home"),
+            BottomNavigationBarItem(
+                icon: Icon(
+                  Icons.message,
+                  key: ValueKey("BottomNavLibrary"),
+                ),
+                label: "Library"),
           ],
         ),
       ),

@@ -8,7 +8,7 @@ import '../data/models/google_play_book_model_impl.dart';
 class YourBooksBloc extends ChangeNotifier {
   int viewTypeValue = 1;
   List<String> categoryChipLabels = [];
-  List<bool> chipIsSelected = [];
+  List<bool> chipSelectedList = [];
   List<ShelfVO>? shelfList;
 
   GooglePlayBookModel model = GooglePlayBookModelImpl();
@@ -51,7 +51,7 @@ class YourBooksBloc extends ChangeNotifier {
         if (!(categoryChipLabels.contains(savedBookList?[i].categoryName)) &&
             savedBookList?[i].categoryName != null) {
           categoryChipLabels.add(savedBookList?[i].categoryName ?? "");
-          chipIsSelected.add(false);
+          chipSelectedList.add(false);
           checkNotifyListener();
         }
       }
@@ -79,7 +79,7 @@ class YourBooksBloc extends ChangeNotifier {
 
   void setSelectedChipIndex(
       {required int index, required bool isSelected}) async {
-    chipIsSelected[index] = isSelected;
+    chipSelectedList[index] = isSelected;
     await getBookByCategory(categoryChipLabels[index]);
     checkNotifyListener();
   }
@@ -91,7 +91,7 @@ class YourBooksBloc extends ChangeNotifier {
 
   void setToDefault() async {
     showClearBtn(value: false);
-    chipIsSelected = chipIsSelected.map((e) => false).toList();
+    chipSelectedList = chipSelectedList.map((e) => false).toList();
     tempCombined.clear();
     temp?.clear();
     await getSavedBookList();

@@ -6,6 +6,7 @@ import '../data/models/google_play_book_model_impl.dart';
 class CreateShelfBloc extends ChangeNotifier {
   /// Model
   GooglePlayBookModel model = GooglePlayBookModelImpl();
+  bool isDisposed = false;
 
   void createNewShelf(str) {
     model.createShelf(
@@ -13,5 +14,17 @@ class CreateShelfBloc extends ChangeNotifier {
     );
     print('----------------> create');
     notifyListeners();
+  }
+
+  void checkNotifyListener() {
+    if (!isDisposed) {
+      notifyListeners();
+    }
+  }
+
+  void clearDisposeNotify() {
+    if (!isDisposed) {
+      isDisposed = true;
+    }
   }
 }

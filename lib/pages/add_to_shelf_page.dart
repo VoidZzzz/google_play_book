@@ -21,6 +21,14 @@ class AddToShelfPage extends StatefulWidget {
 }
 
 class _AddToShelfPageState extends State<AddToShelfPage> {
+  AddToShelfBloc bloc = AddToShelfBloc();
+
+  @override
+  void dispose() {
+    bloc.clearDisposeNotify();
+    bloc.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {

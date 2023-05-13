@@ -31,7 +31,7 @@ class SortingViews extends StatelessWidget {
               (viewTypeValue == 1)
                   ? Icons.view_list_outlined
                   : Icons.view_module_outlined,
-              color: Colors.black54,
+              color: Colors.black54,key: const ValueKey("ViewLayoutKey"),
             ),
           ),
         ],

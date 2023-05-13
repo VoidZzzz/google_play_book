@@ -80,7 +80,7 @@ class _LibraryPageState extends State<LibraryPage>
                       savedBookList: bloc.savedBookList,
                       categoryChipLabels: bloc.categoryChipLabels,
                       isShowClearButton: bloc.isShowClearButton,
-                      chipIsSelected: bloc.chipIsSelected,
+                      chipSelectedList: bloc.chipSelectedList,
                       viewTypeValue: bloc.viewTypeValue,
                       onTapCategoryChip: (val, index) {
                         bloc.setSelectedChipIndex(
@@ -192,6 +192,7 @@ class _LibraryPageState extends State<LibraryPage>
                 Row(
                   children: [
                     Radio(
+                      key: const ValueKey("ViewTypeRadioOne"),
                       activeColor: LIGHT_THEME_SELECTED_CHIP_COLOR,
                       value: 1,
                       groupValue: value,
@@ -212,6 +213,7 @@ class _LibraryPageState extends State<LibraryPage>
                 Row(
                   children: [
                     Radio(
+                      key: const ValueKey("ViewTypeRadioTwo"),
                       activeColor: LIGHT_THEME_SELECTED_CHIP_COLOR,
                       value: 2,
                       groupValue: value,
@@ -232,6 +234,7 @@ class _LibraryPageState extends State<LibraryPage>
                 Row(
                   children: [
                     Radio(
+                      key: const ValueKey("ViewTypeRadioThree"),
                       activeColor: LIGHT_THEME_SELECTED_CHIP_COLOR,
                       value: 3,
                       groupValue: value,
@@ -295,6 +298,7 @@ class _LibraryPageState extends State<LibraryPage>
                 Row(
                   children: [
                     Radio(
+                      key: const ValueKey("SortByRadioOne"),
                       activeColor: LIGHT_THEME_SELECTED_CHIP_COLOR,
                       value: 1,
                       groupValue: value,
@@ -315,6 +319,7 @@ class _LibraryPageState extends State<LibraryPage>
                 Row(
                   children: [
                     Radio(
+                      key: const ValueKey("SortByRadioTwo"),
                       activeColor: LIGHT_THEME_SELECTED_CHIP_COLOR,
                       value: 2,
                       groupValue: value,
@@ -335,6 +340,7 @@ class _LibraryPageState extends State<LibraryPage>
                 Row(
                   children: [
                     Radio(
+                      key: const ValueKey("SortByRadioThree"),
                       activeColor: LIGHT_THEME_SELECTED_CHIP_COLOR,
                       value: 3,
                       groupValue: value,
