@@ -20,7 +20,6 @@ class HomeBloc extends ChangeNotifier {
     _bookModel.getOverview(API_KEY).then((response) {
         bookList = response.results?.lists;
         checkNotifyListener();
-      debugPrint("===========> ${bookList?[2].books?.last.categoryName}");
     }).catchError(
           (error) {
         debugPrint(

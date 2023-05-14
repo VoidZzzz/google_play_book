@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_play_book/blocs/add_to_shelf_bloc.dart';
+import 'package:google_play_book/blocs/shelf_details_bloc.dart';
 import 'package:google_play_book/blocs/your_books_bloc.dart';
 import 'package:google_play_book/data/data_vos/books_vo.dart';
 import 'package:google_play_book/resources/colors.dart';
@@ -20,25 +21,23 @@ class AddToShelfPage extends StatefulWidget {
 }
 
 class _AddToShelfPageState extends State<AddToShelfPage> {
-  AddToShelfBloc bloc = AddToShelfBloc();
-  HomeBloc? homeBloc;
-  YourBooksBloc? yourBooksBloc;
+  AddToShelfBloc addToShelfBloc = AddToShelfBloc();
+
+  @override
+  void initState() {
+    super.initState();
+  }
 
   @override
   void dispose() {
-    bloc.clearDisposeNotify();
-    bloc.dispose();
-    homeBloc?.dispose();
-    homeBloc?.clearDisposeNotify();
-    yourBooksBloc?.dispose();
-    yourBooksBloc?.clearDisposeNotify();
+    addToShelfBloc.clearDisposeNotify();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (context) => AddToShelfBloc(),
+      create: (context) => addToShelfBloc,
       child: Consumer<AddToShelfBloc>(
           builder: (context, bloc, Widget? child)  {
             return Scaffold(

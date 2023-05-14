@@ -5,7 +5,9 @@ import '../resources/colors.dart';
 class SortButtonView extends StatelessWidget {
   const SortButtonView({
     Key? key,
+    required this.sortByValue
   }) : super(key: key);
+  final int sortByValue;
 
   @override
   Widget build(BuildContext context) {
@@ -20,7 +22,7 @@ class SortButtonView extends StatelessWidget {
           width: 10,
         ),
         Text(
-          "Sort by: Recent",
+          (sortByValue == 1)? "Sort by: Recent" : (sortByValue == 2) ? " Sort by: Title" : "sort by: Author",
           style: GoogleFonts.inter(
               fontWeight: FontWeight.w500, fontSize: 14, color: Colors.black54),
         ),

@@ -144,6 +144,11 @@ class BooksVO{
       this.categoryName,
       this.saveTime);
 
+  @override
+  String toString() {
+    return 'BooksVO{ageGroup: $ageGroup, amazonProductUrlLink: $amazonProductUrlLink, articleChapterLink: $articleChapterLink, author: $author, bookImage: $bookImage, bookImageWidth: $bookImageWidth, bookImageHeight: $bookImageHeight, bookReviewLink: $bookReviewLink, contributor: $contributor, contributorNote: $contributorNote, createdDate: $createdDate, description: $description, firstChapterLink: $firstChapterLink, price: $price, primaryISBN10: $primaryISBN10, primaryISBN13: $primaryISBN13, bookUri: $bookUri, publisher: $publisher, rank: $rank, rankLastWeek: $rankLastWeek, sundayReviewLink: $sundayReviewLink, title: $title, updatedDate: $updatedDate, weeksOnList: $weeksOnList, buyLinks: $buyLinks, saveTime: $saveTime, categoryName: $categoryName}';
+  }
+
   factory BooksVO.fromJson(Map<String, dynamic> json) => _$BooksVOFromJson(json);
 
   Map<String, dynamic> toJson() => _$BooksVOToJson(this);

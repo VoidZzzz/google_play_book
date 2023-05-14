@@ -33,25 +33,26 @@ class BookDetails extends StatefulWidget {
 }
 
 class _BookDetailsState extends State<BookDetails> {
-  final DetailBloc _detailBloc = DetailBloc();
+  DetailBloc? _detailBloc;
 
   @override
   void initState() {
     /// Save book to Persistence
-    _detailBloc.saveBook(book: widget.bookDetails);
+    _detailBloc = DetailBloc();
+    _detailBloc?.saveBook(book: widget.bookDetails);
     super.initState();
   }
 
   @override
   void dispose() {
-    _detailBloc.clearDisposeNotify();
+    _detailBloc?.clearDisposeNotify();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (context) => DetailBloc(),
+      create: (context) => _detailBloc,
       child: Scaffold(
         appBar: AppBar(
           automaticallyImplyLeading: false,
@@ -361,7 +362,7 @@ class _BookDetailsState extends State<BookDetails> {
           height: 10,
         ),
         InkWell(
-          onTap: () => _detailBloc.setMoreOrLessStatus(),
+          onTap: () => _detailBloc?.setMoreOrLessStatus(),
           child: const TextView(
             text: "Less",
             fontColor: LIGHT_THEME_SELECTED_CHIP_COLOR,
@@ -396,7 +397,7 @@ class _BookDetailsState extends State<BookDetails> {
           height: 10,
         ),
         InkWell(
-          onTap: () => _detailBloc.setMoreOrLessStatus(),
+          onTap: () => _detailBloc?.setMoreOrLessStatus(),
           child: const TextView(
             text: "More",
             fontColor: LIGHT_THEME_SELECTED_CHIP_COLOR,

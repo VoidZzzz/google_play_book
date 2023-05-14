@@ -30,6 +30,8 @@ void main() async {
     await Future.delayed(const Duration(seconds: 3));
     await tester.pumpAndSettle(const Duration(seconds: 5));
 
+    final pumpAndSettle = await tester.pumpAndSettle(const Duration(seconds: 5));
+
     /// Home Page
     expect(find.byType(BottomNavigationBarHomePage), findsOneWidget);
     

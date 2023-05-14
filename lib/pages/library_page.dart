@@ -23,7 +23,7 @@ class LibraryPage extends StatefulWidget {
 class _LibraryPageState extends State<LibraryPage>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
-  YourBooksBloc bloc = YourBooksBloc();
+  YourBooksBloc yourBooksBloc = YourBooksBloc();
 
   @override
   void initState() {
@@ -33,14 +33,14 @@ class _LibraryPageState extends State<LibraryPage>
 
   @override
   void dispose() {
-    bloc.clearDisposeNotify();
     super.dispose();
+    yourBooksBloc.clearDisposeNotify();
   }
 
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (context) => YourBooksBloc(),
+      create: (context) => yourBooksBloc,
       child: SafeArea(
         child: Scaffold(
           appBar: AppBar(
@@ -77,6 +77,7 @@ class _LibraryPageState extends State<LibraryPage>
                 Consumer<YourBooksBloc>(
                   builder: (context, bloc, Widget? child) {
                     return YourBooksView(
+                      sortByValue: bloc.sortByValue,
                       savedBookList: bloc.savedBookList,
                       categoryChipLabels: bloc.categoryChipLabels,
                       isShowClearButton: bloc.isShowClearButton,
@@ -106,7 +107,7 @@ class _LibraryPageState extends State<LibraryPage>
                         "Title",
                         "Author",
                         bloc,
-                        bloc.viewTypeValue,
+                        bloc.sortByValue,
                       ),
                       onTapAddToShelfInMenu: (index) =>
                           Navigator.of(context).push(

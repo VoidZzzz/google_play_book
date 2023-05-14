@@ -27,12 +27,7 @@ class AddToShelfBloc extends ChangeNotifier {
   }
 
   void setToDefault() {
-    shelfDao.getAllShelvesStream().listen((event) {
-      event.map((e) {
-        e.isSelected = false;
-      });
-      checkNotifyListener();
-    });
+   model.setToDefault();
   }
 
   void setSelectedShelf(int index) {
@@ -42,6 +37,7 @@ class AddToShelfBloc extends ChangeNotifier {
 
   void addBookToSelectedShelves(BooksVO selectedBook) {
     model.addBookToShelf(selectedBook);
+    setToDefault();
     checkNotifyListener();
   }
 

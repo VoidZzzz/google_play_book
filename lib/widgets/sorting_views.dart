@@ -7,10 +7,12 @@ class SortingViews extends StatelessWidget {
       {Key? key,
         required this.viewTypeValue,
         required this.onTapSortByMenu,
+        required this.sortByValue,
         required this.onTapViewTypeMenu})
       : super(key: key);
 
   final int viewTypeValue;
+  final int sortByValue;
   final Function onTapSortByMenu;
   final Function onTapViewTypeMenu;
 
@@ -22,7 +24,7 @@ class SortingViews extends StatelessWidget {
         children: [
           InkWell(
             onTap: () => onTapSortByMenu(),
-            child: const SortButtonView(),
+            child: SortButtonView(sortByValue: sortByValue),
           ),
           const Spacer(),
           InkWell(

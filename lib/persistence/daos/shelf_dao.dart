@@ -47,12 +47,26 @@ class ShelfDao{
     getShelfBox().delete(shelfId);
   }
 
+  void setToDefault(){
+    getAllShelves().map((e) {
+      e.isSelected = false;
+      getShelfBox().put(e.shelfId, e);
+    }).toList();
+  }
+
   Future<ShelfVO> renameShelf(int shelfId, String newName) async{
     return getShelfById(shelfId).then((value) {
       value?.shelfName = newName;
       getShelfBox().put(shelfId, value!);
       return Future.value(value);
     });
+  }
+
+  ShelfVO getBookByShelf(String name){
+      return getAllShelves().where((element) => element.shelfName == name).toList().first;
+  }
+  Stream<ShelfVO> getBookByShelfStream(String name) {
+    return Stream.value(getBookByShelf(name));
   }
 
   Future<ShelfVO?> getShelfById(int shelfId) {

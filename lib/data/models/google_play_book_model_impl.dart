@@ -108,4 +108,19 @@ class GooglePlayBookModelImpl extends GooglePlayBookModel {
       _shelfDao.renameShelf(shelfId, newName),
     );
   }
+
+  @override
+  void setToDefault() {
+    _shelfDao.setToDefault();
+  }
+
+  @override
+  Stream<ShelfVO> getBookByShelfStream(String name) {
+    return _shelfDao
+        .getAllShelvesEventStream()
+        .startWith(
+          _shelfDao.getBookByShelfStream(name),
+        )
+        .map((event) => _shelfDao.getBookByShelf(name));
+  }
 }

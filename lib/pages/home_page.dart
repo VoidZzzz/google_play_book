@@ -32,25 +32,19 @@ class _HomepageState extends State<Homepage>
   late TabController _controller;
 
   HomeBloc homeBloc = HomeBloc();
-  AddToShelfBloc? addToShelfBloc;
-  YourBooksBloc? yourBooksBloc;
 
   @override
   void initState() {
     /// Tab Controller
     _controller = TabController(length: 2, vsync: this);
-    addToShelfBloc = AddToShelfBloc();
-    yourBooksBloc = YourBooksBloc();
     super.initState();
   }
 
   @override
   void dispose() {
-    homeBloc.clearDisposeNotify();
-    addToShelfBloc?.clearDisposeNotify();
-    yourBooksBloc?.clearDisposeNotify();
-    _controller.dispose();
     super.dispose();
+    homeBloc.clearDisposeNotify();
+    _controller.dispose();
   }
 
   @override

@@ -38,7 +38,8 @@ class _ShelfDetailsState extends State<ShelfDetails> {
                 context,
                 () {
                   bloc.deleteShelf(widget.shelf.shelfId!);
-                  _navigateToHome(context);
+                  Navigator.of(context).pop();
+                  Navigator.of(context).pop();
                 },
                 () {
                   bloc.setEditModeToTrue();
@@ -74,6 +75,7 @@ class _ShelfDetailsState extends State<ShelfDetails> {
               ),
               Consumer<ShelfDetailsBloc>(
                 builder: (context, bloc, Widget? child) => YourBooksView(
+                  sortByValue: bloc.sortByValue,
                     categoryChipLabels: bloc.categoryChipLabels,
                     isShowClearButton: bloc.isShowClearButton,
                     chipSelectedList: bloc.selectedChipsList,
@@ -90,7 +92,7 @@ class _ShelfDetailsState extends State<ShelfDetails> {
                         "Title",
                         "Author",
                         bloc,
-                        bloc.viewTypeValue),
+                        bloc.sortByValue),
                     onTapViewTypeMenu: () => showModalBottomSheetLayoutView(
                           context,
                           "   View as",

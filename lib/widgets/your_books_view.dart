@@ -17,6 +17,7 @@ class YourBooksView extends StatelessWidget {
       required this.onTapCategoryChip,
       required this.onTapSortByMenu,
       required this.onTapViewTypeMenu,
+        required this.sortByValue,
       required this.onTapClearButtonInChipView,
       required this.onTapAddToShelfInMenu,
       required this.onTapAddToShelfInBookListView})
@@ -26,6 +27,7 @@ class YourBooksView extends StatelessWidget {
   final bool isShowClearButton;
   final List<bool> chipSelectedList;
   final int viewTypeValue;
+  final int sortByValue;
   final List<BooksVO>? savedBookList;
   final Function onTapClearButtonInChipView;
   final Function(bool, int) onTapCategoryChip;
@@ -54,6 +56,7 @@ class YourBooksView extends StatelessWidget {
           ),
           SortingViews(
             viewTypeValue: viewTypeValue,
+            sortByValue: sortByValue,
             onTapSortByMenu: () => onTapSortByMenu(),
             onTapViewTypeMenu: () => onTapViewTypeMenu(),
           ),
