@@ -112,7 +112,8 @@ class BookView extends StatelessWidget {
             top: 1,
             child: InkWell(
               onTap: () => onTapMenu(),
-              child: const IconView(
+              child: IconView(
+                key: ValueKey(bookName),
                   icon: Icons.more_horiz_outlined,
                   iconColor: GREY_COLOR,
                   iconSize: 25),

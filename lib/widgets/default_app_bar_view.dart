@@ -16,6 +16,7 @@ class DefaultAppBarView extends StatelessWidget {
       child: Padding(
         padding: const EdgeInsets.only(left: 2.0, right: 2.0, top: 10),
         child: Container(
+          key: const ValueKey("GoToSearch"),
           decoration: BoxDecoration(
               border: Border.all(color: Colors.grey, width: 0.5),
               borderRadius: BorderRadius.circular(8),

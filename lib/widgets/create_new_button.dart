@@ -14,6 +14,7 @@ class CreateNewButton extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: [
         Container(
+          key: const ValueKey("CreateButton"),
           height: 43,
           width: 150,
           decoration: BoxDecoration(

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 import '../resources/colors.dart';
+
 class TabViewAndDividerVIew extends StatelessWidget {
   const TabViewAndDividerVIew({
     Key? key,
@@ -20,12 +22,20 @@ class TabViewAndDividerVIew extends StatelessWidget {
           indicatorColor: LIGHT_THEME_SELECTED_CHIP_COLOR,
           indicatorSize: TabBarIndicatorSize.label,
           controller: _tabController,
-          tabs: const [
+          tabs: [
             Tab(
-              text: "Your Books",
+              child: Text(
+                "Your Books",
+                style: GoogleFonts.inter(fontWeight: FontWeight.w600),
+                key: const ValueKey("TabOne"),
+              ),
             ),
             Tab(
-              text: "Your Shelves",
+              child: Text(
+                "Your Shelves",
+                style: GoogleFonts.inter(fontWeight: FontWeight.w600),
+                key: const ValueKey("2"),
+              ),
             ),
           ],
         ),

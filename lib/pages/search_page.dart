@@ -158,10 +158,10 @@ class CircularProgressIndicatorView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const Center(
-        child: CircularProgressIndicator(
-          color: LIGHT_THEME_SELECTED_CHIP_COLOR,
-        ),
-      );
+      child: CircularProgressIndicator(
+        color: LIGHT_THEME_SELECTED_CHIP_COLOR,
+      ),
+    );
   }
 }
 
@@ -209,6 +209,7 @@ class _AppBarViewState extends State<AppBarView> {
           SizedBox(
             width: 300,
             child: TextFormField(
+              key: const ValueKey("SearchField"),
               cursorHeight: 23,
               cursorWidth: 1.5,
               controller: widget.controller,

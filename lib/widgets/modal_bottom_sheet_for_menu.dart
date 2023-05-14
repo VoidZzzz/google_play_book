@@ -85,6 +85,17 @@ void showBottomSheetForMenu(BuildContext context, BooksVO? bookDetails, Function
             const SizedBox(
               height: 17,
             ),
+            InkWell(
+              key: const ValueKey("AddToShelf"),
+              onTap: () => onTapAddToShelf(),
+              child: const MenuOptionsView(
+                menuIcon: Icons.add,
+                menuName: "Add to shelves",
+              ),
+            ),
+            const SizedBox(
+              height: 17,
+            ),
             const MenuOptionsView(
               menuIcon: Icons.delete_outline,
               menuName: "Delete from your library",
@@ -95,16 +106,6 @@ void showBottomSheetForMenu(BuildContext context, BooksVO? bookDetails, Function
             const MenuOptionsView(
               menuIcon: Icons.bookmark_add_outlined,
               menuName: "Add to wishlist",
-            ),
-            const SizedBox(
-              height: 17,
-            ),
-            InkWell(
-              onTap: () => onTapAddToShelf(),
-              child: const MenuOptionsView(
-                menuIcon: Icons.add,
-                menuName: "Add to shelves",
-              ),
             ),
             const SizedBox(
               height: 17,

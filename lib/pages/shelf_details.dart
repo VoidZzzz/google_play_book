@@ -143,6 +143,7 @@ class _ShelfDetailsState extends State<ShelfDetails> {
               ),
               const SizedBox(height: 10),
               InkWell(
+                key: const ValueKey("Rename"),
                 onTap: () => onTapRename(),
                 child: const MenuOptionsView(
                     menuIcon: Icons.mode_edit_outline_outlined,
@@ -150,6 +151,7 @@ class _ShelfDetailsState extends State<ShelfDetails> {
               ),
               const SizedBox(height: 20),
               InkWell(
+                  key: const ValueKey("Delete"),
                   onTap: () => onTapDelete(),
                   child: const MenuOptionsView(
                       menuIcon: Icons.delete_outline_sharp,
@@ -544,6 +546,7 @@ class AppBarTitleView extends StatelessWidget {
     return Row(
       children: [
         InkWell(
+          key: const ValueKey("Back"),
           onTap: () => onTapBack(),
           child: const IconView(
               icon: Icons.keyboard_arrow_left,
@@ -554,6 +557,7 @@ class AppBarTitleView extends StatelessWidget {
         InkWell(
           onTap: () => onTapMenu(),
           child: const IconView(
+            key: ValueKey("MenuButton"),
               icon: Icons.more_horiz,
               iconColor: APP_PRIMARY_COLOR,
               iconSize: 25),
@@ -576,6 +580,7 @@ class RenameView extends StatelessWidget {
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20),
         child: TextField(
+          key: const ValueKey("TextField"),
           cursorColor: LIGHT_THEME_SELECTED_CHIP_COLOR,
           cursorHeight: 30,
           cursorWidth: 1,

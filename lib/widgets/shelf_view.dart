@@ -10,6 +10,7 @@ class ShelfView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
+      key: const ValueKey("Educational"),
       height: 101,
       decoration: const BoxDecoration(
         border: Border(

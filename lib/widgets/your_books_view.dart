@@ -17,7 +17,7 @@ class YourBooksView extends StatelessWidget {
       required this.onTapCategoryChip,
       required this.onTapSortByMenu,
       required this.onTapViewTypeMenu,
-        required this.sortByValue,
+      required this.sortByValue,
       required this.onTapClearButtonInChipView,
       required this.onTapAddToShelfInMenu,
       required this.onTapAddToShelfInBookListView})
@@ -65,6 +65,7 @@ class YourBooksView extends StatelessWidget {
           ),
           (viewTypeValue == 1)
               ? BooksListView(
+                  key: const ValueKey("listView"),
                   savedBookList: savedBookList,
                   onTapAddToShelfInBookListView: (index) {
                     Navigator.of(context).pop();
@@ -72,8 +73,11 @@ class YourBooksView extends StatelessWidget {
                   },
                 )
               : (viewTypeValue == 2)
-                  ? LargeGridView(savedBookList: savedBookList)
+                  ? LargeGridView(
+                      key: const ValueKey("LargeGrid"),
+                      savedBookList: savedBookList)
                   : SmallGridView(
+                      key: const ValueKey("SmallGrid"),
                       savedBookList: savedBookList,
                       onTapAddToShelfInMenu: (index) {
                         Navigator.of(context).pop();

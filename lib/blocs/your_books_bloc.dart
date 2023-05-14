@@ -6,7 +6,7 @@ import '../data/models/google_play_book_model.dart';
 import '../data/models/google_play_book_model_impl.dart';
 
 class YourBooksBloc extends ChangeNotifier {
-  int viewTypeValue = 1;
+  int viewTypeValue = 3;
   int sortByValue = 1;
   List<String> categoryChipLabels = [];
   List<bool> selectedChipList = [];

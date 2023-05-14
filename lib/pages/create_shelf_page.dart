@@ -49,6 +49,7 @@ class _CreateShelfPageState extends State<CreateShelfPage> {
                         Border(bottom: BorderSide(color: APP_TERTIARY_COLOR)),
                   ),
                   child: TextFormField(
+                    key: const ValueKey("TextField"),
                     autofocus: true,
                     onFieldSubmitted: (str) {
                       CreateShelfBloc bloc = CreateShelfBloc();

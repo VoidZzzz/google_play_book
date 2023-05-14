@@ -1,14 +1,13 @@
-
 import 'package:flutter/material.dart';
 import 'package:google_play_book/widgets/sort_button_view.dart';
 
 class SortingViews extends StatelessWidget {
   const SortingViews(
       {Key? key,
-        required this.viewTypeValue,
-        required this.onTapSortByMenu,
-        required this.sortByValue,
-        required this.onTapViewTypeMenu})
+      required this.viewTypeValue,
+      required this.onTapSortByMenu,
+      required this.sortByValue,
+      required this.onTapViewTypeMenu})
       : super(key: key);
 
   final int viewTypeValue;
@@ -30,10 +29,11 @@ class SortingViews extends StatelessWidget {
           InkWell(
             onTap: () => onTapViewTypeMenu(),
             child: Icon(
+              key: const ValueKey("ViewLayoutKey"),
               (viewTypeValue == 1)
                   ? Icons.view_list_outlined
                   : Icons.view_module_outlined,
-              color: Colors.black54,key: const ValueKey("ViewLayoutKey"),
+              color: Colors.black54,
             ),
           ),
         ],

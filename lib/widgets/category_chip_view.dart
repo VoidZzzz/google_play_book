@@ -35,6 +35,7 @@ class CategoryChipView extends StatelessWidget {
               child: Padding(
                 padding: const EdgeInsets.only(top: 15.0, bottom: 15, left: 8),
                 child: InkWell(
+                  key: const ValueKey("ClearButton"),
                   onTap: () => onTapClearButtonInChipView(),
                   child: Container(
                     width: 30,
@@ -61,6 +62,7 @@ class CategoryChipView extends StatelessWidget {
                 return Padding(
                   padding: const EdgeInsets.only(left: 8.0),
                   child: FilterChip(
+                    key: const ValueKey("Chip"),
                     backgroundColor: WHITE_COLOR,
                     side: (chipIsSelected[index])
                         ? const BorderSide(color: WHITE_COLOR)
